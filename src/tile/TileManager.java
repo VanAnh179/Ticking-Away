@@ -99,25 +99,27 @@ public class TileManager {
             InputStream is = getClass().getResourceAsStream(filePath);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-            int col = 0;
-            int row = 0;
+            // Đọc toàn bộ file để xác định kích thước map
+            ArrayList<String> lines = new ArrayList<>();
+            String line;
+            while ((line = br.readLine()) != null) {
+                lines.add(line);
+            }
 
-            while (col < gp.maxWorldCol && row < gp.maxWorldRow) {
-                String line = br.readLine();
-                while (col < gp.maxWorldCol) {
-                    String numbers[] = line.split(" ");
+            gp.maxWorldRow = lines.size();
+            gp.maxWorldCol = lines.get(0).split(" ").length; // Giả sử tất cả các dòng có cùng số cột
+            mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
 
-                    int num = Integer.parseInt(numbers[col]);
-                    mapTileNum[col][row] = num;
-                    col++;
-                }
-                if (col == gp.maxWorldCol) {
-                    col = 0;
-                    row++;
+            // Đọc dữ liệu vào mapTileNum
+            for (int row = 0; row < gp.maxWorldRow; row++) {
+                String[] numbers = lines.get(row).split(" ");
+                for (int col = 0; col < gp.maxWorldCol; col++) {
+                    mapTileNum[col][row] = Integer.parseInt(numbers[col]);
                 }
             }
             br.close();
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -125,24 +127,28 @@ public class TileManager {
         int worldCol = 0;
         int worldRow = 0;
 
-        while (worldCol <gp.maxWorldCol && worldRow < gp.maxWorldRow) {
+        while (worldCol < gp.maxWorldCol && worldRow < gp.maxWorldRow) {
             int tileNum = mapTileNum[worldCol][worldRow];
             
             int worldX = worldCol * gp.tileSize;
             int worldY = worldRow * gp.tileSize;
+            
+            // Tính toán vị trí màn hình dựa trên vị trí nhân vật
             int screenX = worldX - gp.player.worldX + gp.player.screenX;
             int screenY = worldY - gp.player.worldY + gp.player.screenY;
             
-            if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX 
-                && worldX - gp.tileSize < gp.player.worldX + gp.player.screenX 
-                && worldY + gp.tileSize > gp.player.worldY - gp.player.screenY 
-                && worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
+            // Chỉ vẽ các tile trong tầm nhìn
+            if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
+                worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
+                worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
+                worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
                 g2.drawImage(tile[tileNum].image, screenX, screenY, null);
             }
             
             worldCol++;
             
-            if (worldCol == gp.maxScreenCol) {
+            // Reset khi hết hàng
+            if (worldCol == gp.maxWorldCol) {
                 worldCol = 0;
                 worldRow++;
             }

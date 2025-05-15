@@ -17,6 +17,8 @@ public class Player extends Entity {
 
     public final int screenX;
     public final int screenY;
+
+    public BufferedImage idleDown, idleUp, idleLeft, idleRight;
     
     public int hasChest = 0;
 
@@ -40,10 +42,10 @@ public class Player extends Entity {
     }
 
     public void setDefaultValues() {
-        worldX = gp.tileSize * 33;
-        worldY = gp.tileSize * 5;
+        worldX = gp.tileSize * 31;
+        worldY = gp.tileSize * 4;
         speed = 4;
-        direction = "down";
+        direction = "";
     }
 
     public void getPlayerImage() {
@@ -88,7 +90,10 @@ public class Player extends Entity {
         right8 = setup("right (7)");
         right9 = setup("right (8)");
         
-        
+        idleDown = setup("down (1)"); // Sử dụng frame đầu tiên của để tạo hình ảnh riêng cho đứng yên
+        idleUp = setup("up (1)");
+        idleLeft = setup("left (9)");
+        idleRight = setup("right (9)");
     }
 
     public BufferedImage setup(String imageName) {
@@ -105,40 +110,46 @@ public class Player extends Entity {
     }
     
     public void update() {
-        if (keyH.upPressed == true) {
-            direction = "up";
-        } else if (keyH.downPressed == true) {
-            direction = "down";
-        } else if (keyH.leftPressed == true) {
-            direction = "left";
-        } else if (keyH.rightPressed == true) {
-            direction = "right";
-        }
-
-        collisionOn = false;
-        gp.cChecker.checkTile(this);
-        
-        //check obj collision
-        int objIndex = gp.cChecker.checkObject(this, true);
-        pickUpObject(objIndex);
-
-        //collision = false => move
-        if (collisionOn == false) {
-            switch (direction) {
-                case "up":
-                    worldY -= speed;
-                    break;
-                case "down":
-                    worldY += speed;
-                    break;
-                case "left":
-                    worldX -= speed;
-                    break;
-                case "right":
-                    worldX += speed;
-                    break;
+        // Cập nhật hướng di chuyển dựa trên phím nhấn
+        if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
+            if (keyH.upPressed) {
+                direction = "up";
+            } else if (keyH.downPressed) {
+                direction = "down";
+            } else if (keyH.leftPressed) {
+                direction = "left";
+            } else if (keyH.rightPressed) {
+                direction = "right";
             }
+
+            // Kiểm tra va chạm
+            collisionOn = false;
+            gp.cChecker.checkTile(this);
+            int objIndex = gp.cChecker.checkObject(this, true);
+            pickUpObject(objIndex);
+
+            // Di chuyển nếu không có va chạm
+            if (!collisionOn) {
+                switch (direction) {
+                    case "up":
+                        worldY -= speed;
+                        break;
+                    case "down":
+                        worldY += speed;
+                        break;
+                    case "left":
+                        worldX -= speed;
+                        break;
+                    case "right":
+                        worldX += speed;
+                        break;
+                }
+            }
+        } else {
+            // Dừng di chuyển khi không có phím nào được nhấn
+            direction = "";
         }
+
     }
     
     public void pickUpObject(int i) {
@@ -162,67 +173,86 @@ public class Player extends Entity {
     }
     
     public void draw(Graphics2D g2) {
-        BufferedImage image = null;
+        BufferedImage image = idleDown;
 
         // Animation only updates when moving
-        int frame = 1;
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
-            frame = (int)((System.currentTimeMillis() / 100) % 9) + 1;
+            int frame = (int)((System.currentTimeMillis() / 100) % 9) + 1;
+            switch (direction) {
+                case "up":
+                    switch (frame) {
+                        case 1: image = up1; break;
+                        case 2: image = up2; break;
+                        case 3: image = up3; break;
+                        case 4: image = up4; break;
+                        case 5: image = up5; break;
+                        case 6: image = up6; break;
+                        case 7: image = up7; break;
+                        case 8: image = up8; break;
+                        case 9: image = up9; break;
+                    }
+                    break;
+                case "down":
+                    switch (frame) {
+                        case 1: image = down1; break;
+                        case 2: image = down2; break;
+                        case 3: image = down3; break;
+                        case 4: image = down4; break;
+                        case 5: image = down5; break;
+                        case 6: image = down6; break;
+                        case 7: image = down7; break;
+                        case 8: image = down8; break;
+                        case 9: image = down9; break;
+                    }
+                    break;
+                case "left":
+                    switch (frame) {
+                        case 1: image = left1; break;
+                        case 2: image = left2; break;
+                        case 3: image = left3; break;
+                        case 4: image = left4; break;
+                        case 5: image = left5; break;
+                        case 6: image = left6; break;
+                        case 7: image = left7; break;
+                        case 8: image = left8; break;
+                        case 9: image = left9; break;
+                    }
+                    break;
+                case "right":
+                    switch (frame) {
+                        case 1: image = right1; break;
+                        case 2: image = right2; break;
+                        case 3: image = right3; break;
+                        case 4: image = right4; break;
+                        case 5: image = right5; break;
+                        case 6: image = right6; break;
+                        case 7: image = right7; break;
+                        case 8: image = right8; break;
+                        case 9: image = right9; break;
+                    }
+                    break;
+            }
+        } else {
+            // Xử lý hình ảnh khi đứng yên dựa trên hướng cuối cùng
+            switch (direction) {
+                case "up":
+                    image = idleUp;
+                    break;
+                case "down":
+                    image = idleDown;
+                    break;
+                case "left":
+                    image = idleLeft;
+                    break;
+                case "right":
+                    image = idleRight;
+                    break;
+                default:
+                    image = idleDown; // Mặc định nếu không có hướng
+            }
         }
-        switch (direction) {
-            case "up":
-            switch (frame) {
-                case 1: image = up1; break;
-                case 2: image = up2; break;
-                case 3: image = up3; break;
-                case 4: image = up4; break;
-                case 5: image = up5; break;
-                case 6: image = up6; break;
-                case 7: image = up7; break;
-                case 8: image = up8; break;
-                case 9: image = up9; break;
-            }
-            break;
-            case "down":
-            switch (frame) {
-                case 1: image = down1; break;
-                case 2: image = down2; break;
-                case 3: image = down3; break;
-                case 4: image = down4; break;
-                case 5: image = down5; break;
-                case 6: image = down6; break;
-                case 7: image = down7; break;
-                case 8: image = down8; break;
-                case 9: image = down9; break;
-            }
-            break;
-            case "left":
-            switch (frame) {
-                case 1: image = left1; break;
-                case 2: image = left2; break;
-                case 3: image = left3; break;
-                case 4: image = left4; break;
-                case 5: image = left5; break;
-                case 6: image = left6; break;
-                case 7: image = left7; break;
-                case 8: image = left8; break;
-                case 9: image = left9; break;
-            }
-            break;
-            case "right":
-            switch (frame) {
-                case 1: image = right1; break;
-                case 2: image = right2; break;
-                case 3: image = right3; break;
-                case 4: image = right4; break;
-                case 5: image = right5; break;
-                case 6: image = right6; break;
-                case 7: image = right7; break;
-                case 8: image = right8; break;
-                case 9: image = right9; break;
-            }
-            break;
+        if (image != null) {
+            g2.drawImage(image, screenX, screenY, null);
         }
-        g2.drawImage(image, screenX, screenY, null);
     }
 }
