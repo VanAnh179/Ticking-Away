@@ -1,15 +1,13 @@
 package main;
 
-import javax.swing.JPanel;
-
 import entity.Player;
-import object.SuperObject;
-import tile.TileManager;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import javax.swing.JPanel;
+import object.SuperObject;
+import tile.TileManager;
 
 
 public class GamePanel extends JPanel implements Runnable {
@@ -30,7 +28,7 @@ public class GamePanel extends JPanel implements Runnable {
     public int currentMap = 0;
     
 
-    int FPS = 60;
+    int FPS = 30;
     
     //system
     TileManager tileM = new TileManager(this);
@@ -57,6 +55,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
+
+        startGameThread();
     }
     
     public void setupGame() {
@@ -94,6 +94,7 @@ public class GamePanel extends JPanel implements Runnable {
             } 
         }
     }
+
 
     /**
      * Cập nhật vị trí của người chơi dựa trên phím bấm.
