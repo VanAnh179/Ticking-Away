@@ -164,7 +164,20 @@ public class Player extends Entity {
     			gp.ui.gameFinished = true;
     			gp.stopMusic();
     			break;
-    		
+    		case "Key":
+                break;
+            case "Candy":
+                break;
+            case "Scroll":
+                break;
+            case "Book":
+                break;
+            case "Crystal":
+                break;
+            case "Helmet":
+                break;
+            case "Potion":
+                break;
     			
     			
     		}
