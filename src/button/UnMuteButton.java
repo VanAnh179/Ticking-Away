@@ -6,29 +6,31 @@ import main.Sound;
 
 public class UnMuteButton extends JButton {
     private ImageIcon muteIcon, unmuteIcon;
-    private boolean isMuted;
+    private boolean isMuted = false;
     private Sound musicPlayer;
 
     public UnMuteButton(Sound musicPlayer) {
         super("");
-
-        this.musicPlayer = musicPlayer; // Nhận đối tượng Sound từ MenuScreen
+        this.musicPlayer = musicPlayer;
         muteIcon = new ImageIcon("assets/button/Mute.jpg");
         unmuteIcon = new ImageIcon("assets/button/Unmute.png");
         setIcon(unmuteIcon);
-        isMuted = false;
+        setBorderPainted(false);
+        setFocusPainted(false);
+        setContentAreaFilled(false);
 
-        addActionListener(e -> {
-            isMuted = !isMuted; // Đảo trạng thái mute/unmute
-            setIcon(isMuted ? muteIcon : unmuteIcon);
-            repaint();
+        addActionListener(e -> toggleMute());
+    }
 
-            if (isMuted) {
-                musicPlayer.stop(); // Dừng nhạc
-            } else {
-                musicPlayer.play();
-                musicPlayer.loop(); // Bật lại nhạc
-            }
-        });
+    private void toggleMute() {
+        isMuted = !isMuted;
+        setIcon(isMuted ? muteIcon : unmuteIcon);
+
+        if (isMuted) {
+            musicPlayer.stop();
+        } else {
+            musicPlayer.play(); // Tiếp tục phát từ vị trí đã dừng
+            musicPlayer.loop();
+        }
     }
 }

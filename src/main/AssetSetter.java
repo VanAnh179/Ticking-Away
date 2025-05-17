@@ -1,6 +1,8 @@
 package main;
 
 import object.Chest;
+import object.Key;
+import object.Rock;
 
 public class AssetSetter {
 	GamePanel gp;
@@ -13,5 +15,8 @@ public class AssetSetter {
 		gp.obj[0] = new Chest(gp);
 		gp.obj[0].worldX = gp.tileSize * 34;
 		gp.obj[0].worldY = gp.tileSize * 5;
+		
+		
+		
 	}
 }

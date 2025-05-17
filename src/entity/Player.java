@@ -20,7 +20,9 @@ public class Player extends Entity {
 
     public BufferedImage idleDown, idleUp, idleLeft, idleRight;
     
-    public int hasChest = 0;
+    public int hasKey = 0;
+
+    public String lastDirection = "down";
 
     public Player(GamePanel gp, KeyHandler keyH) {
         this.gp = gp;
@@ -112,14 +114,19 @@ public class Player extends Entity {
     public void update() {
         // Cập nhật hướng di chuyển dựa trên phím nhấn
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
+            // Cập nhật direction và lastDirection khi di chuyển
             if (keyH.upPressed) {
                 direction = "up";
+                lastDirection = "up";
             } else if (keyH.downPressed) {
                 direction = "down";
+                lastDirection = "down";
             } else if (keyH.leftPressed) {
                 direction = "left";
+                lastDirection = "left";
             } else if (keyH.rightPressed) {
                 direction = "right";
+                lastDirection = "right";
             }
 
             // Kiểm tra va chạm
@@ -147,7 +154,7 @@ public class Player extends Entity {
             }
         } else {
             // Dừng di chuyển khi không có phím nào được nhấn
-            direction = "";
+            direction = lastDirection;
         }
 
     }
@@ -247,7 +254,7 @@ public class Player extends Entity {
             }
         } else {
             // Xử lý hình ảnh khi đứng yên dựa trên hướng cuối cùng
-            switch (direction) {
+            switch (lastDirection) {
                 case "up":
                     image = idleUp;
                     break;
@@ -260,12 +267,8 @@ public class Player extends Entity {
                 case "right":
                     image = idleRight;
                     break;
-                default:
-                    image = idleDown; // Mặc định nếu không có hướng
             }
         }
-        if (image != null) {
-            g2.drawImage(image, screenX, screenY, null);
-        }
+        g2.drawImage(image, screenX, screenY, null);
     }
 }

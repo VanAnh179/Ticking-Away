@@ -6,7 +6,7 @@ import java.awt.*;
 import javax.swing.*;
 
 public class MenuScreen extends JFrame {
-    private Sound musicPlayer;
+    private Sound menuMusic;
     private StartButton startButton;
     private UnMuteButton unMuteButton;
 
@@ -31,12 +31,12 @@ public class MenuScreen extends JFrame {
         startButton.setBounds(325, 330, 125, 40);
 
         // Tạo nhạc nền
-        musicPlayer = new Sound();
-        musicPlayer.setFile(0); // Chọn file nhạc
-        musicPlayer.loop();
+        menuMusic = new Sound();
+        menuMusic.setFile(0); // Chọn file nhạc
+        menuMusic.loop();
 
         // Tạo nút UnMute
-        unMuteButton = new UnMuteButton(musicPlayer);
+        unMuteButton = new UnMuteButton(menuMusic);
         unMuteButton.setBounds(20, 500, 40, 40);
 
         // Thêm các thành phần vào panel
@@ -47,27 +47,10 @@ public class MenuScreen extends JFrame {
 
         setVisible(true);
     }
-    
-    // Phương thức để dừng và phát nhạc
-    private void stopMusic() {
-        if (musicPlayer != null) {
-            musicPlayer.stop();
-        }
-    }
 
-    private void playMusic() {
-        if (musicPlayer != null) {
-            musicPlayer.play();
-            musicPlayer.loop();
-        }
+    public void stopMenuMusic() {
+        menuMusic.stop();
     }
-    
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new MenuScreen().setVisible(true);
-        });
-    }
-
 }
 
 // Class JPanel để vẽ nền

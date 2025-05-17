@@ -1,7 +1,7 @@
 floor.png
 false
 rock.png
-true
+false
 tile0.png
 true
 tile1.png

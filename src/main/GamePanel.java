@@ -28,10 +28,10 @@ public class GamePanel extends JPanel implements Runnable {
     public int currentMap = 0;
     
 
-    int FPS = 30;
+    int FPS = 60;
     
     //system
-    TileManager tileM = new TileManager(this);
+    public TileManager tileM = new TileManager(this);
     KeyHandler keyH = new KeyHandler();
     Sound music = new Sound();
     Sound soundEffect = new Sound();
@@ -43,7 +43,7 @@ public class GamePanel extends JPanel implements Runnable {
     
     //entity and object
     public Player player = new Player(this, keyH);
-    public SuperObject obj[] = new SuperObject[10];
+    public SuperObject obj[] = new SuperObject[1000];
 
     /**
      * Hàm khởi tạo GamePanel.
@@ -55,14 +55,14 @@ public class GamePanel extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
+        
+        obj = new SuperObject[1000];
 
-        startGameThread();
+        setupGame();
     }
     
     public void setupGame() {
     	aSetter.setObject();
-    	
-    	//playMusic(null); //music bg
     }
 
     /**

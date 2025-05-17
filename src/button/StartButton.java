@@ -1,10 +1,12 @@
 package button;
 
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
+import java.awt.Font;
+import java.awt.Color;
 import main.GamePanel;
+import main.MenuScreen;
 
 public class StartButton extends JButton {
     private ImageIcon normalIcon, hoverIcon, clickIcon;
@@ -20,8 +22,8 @@ public class StartButton extends JButton {
         // Đặt hình ảnh mặc định
         setIcon(normalIcon);
         setFont(new Font("Serif", Font.BOLD, 30));
-        setBackground(Color.DARK_GRAY); // Màu nền bình thường
-        setForeground(Color.WHITE); // Màu chữ bình thường
+        setBackground(Color.DARK_GRAY);
+        setForeground(Color.WHITE);
         setBorderPainted(false);
         setFocusPainted(false);
         setContentAreaFilled(false);
@@ -31,31 +33,38 @@ public class StartButton extends JButton {
             @Override
             public void mouseEntered(MouseEvent e) {
                 setIcon(hoverIcon);
-                setBackground(Color.BLACK); // Màu tối hơn khi di chuột vào
+                setBackground(Color.BLACK);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 setIcon(normalIcon);
-                setBackground(Color.DARK_GRAY); // Quay lại màu bình thường
+                setBackground(Color.DARK_GRAY);
             }
         });
 
         addActionListener(e -> {
-            setIcon(clickIcon);
-            setBackground(Color.BLACK);
-            Window window = SwingUtilities.getWindowAncestor(this);
-            if (window instanceof JFrame) {
-                JFrame frame = (JFrame) window;
-                frame.getContentPane().removeAll(); // Xóa toàn bộ nội dung MenuScreen
-                GamePanel gamePanel = new GamePanel(); // Tạo một GamePanel mới
-                frame.add(gamePanel); // Thêm GamePanel vào cửa sổ hiện tại
-                frame.revalidate(); // Cập nhật lại bố cục
-                frame.repaint(); // Vẽ lại màn hình
-
-                gamePanel.requestFocusInWindow();
-                gamePanel.startGameThread();
+            JFrame menuFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+            if (menuFrame instanceof MenuScreen menuScreen) {
+                menuScreen.stopMenuMusic(); // Dừng nhạc menu
+                menuScreen.setVisible(false); // Ẩn menu thay vì dispose
+            } else {
+                menuFrame.setVisible(false); // fallback nếu không phải MenuScreen
             }
+
+            JFrame gameFrame = new JFrame();
+            gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            gameFrame.setResizable(false);
+            gameFrame.setTitle("Ticking Away");
+
+            GamePanel gamePanel = new GamePanel(); // setupGame() đã được gọi trong constructor
+            gamePanel.playMusic(1);
+            gameFrame.add(gamePanel);
+            gameFrame.pack();
+            gameFrame.setLocationRelativeTo(null);
+            gameFrame.setVisible(true);
+
+            gamePanel.startGameThread();
         });
     }
 }
