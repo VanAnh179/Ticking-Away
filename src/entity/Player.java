@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import main.GamePanel;
 import main.KeyHandler;
 import main.UtilityTool;
+import object.Bomb;
 
 public class Player extends Entity {
 	GamePanel gp;
@@ -24,6 +25,10 @@ public class Player extends Entity {
 
     public String lastDirection = "down";
 
+    // Tính thời gian đặt bomb để tránh spam
+    public int bombCooldown = 0; // biến cooldown cho đặt bomb
+    public final int BOMB_COOLDOWN_TIME = 30; // 1 giây (60 frames)
+
     public Player(GamePanel gp, KeyHandler keyH) {
         this.gp = gp;
         this.keyH = keyH;
@@ -32,12 +37,12 @@ public class Player extends Entity {
         screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 
         solidArea = new Rectangle();
-        solidArea.x = 12;
-        solidArea.y = 12;
+        solidArea.x = 16;
+        solidArea.y = 35;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
-        solidArea.width = 24;
-        solidArea.height = 24;
+        solidArea.width = 16;
+        solidArea.height = 13;
 
         setDefaultValues();
         getPlayerImage();
@@ -112,6 +117,11 @@ public class Player extends Entity {
     }
     
     public void update() {
+        // Giảm cooldown mỗi frame nếu > 0
+        if (bombCooldown > 0) {
+            bombCooldown--;
+        }
+
         // Cập nhật hướng di chuyển dựa trên phím nhấn
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
             // Cập nhật direction và lastDirection khi di chuyển
@@ -127,6 +137,10 @@ public class Player extends Entity {
             } else if (keyH.rightPressed) {
                 direction = "right";
                 lastDirection = "right";
+            }
+            if (keyH.spacePressed) {
+                placeBomb();
+                keyH.spacePressed = false;
             }
 
             // Kiểm tra va chạm
@@ -157,6 +171,36 @@ public class Player extends Entity {
             direction = lastDirection;
         }
 
+    }
+
+    private void placeBomb() {
+        if (bombCooldown > 0) return;
+
+        // Tính tọa độ trung tâm của player
+        int centerX = worldX + solidArea.x - 1 + ((solidArea.width - 1) / 2);
+        int centerY = worldY + solidArea.y - 1 + ((solidArea.height - 1) / 2);
+
+        // Xác định ô dựa trên trung tâm
+        int bombCol = centerX / gp.tileSize;
+        int bombRow = centerY / gp.tileSize;
+        int bombWorldX = bombCol * gp.tileSize;
+        int bombWorldY = bombRow * gp.tileSize;
+
+        // Kiểm tra giới hạn map và vật cản
+        if (bombCol < 0 || bombCol >= gp.maxWorldCol || bombRow < 0 || bombRow >= gp.maxWorldRow) return;
+        if (gp.tileM.tile[gp.tileM.mapTileNum[bombCol][bombRow]].collision) return;
+
+        // Đặt bomb vào ô trống đầu tiên trong mảng obj[]
+        for (int i = 0; i < gp.obj.length; i++) {
+            if (gp.obj[i] == null) {
+                Bomb bomb = new Bomb(gp);
+                bomb.worldX = bombWorldX;
+                bomb.worldY = bombWorldY;
+                gp.obj[i] = bomb;
+                bombCooldown = BOMB_COOLDOWN_TIME; // Kích hoạt cooldown
+                break;
+            }
+        }
     }
     
     public void pickUpObject(int i) {

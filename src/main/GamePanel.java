@@ -5,7 +5,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+
 import javax.swing.JPanel;
+
+import object.Bomb;
+import object.Flame;
 import object.SuperObject;
 import tile.TileManager;
 
@@ -44,6 +49,7 @@ public class GamePanel extends JPanel implements Runnable {
     //entity and object
     public Player player = new Player(this, keyH);
     public SuperObject obj[] = new SuperObject[1000];
+    public ArrayList<Flame> flames = new ArrayList<>();
 
     /**
      * Hàm khởi tạo GamePanel.
@@ -101,6 +107,19 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public void update() {
         player.update();
+
+        // Cập nhật bomb
+        for (int i = 0; i < obj.length; i++) {
+            if (obj[i] != null && obj[i].name.equals("Bomb")) {
+                ((Bomb) obj[i]).update();
+            }
+        }
+
+        // Cập nhật flame
+        for (int i = flames.size() - 1; i >= 0; i--) {
+            Flame flame = flames.get(i);
+            flame.update();
+        }
     }
 
     /**
@@ -136,6 +155,12 @@ public class GamePanel extends JPanel implements Runnable {
         //UI
         ui.draw(g2);
         
+        // Vẽ flame
+        for (Flame flame : flames) {
+            int screenX = flame.worldX - player.worldX + player.screenX;
+            int screenY = flame.worldY - player.worldY + player.screenY;
+            g2.drawImage(flame.image, screenX, screenY, null);
+        }
         
         // DEBUG
         if (keyH.checkDrawTime == true) {

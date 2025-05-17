@@ -2,7 +2,6 @@ package main;
 
 import object.Chest;
 import object.Key;
-import object.Rock;
 
 public class AssetSetter {
 	GamePanel gp;

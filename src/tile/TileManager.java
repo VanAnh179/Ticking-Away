@@ -11,7 +11,6 @@ import javax.imageio.ImageIO;
 
 import main.GamePanel;
 import main.UtilityTool;
-import object.Rock;
 
 public class TileManager {
 	
@@ -117,23 +116,18 @@ public class TileManager {
                 for (int col = 0; col < gp.maxWorldCol; col++) {
                     int tileNum = Integer.parseInt(numbers[col]);
                     mapTileNum[col][row] = tileNum;
-
-                    // Tự động thêm Rock khi gặp tile có ID = 1
-                    // if (tileNum == 1) {
-                    //     for (int i = 0; i < gp.obj.length; i++) {
-                    //         if (gp.obj[i] == null) {
-                    //             gp.obj[i] = new Rock(gp);
-                    //             gp.obj[i].worldX = col * gp.tileSize;
-                    //             gp.obj[i].worldY = row * gp.tileSize;
-                    //             break;
-                    //         }
-                    //     }
-                    // }
                 }
             }
             br.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void changeTile(int col, int row, int newTileID) {
+        if (col >= 0 && col < gp.maxWorldCol && row >= 0 && row < gp.maxWorldRow) {
+            mapTileNum[col][row] = newTileID;
+            // Không thay đổi thuộc tính collision của tile, dùng giá trị từ tiledata.txt
         }
     }
 
