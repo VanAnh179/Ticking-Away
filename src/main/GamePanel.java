@@ -75,6 +75,7 @@ public class GamePanel extends JPanel implements Runnable {
      * Bắt đầu luồng game (game loop) mới.
      */
     public void startGameThread() {
+        ui.resetTimer();
         gameThread = new Thread(this);
         gameThread.start();
     }
@@ -170,9 +171,6 @@ public class GamePanel extends JPanel implements Runnable {
 	        g2.drawString("Draw Time: " + passed, 10, 400);
 	        System.out.println("Draw Time: " + passed);
         }
-        
-        
-        g2.dispose();
     }
     
     public void playMusic(int i) {

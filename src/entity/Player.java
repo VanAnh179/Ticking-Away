@@ -4,9 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
 import main.GamePanel;
 import main.KeyHandler;
 import main.UtilityTool;
@@ -18,6 +16,9 @@ public class Player extends Entity {
 
     public final int screenX;
     public final int screenY;
+
+    public int maxHealth = 4;
+    public int health = 4;
 
     public BufferedImage idleDown, idleUp, idleLeft, idleRight;
     
@@ -53,6 +54,7 @@ public class Player extends Entity {
         worldY = gp.tileSize * 4;
         speed = 4;
         direction = "";
+        health = maxHealth;
     }
 
     public void getPlayerImage() {
@@ -314,5 +316,17 @@ public class Player extends Entity {
             }
         }
         g2.drawImage(image, screenX, screenY, null);
+    }
+
+    public void takeDamage(int damage) {
+        health -= damage;
+        if(health < 0) {
+            health = 0;
+        }
+
+        gp.ui.showMessage("-1 life");
+        if(health <= 0) {
+            gp.ui.showMessage(direction);
+        }
     }
 }
