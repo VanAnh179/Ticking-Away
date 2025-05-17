@@ -11,7 +11,6 @@ import main.UtilityTool;
 import object.Bomb;
 
 public class Player extends Entity {
-	GamePanel gp;
     KeyHandler keyH;
 
     public final int screenX;
@@ -19,6 +18,9 @@ public class Player extends Entity {
 
     public int maxHealth = 4;
     public int health = 4;
+    public int invincibleCounter = 0;
+    public final int INVINCIBLE_TIME = 100;
+    public boolean wasTouchingEnemy = false;
 
     public BufferedImage idleDown, idleUp, idleLeft, idleRight;
     
@@ -31,7 +33,7 @@ public class Player extends Entity {
     public final int BOMB_COOLDOWN_TIME = 30; // 1 giây (60 frames)
 
     public Player(GamePanel gp, KeyHandler keyH) {
-        this.gp = gp;
+        super(gp);
         this.keyH = keyH;
 
         screenX = gp.screenWidth / 2 - (gp.tileSize / 2);
@@ -54,68 +56,56 @@ public class Player extends Entity {
         worldY = gp.tileSize * 4;
         speed = 4;
         direction = "";
+        maxHealth = 4;
         health = maxHealth;
     }
 
     public void getPlayerImage() {
         
-        up1 = setup("up (1)");
-        up2 = setup("up (2)");
-        up3 = setup("up (3)");
-        up4 = setup("up (4)");
-        up5 = setup("up (5)");
-        up6 = setup("up (6)");
-        up7 = setup("up (7)");
-        up8 = setup("up (8)");
-        up9 = setup("up (9)");
+        up1 = setup("/player/up (1)");
+        up2 = setup("/player/up (2)");
+        up3 = setup("/player/up (3)");
+        up4 = setup("/player/up (4)");
+        up5 = setup("/player/up (5)");
+        up6 = setup("/player/up (6)");
+        up7 = setup("/player/up (7)");
+        up8 = setup("/player/up (8)");
+        up9 = setup("/player/up (9)");
 
-        down1 = setup("down (1)");
-        down2 = setup("down (2)");
-        down3 = setup("down (3)");
-        down4 = setup("down (4)");
-        down5 = setup("down (5)");
-        down6 = setup("down (6)");
-        down7 = setup("down (7)");
-        down8 = setup("down (8)");
-        down9 = setup("down (9)");
+        down1 = setup("/player/down (1)");
+        down2 = setup("/player/down (2)");
+        down3 = setup("/player/down (3)");
+        down4 = setup("/player/down (4)");
+        down5 = setup("/player/down (5)");
+        down6 = setup("/player/down (6)");
+        down7 = setup("/player/down (7)");
+        down8 = setup("/player/down (8)");
+        down9 = setup("/player/down (9)");
 
-        left1 = setup("left (9)");
-        left2 = setup("left (1)");
-        left3 = setup("left (2)");
-        left4 = setup("left (3)");
-        left5 = setup("left (4)");
-        left6 = setup("left (5)");
-        left7 = setup("left (6)");
-        left8 = setup("left (7)");
-        left9 = setup("left (8)");
+        left1 = setup("/player/left (9)");
+        left2 = setup("/player/left (1)");
+        left3 = setup("/player/left (2)");
+        left4 = setup("/player/left (3)");
+        left5 = setup("/player/left (4)");
+        left6 = setup("/player/left (5)");
+        left7 = setup("/player/left (6)");
+        left8 = setup("/player/left (7)");
+        left9 = setup("/player/left (8)");
 
-        right1 = setup("right (9)");
-        right2 = setup("right (1)");
-        right3 = setup("right (2)");
-        right4 = setup("right (3)");
-        right5 = setup("right (4)");
-        right6 = setup("right (5)");
-        right7 = setup("right (6)");
-        right8 = setup("right (7)");
-        right9 = setup("right (8)");
-        
-        idleDown = setup("down (1)"); // Sử dụng frame đầu tiên của để tạo hình ảnh riêng cho đứng yên
-        idleUp = setup("up (1)");
-        idleLeft = setup("left (9)");
-        idleRight = setup("right (9)");
-    }
+        right1 = setup("/player/right (9)");
+        right2 = setup("/player/right (1)");
+        right3 = setup("/player/right (2)");
+        right4 = setup("/player/right (3)");
+        right5 = setup("/player/right (4)");
+        right6 = setup("/player/right (5)");
+        right7 = setup("/player/right (6)");
+        right8 = setup("/player/right (7)");
+        right9 = setup("/player/right (8)");
 
-    public BufferedImage setup(String imageName) {
-    	UtilityTool uTool = new UtilityTool();
-    	BufferedImage image = null;
-    	
-    	try {
-    		image = ImageIO.read(getClass().getResourceAsStream("/player/" + imageName + ".png"));
-    		image = uTool.scaleImage(image, gp.tileSize, gp.tileSize);
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    	}
-    	return image;
+        idleDown = setup("/player/down (1)");
+        idleUp = setup("/player/up (1)");
+        idleLeft = setup("/player/left (9)");
+        idleRight = setup("/player/right (9)");
     }
     
     public void update() {
@@ -123,6 +113,10 @@ public class Player extends Entity {
         if (bombCooldown > 0) {
             bombCooldown--;
         }
+
+        // if (invincibleCounter > 0) {
+        //     invincibleCounter--;
+        // }
 
         // Cập nhật hướng di chuyển dựa trên phím nhấn
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
@@ -148,8 +142,24 @@ public class Player extends Entity {
             // Kiểm tra va chạm
             collisionOn = false;
             gp.cChecker.checkTile(this);
+
+            //check obj collision
             int objIndex = gp.cChecker.checkObject(this, true);
             pickUpObject(objIndex);
+
+            //check enemy collision
+            int enemyIndex = gp.cChecker.checkEntity(this, gp.enemy);
+            // Chỉ trừ máu khi vừa mới va chạm (trước đó chưa va chạm)
+            if (enemyIndex != 999 && invincibleCounter == 0) {
+                interactEnemy(enemyIndex);
+                wasTouchingEnemy = true;
+            } else {
+                wasTouchingEnemy = false;
+            }
+            // Giảm thời gian bất tử
+            if (invincibleCounter > 0) {
+                invincibleCounter--;
+            }
 
             // Di chuyển nếu không có va chạm
             if (!collisionOn) {
@@ -173,6 +183,14 @@ public class Player extends Entity {
             direction = lastDirection;
         }
 
+    }
+
+    public void interactEnemy(int i) {
+        if (i != 99) {
+            System.out.println("[Debug] Player collided with enemy at index: " + i);
+            takeDamage(1);
+            invincibleCounter = INVINCIBLE_TIME;
+        }
     }
 
     private void placeBomb() {
@@ -238,6 +256,7 @@ public class Player extends Entity {
     	}
     }
     
+    @Override
     public void draw(Graphics2D g2) {
         BufferedImage image = idleDown;
 

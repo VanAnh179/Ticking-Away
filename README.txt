@@ -7,18 +7,19 @@ Mục đích:
 - Thu thập đủ 2 chìa khóa (key) được giấu dưới các tảng đá (rock) để mở khóa "portal" và chiến thắng.
 
 Vật cản:
-- Mê cung với các tường chắn.
-- Kẻ địch (enemies) đuổi theo người chơi.
-- Các tảng đá (rock) chắn đường, cần dùng bom để phá.
+- Mê cung với các tường chắn. (xong)
+- Kẻ địch (enemies) đuổi theo người chơi. (xong)
+- Các tảng đá (rock) chắn đường, cần dùng bom để phá. (xong)
 - Vật phẩm chủ yếu nằm trong 7 chest và sẽ cho ngẫu nhiên.
 
 Kỹ năng người chơi:
-- Đặt bom (nổ theo hình dấu +, 5 ô) để phá vật cản.
+- Đặt bom (nổ theo hình dấu +, 5 ô) để phá vật cản. (xong)
+- Đặt bom tiêu diệt kẻ địch.
 - Làm sáng phạm vi xung quanh (bán kính nhất định).
-- Nhặt vật phẩm (key, item).
+- Nhặt vật phẩm (key, item). (xong)
 - Mở khóa portal khi đủ key.
 
-UI:
+UI: (xong)
 - Health: 4 mạng.
 - Score: tính theo số enemies tiêu diệt (nhiều điểm), số rock bị phá (ít điểm hơn).
 - Time: thời gian hoàn thành, càng ở trong mê cung lâu thì phạm vi sáng càng giảm.
@@ -35,5 +36,6 @@ Items:
 
 Enemies:
 - Khi vào phạm vi sáng của người chơi sẽ đuổi theo, chạm vào trừ 1 máu.
-- Sweet: không đi qua tường, gặp vật cản thì dừng, di chuyển nhanh hơn Watermelon, số lượng 2-3.
-- Watermelon: đi xuyên qua mọi vật cản, số lượng 1-2.
+- Watermelon: không đi qua tường, gặp vật cản thì dừng, di chuyển nhanh hơn Watermelon, số lượng 2-3.
+- Sweet: đi xuyên qua mọi vật cản, số lượng 1-2.
+- Bitter: khi đến gần người chơi ở khoảng cách nhất định sẽ bắt đầu kích hoạt thời gian nổ, nổ -2 máu.

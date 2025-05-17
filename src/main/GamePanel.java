@@ -1,10 +1,12 @@
 package main;
 
+import entity.Entity;
 import entity.Player;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -49,6 +51,7 @@ public class GamePanel extends JPanel implements Runnable {
     //entity and object
     public Player player = new Player(this, keyH);
     public SuperObject obj[] = new SuperObject[1000];
+    public Entity enemy[] = new Entity[10];
     public ArrayList<Flame> flames = new ArrayList<>();
 
     /**
@@ -69,6 +72,8 @@ public class GamePanel extends JPanel implements Runnable {
     
     public void setupGame() {
     	aSetter.setObject();
+        aSetter.setEnemy();
+        player.wasTouchingEnemy = (cChecker.checkEntity(player, enemy) != 99);
     }
 
     /**
@@ -109,6 +114,14 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         player.update();
 
+        //enemy
+        for (int i = 0; i < enemy.length; i++) {
+            if (enemy[i] != null) {
+                System.out.println("[Debug] Updating enemy " + i);
+                enemy[i].update();
+            }
+        }
+
         // Cập nhật bomb
         for (int i = 0; i < obj.length; i++) {
             if (obj[i] != null && obj[i].name.equals("Bomb")) {
@@ -120,6 +133,24 @@ public class GamePanel extends JPanel implements Runnable {
         for (int i = flames.size() - 1; i >= 0; i--) {
             Flame flame = flames.get(i);
             flame.update();
+            
+            // Kiểm tra va chạm với player
+            if (flame.collision) {
+                int flameX = flame.worldX + flame.solidArea.x;
+                int flameY = flame.worldY + flame.solidArea.y;
+                int playerX = player.worldX + player.solidArea.x;
+                int playerY = player.worldY + player.solidArea.y;
+
+                Rectangle flameRect = new Rectangle(flameX, flameY, flame.solidArea.width, flame.solidArea.height);
+                Rectangle playerRect = new Rectangle(playerX, playerY, player.solidArea.width, player.solidArea.height);
+
+                if (flameRect.intersects(playerRect)) {
+                    if (player.invincibleCounter == 0) {
+                        player.takeDamage(1);
+                        player.invincibleCounter = player.INVINCIBLE_TIME;
+                    }
+                }
+            }
         }
     }
 
@@ -149,6 +180,13 @@ public class GamePanel extends JPanel implements Runnable {
         	}
         }
 
+        //enemy
+        for (int i = 0; i < enemy.length; i++) {
+            if (enemy[i] != null) {
+                System.out.println("[Debug] Drawing enemy " + i + " at (" + enemy[i].worldX + ", " + enemy[i].worldY + ")");
+                enemy[i].draw(g2);
+            }
+        }
         
         //player
         player.draw(g2); // Vẽ player

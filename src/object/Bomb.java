@@ -2,13 +2,16 @@ package object;
 
 import main.GamePanel;
 import main.UtilityTool;
+import tile.Tile;
+
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Bomb extends SuperObject {
     GamePanel gp;
-    public int countdown = 120; // 3 giây
+    public int countdown = 90; // 1.5 giây
     public boolean exploded = false;
     public boolean isActive = false;
     private int activationDelay = 60; // 0.5 giây
@@ -96,6 +99,22 @@ public class Bomb extends SuperObject {
         if (targetCol < 0 || targetCol >= gp.maxWorldCol || targetRow < 0 || targetRow >= gp.maxWorldRow) {
             return;
         }
+        // Tính toán vị trí flame và player theo pixel
+        int flameX = targetCol * gp.tileSize;
+        int flameY = targetRow * gp.tileSize;
+        int playerX = gp.player.worldX + gp.player.solidArea.x;
+        int playerY = gp.player.worldY + gp.player.solidArea.y;
+
+        // Kiểm tra va chạm giữa flame và player
+        Rectangle flameRect = new Rectangle(flameX + solidArea.x, flameY + solidArea.y, solidArea.width, solidArea.height);
+        Rectangle playerRect = new Rectangle(playerX, playerY, gp.player.solidArea.width, gp.player.solidArea.height);
+
+        if (flameRect.intersects(playerRect)) {
+            if (gp.player.invincibleCounter == 0) {
+                gp.player.takeDamage(1);
+                gp.player.invincibleCounter = gp.player.INVINCIBLE_TIME;
+            }
+        }
 
         // Thêm flame
         String flameType = type;
@@ -109,9 +128,13 @@ public class Bomb extends SuperObject {
         Flame flame = new Flame(gp, targetCol * gp.tileSize, targetRow * gp.tileSize, flameType);
         gp.flames.add(flame);
 
-        // Chỉ thay đổi tile nếu tile hiện tại có collision
-        if (gp.tileM.tile[gp.tileM.mapTileNum[targetCol][targetRow]].collision) {
-            gp.tileM.changeTile(targetCol, targetRow, 41); // Đổi sang tile không chặn
+        // Chỉ thay đổi tile nếu tile có ID là 1 và đang có collision
+        int tileIndex = gp.tileM.mapTileNum[targetCol][targetRow]; // Lấy index của tile trong mảng tile[]
+        Tile currentTile = gp.tileM.tile[tileIndex]; // Lấy đối tượng tile
+
+        // Kiểm tra ID và collision
+        if (currentTile.id == 1 && currentTile.collision) {
+            gp.tileM.changeTile(targetCol, targetRow, 41); // Đổi sang tile không chặn (ID 41)
         }
     }
 }

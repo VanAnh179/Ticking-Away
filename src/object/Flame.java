@@ -2,6 +2,8 @@ package object;
 
 import main.GamePanel;
 import main.UtilityTool;
+
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -12,6 +14,7 @@ public class Flame extends SuperObject {
     private BufferedImage[][] flameFrames; // [Loại flame][Frame]
     private int animationIndex = 0;
     private String flameType; // "horizontal", "vertical", "left_last", "right_last", "top_last", "down_last"
+    private int activationDelay = 10;
 
     public Flame(GamePanel gp, int x, int y, String flameType) {
         this.gp = gp;
@@ -19,7 +22,10 @@ public class Flame extends SuperObject {
         this.worldY = y;
         this.flameType = flameType;
         this.name = "Flame";
-        this.collision = false;
+        this.collision = true;
+        solidArea = new Rectangle(16, 16, 16, 16); // Điều chỉnh vùng va chạm nhỏ hơn
+        solidAreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
         loadFlameFrames();
     }
 
@@ -99,6 +105,13 @@ public class Flame extends SuperObject {
     }
 
     public void update() {
+        if (activationDelay > 0) {
+            activationDelay--;
+            collision = false;
+        } else {
+            collision = true; // Bật va chạm sau delay
+        }
+
         duration--;
         if (duration <= 0) {
             gp.flames.remove(this);

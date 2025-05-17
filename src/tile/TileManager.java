@@ -81,7 +81,7 @@ public class TileManager {
         UtilityTool uTool = new UtilityTool();
         
         try {
-        	tile[i] = new Tile();
+        	tile[i] = new Tile(i, collision);
             InputStream is = getClass().getResourceAsStream("/tiles/" + imageName);
             if (is == null) {
                 throw new IOException("Tile image not found: /tiles/" + imageName);
@@ -117,6 +117,25 @@ public class TileManager {
                     int tileNum = Integer.parseInt(numbers[col]);
                     mapTileNum[col][row] = tileNum;
                 }
+            }
+            br.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadTiles() {
+        try {
+            InputStream is = getClass().getResourceAsStream("/tiledata.txt");
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            String line;
+            int id = 0; // ID bắt đầu từ 0
+            while ((line = br.readLine()) != null) {
+                String imagePath = line.trim();
+                boolean collision = Boolean.parseBoolean(br.readLine().trim());
+                tile[id] = new Tile(id, collision); // Tạo tile với ID tương ứng
+                tile[id].image = ImageIO.read(getClass().getResourceAsStream("/tiles/" + imagePath));
+                id++;
             }
             br.close();
         } catch (Exception e) {
