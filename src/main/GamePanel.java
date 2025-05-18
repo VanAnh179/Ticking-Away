@@ -8,9 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-
 import javax.swing.JPanel;
-
 import object.Bomb;
 import object.Flame;
 import object.SuperObject;
@@ -54,6 +52,8 @@ public class GamePanel extends JPanel implements Runnable {
     public Entity enemy[] = new Entity[10];
     public ArrayList<Flame> flames = new ArrayList<>();
 
+    public EventObject eventObj;
+
     /**
      * Hàm khởi tạo GamePanel.
      * Thiết lập kích thước panel, màu nền, bật double buffering, thêm key listener và cho phép focus.
@@ -66,6 +66,8 @@ public class GamePanel extends JPanel implements Runnable {
         this.setFocusable(true);
         
         obj = new SuperObject[1000];
+
+        eventObj = new EventObject(this);
 
         setupGame();
     }
@@ -147,9 +149,22 @@ public class GamePanel extends JPanel implements Runnable {
                 if (flameRect.intersects(playerRect)) {
                     if (player.invincibleCounter == 0) {
                         player.takeDamage(1);
-                        player.invincibleCounter = player.INVINCIBLE_TIME;
+                        player.invincibleCounter = 60;
                     }
                 }
+            }
+
+            if(flame.justCreated) {
+                int flameCol = flame.worldX / tileSize;
+                int flameRow = flame.worldY / tileSize;
+                int playerCol = player.worldX / tileSize;
+                int playerRow = player.worldY / tileSize;
+                
+                if (flameCol == playerCol && flameRow == playerRow && player.invincibleCounter == 0) {
+                    player.takeDamage(1);
+                    player.invincibleCounter = player.INVINCIBLE_TIME;
+                }
+                flame.justCreated = false;
             }
         }
     }
