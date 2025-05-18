@@ -1,13 +1,12 @@
 package object;
 
-import main.GamePanel;
-import main.UtilityTool;
-import tile.Tile;
-
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import main.GamePanel;
+import main.UtilityTool;
+import tile.Tile;
 
 public class Bomb extends SuperObject {
     GamePanel gp;
@@ -19,6 +18,7 @@ public class Bomb extends SuperObject {
     private int animationCounter = 0;
     private int animationDelay = 10; // Tốc độ animation
     public int indexInArray = -1;
+    public int explosionRange = 1; // Phạm vi nổ
 
     public Bomb(GamePanel gp) {
         this.gp = gp;
@@ -77,15 +77,19 @@ public class Bomb extends SuperObject {
         int bombCol = worldX / gp.tileSize;
         int bombRow = worldY / gp.tileSize;
 
+        checkPlayerDamage(bombCol, bombRow);
+
         // Tạo flame trung tâm
         Flame centerFlame = new Flame(gp, worldX, worldY, "center");
         gp.flames.add(centerFlame);
 
         // Tạo flame 4 hướng (mỗi hướng 1 ô)
-        createFlameInDirection(bombCol, bombRow, 0, -1, "vertical");    // Trên
-        createFlameInDirection(bombCol, bombRow, 0, 1, "vertical");     // Dưới
-        createFlameInDirection(bombCol, bombRow, -1, 0, "horizontal");  // Trái
-        createFlameInDirection(bombCol, bombRow, 1, 0, "horizontal");   // Phải
+        for(int r = 1; r <= explosionRange; r++) {
+            createFlameInDirection(bombCol, bombRow, 0, -r, "vertical");    // Trên
+            createFlameInDirection(bombCol, bombRow, 0, r, "vertical");     // Dưới
+            createFlameInDirection(bombCol, bombRow, -r, 0, "horizontal");  // Trái
+            createFlameInDirection(bombCol, bombRow, r, 0, "horizontal");   // Phải
+        }
 
         // Xóa bomb
         gp.obj[indexInArray] = null;
@@ -135,6 +139,25 @@ public class Bomb extends SuperObject {
         // Kiểm tra ID và collision
         if (currentTile.id == 1 && currentTile.collision) {
             gp.tileM.changeTile(targetCol, targetRow, 41); // Đổi sang tile không chặn (ID 41)
+            gp.ui.addScore(70); // Cộng 70 điểm khi phá rock
+        }
+    }
+
+    private void checkPlayerDamage(int col, int row) {
+        // Tính toán vị trí bom và người chơi theo pixel, bao gồm vùng va chạm
+        int bombX = worldX + solidArea.x;
+        int bombY = worldY + solidArea.y;
+        int playerX = gp.player.worldX + gp.player.solidArea.x;
+        int playerY = gp.player.worldY + gp.player.solidArea.y;
+
+        // Tạo vùng va chạm cho bom và người chơi
+        Rectangle bombRect = new Rectangle(bombX, bombY, solidArea.width, solidArea.height);
+        Rectangle playerRect = new Rectangle(playerX, playerY, gp.player.solidArea.width, gp.player.solidArea.height);
+
+        // Kiểm tra giao nhau
+        if (bombRect.intersects(playerRect) && gp.player.invincibleCounter == 0) {
+            gp.player.takeDamage(1);
+            gp.player.invincibleCounter = 60; // Đặt thời gian bất tử
         }
     }
 }

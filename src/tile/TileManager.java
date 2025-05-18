@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import object.Chest;
 
 import javax.imageio.ImageIO;
 
@@ -13,8 +14,7 @@ import main.GamePanel;
 import main.UtilityTool;
 
 public class TileManager {
-	
-	GamePanel gp;
+    GamePanel gp;
     public Tile[] tile;
     public int mapTileNum[][];
     boolean drawPatch = false;
@@ -81,7 +81,7 @@ public class TileManager {
         UtilityTool uTool = new UtilityTool();
         
         try {
-        	tile[i] = new Tile(i, collision);
+            tile[i] = new Tile(i, collision);
             InputStream is = getClass().getResourceAsStream("/tiles/" + imageName);
             if (is == null) {
                 throw new IOException("Tile image not found: /tiles/" + imageName);
@@ -116,6 +116,10 @@ public class TileManager {
                 for (int col = 0; col < gp.maxWorldCol; col++) {
                     int tileNum = Integer.parseInt(numbers[col]);
                     mapTileNum[col][row] = tileNum;
+
+                    if(tileNum == 1) {
+                        spawnChestArt(col, row);
+                    }
                 }
             }
             br.close();
@@ -180,5 +184,26 @@ public class TileManager {
                 worldRow++;
             }
         }
+    }
+
+    private void spawnChestArt(int col, int row) {
+        if(!tile[mapTileNum[col][row]].collision) {
+            Chest chest = new Chest(gp);
+            chest.worldX = col * gp.tileSize;
+            chest.worldY = row * gp.tileSize;
+            
+            for(int i = 0 ;i < gp.obj.length; i++) {
+                if(gp.obj[i] == null) {
+                    gp.obj[i] = chest;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Thêm phương thức resetMap
+    public void resetMap() {
+        mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow]; // Khởi tạo lại mảng
+        loadMap("/maps/sample.txt"); // Tải lại map ban đầu
     }
 }

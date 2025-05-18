@@ -15,6 +15,7 @@ public class Flame extends SuperObject {
     private int animationIndex = 0;
     private String flameType; // "horizontal", "vertical", "left_last", "right_last", "top_last", "down_last"
     private int activationDelay = 10;
+    public boolean justCreated = false; // Để kiểm tra xem flame có vừa được tạo ra hay không
 
     public Flame(GamePanel gp, int x, int y, String flameType) {
         this.gp = gp;

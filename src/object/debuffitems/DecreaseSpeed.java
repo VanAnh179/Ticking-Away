@@ -1,11 +1,8 @@
 package object.debuffitems;
 
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
 import main.GamePanel;
-
 import object.*;
 
 public class DecreaseSpeed extends SuperObject {
@@ -23,5 +20,6 @@ public class DecreaseSpeed extends SuperObject {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
+		collision = false;
 	}
 }

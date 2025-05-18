@@ -1,8 +1,7 @@
 package enemy;
 
-import java.awt.Rectangle;
-
 import entity.Entity;
+import java.awt.Rectangle;
 import main.GamePanel;
 import object.Flame;
 
