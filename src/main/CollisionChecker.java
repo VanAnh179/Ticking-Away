@@ -251,9 +251,9 @@ public class CollisionChecker {
 				flame.solidArea.y = flame.worldY + flame.solidArea.y;
 				
 				if (entity.solidArea.intersects(flame.solidArea)) {
-					entity.collisionOn = true;
-					index = 0;
-				}
+			entity.takeDamage(1);
+			entity.collisionOn = true;
+			index = 0;
 				
 				entity.solidArea.x = entity.solidAreaDefaultX;
 				entity.solidArea.y = entity.solidAreaDefaultY;
@@ -261,8 +261,9 @@ public class CollisionChecker {
 				flame.solidArea.y = flame.solidAreaDefaultY;
 			}
 		}
-    	
+    	}
     	return index;
+	
 	}
 
 	public void checkPlayer(Entity entity) {

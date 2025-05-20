@@ -106,12 +106,12 @@ public class Flame extends SuperObject {
     }
 
     public void update() {
-        // if (activationDelay > 0) {
-        //     activationDelay--;
-        //     collision = false;
-        // } else {
-        //     collision = true; // Bật va chạm sau delay
-        // }
+        if (activationDelay > 0) {
+            activationDelay--;
+            collision = false;
+        } else {
+            collision = true; // Bật va chạm sau delay
+        }
 
         duration--;
         if (duration <= 0) {

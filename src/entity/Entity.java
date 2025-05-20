@@ -64,6 +64,8 @@ public class Entity {
         }
     }
 
+    public void takeDamage(int damage) {}
+
     public void draw(Graphics2D g2) {
         BufferedImage image = null;
         int screenX = worldX - gp.player.worldX + gp.player.screenX;

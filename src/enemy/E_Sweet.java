@@ -74,7 +74,8 @@ public class E_Sweet extends Entity {
         this.indexInEnemyArray = index;
     }
 
-    private void takeDamage(int damage) {
+    @Override
+    public void takeDamage(int damage) {
         health -= damage;
         if (health <= 0 && indexInEnemyArray != -1) {
             gp.enemy[indexInEnemyArray] = null;

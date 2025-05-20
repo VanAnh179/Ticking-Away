@@ -342,6 +342,7 @@ public class Player extends Entity {
         }
     }
 
+    @Override
     public void takeDamage(int damage) {
         if (invincibleCounter == 0) { // Chỉ nhận sát thương khi không bất tử
             health -= damage;
