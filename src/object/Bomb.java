@@ -110,6 +110,9 @@ public class Bomb extends SuperObject {
             createFlameInDirection(bombCol, bombRow, r, 0, "horizontal");   // Phải
         }
 
+        // Kích hoạt rung màn hình
+        gp.triggerShake(8, 30); // Cường độ 5 pixel, thời gian 10 frames
+
         // Xóa bomb
         gp.obj[indexInArray] = null;
     }

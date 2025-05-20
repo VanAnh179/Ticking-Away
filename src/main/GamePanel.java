@@ -43,6 +43,9 @@ public class GamePanel extends JPanel implements Runnable {
     public CollisionChecker cChecker = new CollisionChecker(this);
     public AssetSetter aSetter = new AssetSetter(this);
     public UI ui = new UI(this);
+    public int shakeIntensity = 0; // Cường độ rung
+    public int shakeDuration = 0;  // Thời gian rung (tính bằng frame)
+    public int shakeCounter = 0;   // Đếm thời gian đã rung
     Thread gameThread;
     
     // entity and object
@@ -188,6 +191,16 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
         
+        // Xử lý hiệu ứng rung
+        int offsetX = 0;
+        int offsetY = 0;
+        if (shakeCounter < shakeDuration) {
+            offsetX = (int)(Math.random() * shakeIntensity * 2 - shakeIntensity);
+            offsetY = (int)(Math.random() * shakeIntensity * 2 - shakeIntensity);
+            shakeCounter++;
+        }
+        g2.translate(offsetX, offsetY); // Áp dụng dịch chuyển
+        
         // DEBUG
         long drawStart = 0;
         if (keyH.checkDrawTime == true) {
@@ -216,11 +229,13 @@ public class GamePanel extends JPanel implements Runnable {
         
         // UI
         ui.draw(g2);
+
+        g2.translate(-offsetX, -offsetY);
         
         // Vẽ flame chỉ khi game chưa kết thúc
         for (Flame flame : flames) {
-            int screenX = flame.worldX - player.worldX + player.screenX;
-            int screenY = flame.worldY - player.worldY + player.screenY;
+            int screenX = flame.worldX - player.worldX + player.screenX + offsetX;
+            int screenY = flame.worldY - player.worldY + player.screenY + offsetY;
             g2.drawImage(flame.image, screenX, screenY, null);
         }
         
@@ -232,6 +247,12 @@ public class GamePanel extends JPanel implements Runnable {
             g2.drawString("Draw Time: " + passed, 10, 400);
             System.out.println("Draw Time: " + passed);
         }
+    }
+
+    public void triggerShake(int intensity, int duration) {
+        this.shakeIntensity = intensity;
+        this.shakeDuration = duration;
+        this.shakeCounter = 0;
     }
     
     public void playMusic(int i) {
