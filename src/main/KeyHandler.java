@@ -4,7 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyHandler implements KeyListener {
-
+    public boolean debugMode = false;
     public boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed;
     boolean checkDrawTime;
     private GamePanel gp; // Thêm tham chiếu đến GamePanel
@@ -20,7 +20,7 @@ public class KeyHandler implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
-        System.out.println("Key pressed: " + code + ", gameFinished: " + gp.ui.gameFinished);
+        // System.out.println("Key pressed: " + code + ", gameFinished: " + gp.ui.gameFinished);
 
         if (code == KeyEvent.VK_UP) {
             upPressed = true;
@@ -40,10 +40,11 @@ public class KeyHandler implements KeyListener {
 
         // DEBUG
         if (code == KeyEvent.VK_T) {
-            checkDrawTime = !checkDrawTime;
+            //checkDrawTime = !checkDrawTime;
+            debugMode = !debugMode;
         }
 
-        // Xử lý phím R để khởi động lại game
+        // DEBUG Xử lý phím R để khởi động lại game
         if (code == KeyEvent.VK_R && gp.ui.gameFinished) {
             gp.resetGame();
         }

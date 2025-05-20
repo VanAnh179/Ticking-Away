@@ -166,17 +166,17 @@ public class GamePanel extends JPanel implements Runnable {
                         }
                     }
 
-                    // Kiểm tra va chạm với enemy (nếu enemy có thể bị phá hủy bởi flame)
-                    for (int j = 0; j < enemy.length; j++) {
-                        if (enemy[j] != null) {
-                            int enemyX = enemy[j].worldX + enemy[j].solidArea.x;
-                            int enemyY = enemy[j].worldY + enemy[j].solidArea.y;
-                            Rectangle enemyRect = new Rectangle(enemyX, enemyY, enemy[j].solidArea.width, enemy[j].solidArea.height);
-
-                            if (flameRect.intersects(enemyRect)) {
-                                enemy[j] = null; // Xóa enemy khi bị flame chạm vào
-                            }
+                    if(flame.justCreated) {
+                        int flameCol = flame.worldX / tileSize;
+                        int flameRow = flame.worldY / tileSize;
+                        int playerCol = player.worldX / tileSize;
+                        int playerRow = player.worldY / tileSize;
+                        
+                        if (flameCol == playerCol && flameRow == playerRow && player.invincibleCounter == 0) {
+                            player.takeDamage(1);
+                            player.invincibleCounter = player.INVINCIBLE_TIME;
                         }
+                        flame.justCreated = false;
                     }
                 }
             }
@@ -218,18 +218,10 @@ public class GamePanel extends JPanel implements Runnable {
         ui.draw(g2);
         
         // Vẽ flame chỉ khi game chưa kết thúc
-        if (!ui.gameFinished) {
-            for (Flame flame : flames) {
-                int screenX = flame.worldX - player.worldX + player.screenX;
-                int screenY = flame.worldY - player.worldY + player.screenY;
-                // Chỉ vẽ nếu flame nằm trong tầm nhìn
-                if (flame.worldX + tileSize > player.worldX - player.screenX &&
-                    flame.worldX - tileSize < player.worldX + player.screenX &&
-                    flame.worldY + tileSize > player.worldY - player.screenY &&
-                    flame.worldY - tileSize < player.worldY + player.screenY) {
-                    g2.drawImage(flame.image, screenX, screenY, null);
-                }
-            }
+        for (Flame flame : flames) {
+            int screenX = flame.worldX - player.worldX + player.screenX;
+            int screenY = flame.worldY - player.worldY + player.screenY;
+            g2.drawImage(flame.image, screenX, screenY, null);
         }
         
         // DEBUG

@@ -22,7 +22,7 @@ public class AssetSetter {
 	}
 
 	public void setEnemy() {
-		// addSweet(29, 5);
+		//addSweet(30, 5);
 		addBitter(30, 5);
 	} 
 

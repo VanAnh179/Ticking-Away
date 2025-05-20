@@ -1,5 +1,6 @@
 package entity;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -16,7 +17,7 @@ public class Player extends Entity {
     public int maxHealth = 4;
     public int health = maxHealth;
     public int invincibleCounter = 0;
-    public final int INVINCIBLE_TIME = 100;
+    public final int INVINCIBLE_TIME = 60;
     public boolean wasTouchingEnemy = false;
 
     public BufferedImage idleDown, idleUp, idleLeft, idleRight;
@@ -47,10 +48,10 @@ public class Player extends Entity {
         solidArea = new Rectangle();
         solidArea.x = 16;
         solidArea.y = 35;
-        solidAreaDefaultX = solidArea.x;
-        solidAreaDefaultY = solidArea.y;
         solidArea.width = 16;
         solidArea.height = 13;
+        solidAreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
 
         setDefaultValues();
         getPlayerImage();
@@ -121,6 +122,7 @@ public class Player extends Entity {
 
         // Cập nhật hướng di chuyển dựa trên phím nhấn
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
+            String newDirection = direction;
             // Cập nhật direction và lastDirection khi di chuyển
             if (keyH.upPressed) {
                 direction = "up";
@@ -139,6 +141,25 @@ public class Player extends Entity {
                 placeBomb();
                 keyH.spacePressed = false;
             }
+
+            // Nếu hướng thay đổi, kiểm tra collision ngay
+            if (!newDirection.equals(direction)) {
+                solidArea.x = solidAreaDefaultX;
+                solidArea.y = solidAreaDefaultY;
+                collisionOn = false;
+                gp.cChecker.checkTile(this);
+                if (collisionOn) {
+                    // Điều chỉnh vị trí nếu cần
+                    switch (newDirection) {
+                        case "up": worldY += speed; break;
+                        case "down": worldY -= speed; break;
+                        case "left": worldX += speed; break;
+                        case "right": worldX -= speed; break;
+                    }
+                }
+            }
+            solidArea.x = solidAreaDefaultX;
+            solidArea.y = solidAreaDefaultY;
 
             // Kiểm tra va chạm
             collisionOn = false;
@@ -165,22 +186,16 @@ public class Player extends Entity {
             // Di chuyển nếu không có va chạm
             if (!collisionOn) {
                 switch (direction) {
-                    case "up":
-                        worldY -= speed;
-                        break;
-                    case "down":
-                        worldY += speed;
-                        break;
-                    case "left":
-                        worldX -= speed;
-                        break;
-                    case "right":
-                        worldX += speed;
-                        break;
+                    case "up": worldY -= speed; break;
+                    case "down": worldY += speed; break;
+                    case "left": worldX -= speed; break;
+                    case "right": worldX += speed; break;
                 }
             }
         } else {
-            // Dừng di chuyển khi không có phím nào được nhấn
+            // Khi không di chuyển, vẫn reset solidArea để tránh chồng lấn
+            solidArea.x = solidAreaDefaultX;
+            solidArea.y = solidAreaDefaultY;
             direction = lastDirection;
         }
 
@@ -315,6 +330,16 @@ public class Player extends Entity {
             }
         }
         g2.drawImage(image, screenX, screenY, null);
+        // DEBUG check solidArea
+        if (gp.keyH.debugMode) {
+            g2.setColor(new Color(255, 0, 0, 128)); // Màu đỏ trong suốt
+            g2.fillRect(
+                screenX + solidArea.x, // Vị trí X trên màn hình
+                screenY + solidArea.y, // Vị trí Y trên màn hình
+                solidArea.width,      // Chiều rộng
+                solidArea.height      // Chiều cao
+            );
+        }
     }
 
     public void takeDamage(int damage) {

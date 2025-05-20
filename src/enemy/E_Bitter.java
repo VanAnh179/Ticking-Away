@@ -234,6 +234,7 @@ public class E_Bitter extends Entity {
         collisionOn = false;
         gp.cChecker.checkTile(this);
         gp.cChecker.checkObject(this, false);
+        gp.cChecker.checkPlayer(this);
         return collisionOn;
     }
 

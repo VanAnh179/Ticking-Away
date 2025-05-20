@@ -58,7 +58,7 @@ public class E_Sweet extends Entity {
         for (int i = 0; i < gp.flames.size(); i++) {
             Flame flame = gp.flames.get(i);
             Rectangle flameRect = new Rectangle(flame.worldX + flame.solidArea.x, flame.worldY + flame.solidArea.y, flame.solidArea.width, flame.solidArea.height);
-            Rectangle enemyRect = new Rectangle(worldX + solidArea.x, worldY + solidArea.y, solidArea.width, solidArea.height);
+            Rectangle enemyRect = new Rectangle((int)(worldX + solidArea.x), (int)(worldY + solidArea.y), solidArea.width, solidArea.height);
 
             if (flameRect.intersects(enemyRect) && invincibleCounter == 0) {
                 takeDamage(1);

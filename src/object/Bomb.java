@@ -4,11 +4,14 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 import main.GamePanel;
 import main.UtilityTool;
 import tile.Tile;
 
 public class Bomb extends SuperObject {
+    public static final int EXPLOSION_RADIUS = 3;
     GamePanel gp;
     public int countdown = 90; // 1.5 giây
     public boolean exploded = false;
@@ -25,6 +28,12 @@ public class Bomb extends SuperObject {
         name = "Bomb";
         collision = false; // Ban đầu không va chạm
         loadAnimationFrames();
+    }
+
+    public Bomb(int col, int row, GamePanel gp) {
+        this(gp);
+        this.worldX = col * gp.tileSize;
+        this.worldY = row * gp.tileSize;
     }
 
     private void loadAnimationFrames() {
@@ -52,6 +61,16 @@ public class Bomb extends SuperObject {
                 isActive = true;
             }
             return;
+        }
+
+        if (isActive) {
+            if (animationDelay > 0) {
+                animationDelay--;
+            } else {
+                animationDelay = 10; // Reset tốc độ animation
+                animationCounter = (animationCounter + 1) % animationFrames.length;
+                image = animationFrames[animationCounter];
+            }
         }
 
         // Countdown nổ
@@ -123,11 +142,18 @@ public class Bomb extends SuperObject {
         // Thêm flame
         String flameType = type;
         /* Điều kiện để xác định flame đầu mút */
-        if ((dx == -1 && type.equals("horizontal")) || 
-            (dx == 1 && type.equals("horizontal")) || 
-            (dy == -1 && type.equals("vertical")) || 
-            (dy == 1 && type.equals("vertical"))) {
-            flameType = "left_last"; // Hoặc "right_last", "top_last", "down_last"
+        if (type.equals("horizontal")) {
+            if (dx < 0) {
+                flameType = "left_last";
+            } else if (dx > 0) {
+                flameType = "right_last";
+            }
+        } else if (type.equals("vertical")) {
+            if (dy < 0) {
+                flameType = "top_last";
+            } else if (dy > 0) {
+                flameType = "down_last";
+            }
         }
         Flame flame = new Flame(gp, targetCol * gp.tileSize, targetRow * gp.tileSize, flameType);
         gp.flames.add(flame);
