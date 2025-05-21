@@ -18,6 +18,7 @@ public class E_Bitter extends Entity {
     private Random random = new Random();
     public int invincibleCounter = 0;
     public final int INVINCIBLE_TIME = 60;
+    private int indexInEnemyArray = -1;
 
     public E_Bitter(GamePanel gp) {
         super(gp);
@@ -74,18 +75,21 @@ public class E_Bitter extends Entity {
         }
     }
 
+    public void setIndexInEnemyArray(int index) {
+        this.indexInEnemyArray = index;
+    }
+
     @Override
-    public void takeDamage(int damage) {
-    if (invincibleCounter == 0) {
+public void takeDamage(int damage) {
+    if (invincibleCounter == 0) { // Chỉ nhận sát thương khi không bất tử
         health -= damage;
-        invincibleCounter = INVINCIBLE_TIME;
         if (health <= 0) {
-            for (int i = 0; i < gp.enemy.length; i++) {
-                if (gp.enemy[i] == this) {
-                    gp.enemy[i] = null; // Xóa enemy khỏi mảng
-                    break;
-                }
+            if (indexInEnemyArray != -1) {
+                gp.enemy[indexInEnemyArray] = null; // Xóa enemy khỏi mảng
+                indexInEnemyArray = -1;
             }
+        } else {
+            invincibleCounter = 60; // Kích hoạt thời gian bất tử
         }
     }
 }

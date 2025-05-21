@@ -243,7 +243,7 @@ public class CollisionChecker {
 		}
 
 		for (Flame flame : gp.flames) {
-			if (flame != null) {
+			if (flame != null && entity != null) {
 				entity.solidArea.x = entity.worldX + entity.solidArea.x;
 				entity.solidArea.y = entity.worldY + entity.solidArea.y;
 				

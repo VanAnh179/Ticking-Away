@@ -55,19 +55,29 @@ public class E_Sweet extends Entity {
         super.update();
 
         // Kiểm tra va chạm với flame
-        for (int i = 0; i < gp.flames.size(); i++) {
-            Flame flame = gp.flames.get(i);
-            Rectangle flameRect = new Rectangle(flame.worldX + flame.solidArea.x, flame.worldY + flame.solidArea.y, flame.solidArea.width, flame.solidArea.height);
-            Rectangle enemyRect = new Rectangle((int)(worldX + solidArea.x), (int)(worldY + solidArea.y), solidArea.width, solidArea.height);
+        for (Flame flame : gp.flames) {
+        if (flame != null && flame.collision && invincibleCounter == 0) {
+            Rectangle flameRect = new Rectangle(
+                flame.worldX + flame.solidArea.x,
+                flame.worldY + flame.solidArea.y,
+                flame.solidArea.width,
+                flame.solidArea.height
+            );
+            Rectangle enemyRect = new Rectangle(
+                worldX + solidArea.x,
+                worldY + solidArea.y,
+                solidArea.width,
+                solidArea.height
+            );
 
-            if (flameRect.intersects(enemyRect) && invincibleCounter == 0) {
-                takeDamage(1);
-                invincibleCounter = 60;
-                break; // chỉ trừ máu 1 lần mỗi frame
+            if (flameRect.intersects(enemyRect)) {
+                takeDamage(1); // Chỉ gọi takeDamage() một lần
+                break;
             }
         }
+    }
 
-        if (invincibleCounter > 0) invincibleCounter--;
+    if (invincibleCounter > 0) invincibleCounter--;
     }
 
     public void setIndexInEnemyArray(int index) {
@@ -75,13 +85,19 @@ public class E_Sweet extends Entity {
     }
 
     @Override
-    public void takeDamage(int damage) {
+public void takeDamage(int damage) {
+    if (invincibleCounter == 0) { // Chỉ nhận sát thương khi không bất tử
         health -= damage;
-        if (health <= 0 && indexInEnemyArray != -1) {
-            gp.enemy[indexInEnemyArray] = null;
-            // Xóa enemy khỏi danh sách
+        if (health <= 0) {
+            if (indexInEnemyArray != -1) {
+                gp.enemy[indexInEnemyArray] = null; // Xóa enemy khỏi mảng
+                indexInEnemyArray = -1;
+            }
+        } else {
+            invincibleCounter = 60; // Kích hoạt thời gian bất tử
         }
     }
+}
 
     @Override
     public void setAction() {
