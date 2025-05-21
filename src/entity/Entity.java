@@ -40,6 +40,7 @@ public class Entity {
 
     public void update() {
         setAction();
+        
         collisionOn = false;
         gp.cChecker.checkTile(this);
         gp.cChecker.checkObject(this, false);
@@ -62,6 +63,8 @@ public class Entity {
             }
         }
     }
+
+    public void takeDamage(int damage) {}
 
     public void draw(Graphics2D g2) {
         BufferedImage image = null;

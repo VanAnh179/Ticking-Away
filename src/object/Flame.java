@@ -15,6 +15,7 @@ public class Flame extends SuperObject {
     private int animationIndex = 0;
     private String flameType; // "horizontal", "vertical", "left_last", "right_last", "top_last", "down_last"
     private int activationDelay = 10;
+    public boolean justCreated = false; // Để kiểm tra xem flame có vừa được tạo ra hay không
 
     public Flame(GamePanel gp, int x, int y, String flameType) {
         this.gp = gp;
@@ -23,7 +24,7 @@ public class Flame extends SuperObject {
         this.flameType = flameType;
         this.name = "Flame";
         this.collision = true;
-        solidArea = new Rectangle(16, 16, 16, 16); // Điều chỉnh vùng va chạm nhỏ hơn
+        //solidArea = new Rectangle(16, 16, 16, 16); // Điều chỉnh vùng va chạm nhỏ hơn
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
         loadFlameFrames();
@@ -118,14 +119,29 @@ public class Flame extends SuperObject {
         }
 
         // Cập nhật animation
-        animationIndex = (animationIndex + 1) % 3;
+         animationIndex = (animationIndex + 1) % 3;
         switch (flameType) {
-            case "horizontal": image = flameFrames[0][animationIndex]; break;
-            case "vertical": image = flameFrames[1][animationIndex]; break;
-            case "left_last": image = flameFrames[2][animationIndex]; break;
-            case "right_last": image = flameFrames[3][animationIndex]; break;
-            case "top_last": image = flameFrames[4][animationIndex]; break;
-            case "down_last": image = flameFrames[5][animationIndex]; break;
+            case "center":
+                image = flameFrames[0][animationIndex];
+                break;
+            case "horizontal":
+                image = flameFrames[1][animationIndex];
+                break;
+            case "vertical":
+                image = flameFrames[2][animationIndex];
+                break;
+            case "left_last":
+                image = flameFrames[3][animationIndex];
+                break;
+            case "right_last":
+                image = flameFrames[4][animationIndex];
+                break;
+            case "top_last":
+                image = flameFrames[5][animationIndex];
+                break;
+            case "down_last":
+                image = flameFrames[6][animationIndex];
+                break;
         }
     }
 }

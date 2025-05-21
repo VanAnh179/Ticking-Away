@@ -1,9 +1,7 @@
 package object.debuffitems;
 
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
 import main.GamePanel;
 import object.SuperObject;
 
@@ -22,5 +20,6 @@ public class Teleport extends SuperObject {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
+		collision = false;
 	}
 }

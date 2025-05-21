@@ -1,7 +1,9 @@
 package entity;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.AlphaComposite;
 import java.awt.image.BufferedImage;
 import main.GamePanel;
 import main.KeyHandler;
@@ -14,7 +16,7 @@ public class Player extends Entity {
     public final int screenY;
 
     public int maxHealth = 4;
-    public int health = 4;
+    public int health = maxHealth;
     public int invincibleCounter = 0;
     public final int INVINCIBLE_TIME = 100;
     public boolean wasTouchingEnemy = false;
@@ -29,9 +31,19 @@ public class Player extends Entity {
     public int bombCooldown = 0; // biến cooldown cho đặt bomb
     public final int BOMB_COOLDOWN_TIME = 30; // 1 giây (60 frames)
 
+<<<<<<< HEAD
     public int bombRange = 1; // Phạm vi bom nổ
     public int bombCooldownTime = 0; // Thời gian cooldown cho bomb
 
+=======
+    public int bombRange = 1; // Số ô bomb có thể nổ
+
+    public int baseSpeed = 4; // Tốc độ di chuyển cơ bản
+    public int speed = baseSpeed; // Tốc độ di chuyển hiện tại
+
+    public boolean isTeleporting = false; // Biến kiểm tra xem có đang teleport hay không
+    public int teleportCounter = 0; // Biến đếm thời gian teleport
+>>>>>>> 1bcddee1872bded8d0eb7d3cabba04f7a19c687c
 
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp);
@@ -43,10 +55,10 @@ public class Player extends Entity {
         solidArea = new Rectangle();
         solidArea.x = 16;
         solidArea.y = 35;
-        solidAreaDefaultX = solidArea.x;
-        solidAreaDefaultY = solidArea.y;
         solidArea.width = 16;
         solidArea.height = 13;
+        solidAreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
 
         setDefaultValues();
         getPlayerImage();
@@ -59,10 +71,10 @@ public class Player extends Entity {
         direction = "";
         maxHealth = 4;
         health = maxHealth;
+        speed = baseSpeed;
     }
 
     public void getPlayerImage() {
-        
         up1 = setup("/player/up (1)");
         up2 = setup("/player/up (2)");
         up3 = setup("/player/up (3)");
@@ -115,12 +127,9 @@ public class Player extends Entity {
             bombCooldown--;
         }
 
-        // if (invincibleCounter > 0) {
-        //     invincibleCounter--;
-        // }
-
         // Cập nhật hướng di chuyển dựa trên phím nhấn
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
+            String newDirection = direction;
             // Cập nhật direction và lastDirection khi di chuyển
             if (keyH.upPressed) {
                 direction = "up";
@@ -140,6 +149,25 @@ public class Player extends Entity {
                 keyH.spacePressed = false;
             }
 
+            // Nếu hướng thay đổi, kiểm tra collision ngay
+            if (!newDirection.equals(direction)) {
+                solidArea.x = solidAreaDefaultX;
+                solidArea.y = solidAreaDefaultY;
+                collisionOn = false;
+                gp.cChecker.checkTile(this);
+                if (collisionOn) {
+                    // Điều chỉnh vị trí nếu cần
+                    switch (newDirection) {
+                        case "up": worldY += speed; break;
+                        case "down": worldY -= speed; break;
+                        case "left": worldX += speed; break;
+                        case "right": worldX -= speed; break;
+                    }
+                }
+            }
+            solidArea.x = solidAreaDefaultX;
+            solidArea.y = solidAreaDefaultY;
+
             // Kiểm tra va chạm
             collisionOn = false;
             gp.cChecker.checkTile(this);
@@ -157,33 +185,36 @@ public class Player extends Entity {
             } else {
                 wasTouchingEnemy = false;
             }
-            // Giảm thời gian bất tử
-            if (invincibleCounter > 0) {
-                invincibleCounter--;
-            }
 
             // Di chuyển nếu không có va chạm
             if (!collisionOn) {
                 switch (direction) {
-                    case "up":
-                        worldY -= speed;
-                        break;
-                    case "down":
-                        worldY += speed;
-                        break;
-                    case "left":
-                        worldX -= speed;
-                        break;
-                    case "right":
-                        worldX += speed;
-                        break;
+                    case "up": worldY -= speed; break;
+                    case "down": worldY += speed; break;
+                    case "left": worldX -= speed; break;
+                    case "right": worldX += speed; break;
                 }
             }
         } else {
-            // Dừng di chuyển khi không có phím nào được nhấn
+            // Khi không di chuyển, vẫn reset solidArea để tránh chồng lấn
+            solidArea.x = solidAreaDefaultX;
+            solidArea.y = solidAreaDefaultY;
             direction = lastDirection;
         }
 
+        
+        // Giảm thời gian bất tử
+        if (invincibleCounter > 0) {
+            invincibleCounter--;
+        }
+
+        if(isTeleporting) {
+            teleportCounter++;
+            if(teleportCounter > 30) {
+                isTeleporting = false;
+                teleportCounter = 0;
+            }
+        }
     }
 
     public void interactEnemy(int i) {
@@ -217,44 +248,16 @@ public class Player extends Entity {
                 Bomb bomb = new Bomb(gp);
                 bomb.worldX = bombWorldX;
                 bomb.worldY = bombWorldY;
+                bomb.explosionRange = this.bombRange;
                 gp.obj[i] = bomb;
                 bombCooldown = BOMB_COOLDOWN_TIME; // Kích hoạt cooldown
                 break;
             }
         }
     }
-    
+
     public void pickUpObject(int i) {
-    	if (i != 999) {
-    		String objectName = gp.obj[i].name;
-    		
-    		switch(objectName) {
-    		case "Chest":
-    			//gp.playSoundEffect(null);
-    			gp.obj[i] = null;
-    			gp.ui.showMessage("you got a chest");
-    			gp.ui.gameFinished = true;
-    			gp.stopMusic();
-    			break;
-    		case "Key":
-                break;
-            case "Candy":
-                break;
-            case "Scroll":
-                break;
-            case "Book":
-                break;
-            case "Crystal":
-                break;
-            case "Helmet":
-                break;
-            case "Potion":
-                break;
-    			
-    			
-    		}
-    		
-    	}
+        gp.eventObj.handleItemPickup(i);
     }
     
     @Override
@@ -335,20 +338,62 @@ public class Player extends Entity {
                     break;
             }
         }
+
+        // Thêm hiệu ứng nhấp nháy khi bất tử
+    if (invincibleCounter > 0) {
+        // Độ trong suốt thay đổi theo thời gian (nhấp nháy)
+        float alpha = (invincibleCounter % 12 < 6) ? 0.2f : 1.0f;
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+    }
+
         g2.drawImage(image, screenX, screenY, null);
+
+        // Reset composite để không ảnh hưởng đến các thành phần khác
+    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+
+        // DEBUG check solidArea
+        if (gp.keyH.debugMode) {
+            g2.setColor(new Color(255, 0, 0, 128)); // Màu đỏ trong suốt
+            g2.fillRect(
+                screenX + solidArea.x, // Vị trí X trên màn hình
+                screenY + solidArea.y, // Vị trí Y trên màn hình
+                solidArea.width,      // Chiều rộng
+                solidArea.height      // Chiều cao
+            );
+        }
     }
 
-    public void takeDamage(int damage) {
-        health -= damage;
-        if(health < 0) {
-            health = 0;
-        }
-
-        gp.ui.showMessage("-1 life");
-        if(health <= 0) {
-            gp.ui.showMessage(direction);
-        }
-    }
-
+<<<<<<< HEAD
     
+=======
+    @Override
+    public void takeDamage(int damage) {
+        if (invincibleCounter == 0) { // Chỉ nhận sát thương khi không bất tử
+            health -= damage;
+            if (health < 0) {
+                health = 0;
+            }
+
+            gp.ui.showMessage("-1 life");
+            if (health <= 0) {
+                gp.gameOver();
+            } else {
+                invincibleCounter = INVINCIBLE_TIME; // Bật trạng thái bất tử
+            }
+        }
+    }
+
+    // Thêm phương thức resetPlayer
+    public void resetPlayer() {
+        setDefaultValues(); // Đặt lại vị trí, health, speed, v.v.
+        hasKey = 0; // Đặt lại số lượng key
+        invincibleCounter = 0; // Đặt lại trạng thái bất tử
+        bombCooldown = 0; // Đặt lại cooldown bomb
+        bombRange = 1; // Đặt lại phạm vi bomb
+        speed = baseSpeed; // Đặt lại tốc độ
+        isTeleporting = false; // Đặt lại trạng thái teleport
+        teleportCounter = 0; // Đặt lại đếm thời gian teleport
+        lastDirection = "down"; // Đặt lại hướng cuối cùng
+    }
+>>>>>>> 1bcddee1872bded8d0eb7d3cabba04f7a19c687c
 }

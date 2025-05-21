@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import object.Chest;
 
 import javax.imageio.ImageIO;
 
@@ -13,8 +14,7 @@ import main.GamePanel;
 import main.UtilityTool;
 
 public class TileManager {
-	
-	GamePanel gp;
+    GamePanel gp;
     public Tile[] tile;
     public int mapTileNum[][];
     boolean drawPatch = false;
@@ -81,7 +81,7 @@ public class TileManager {
         UtilityTool uTool = new UtilityTool();
         
         try {
-        	tile[i] = new Tile(i, collision);
+            tile[i] = new Tile(i, collision);
             InputStream is = getClass().getResourceAsStream("/tiles/" + imageName);
             if (is == null) {
                 throw new IOException("Tile image not found: /tiles/" + imageName);
@@ -124,29 +124,9 @@ public class TileManager {
         }
     }
 
-    public void loadTiles() {
-        try {
-            InputStream is = getClass().getResourceAsStream("/tiledata.txt");
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-            String line;
-            int id = 0; // ID bắt đầu từ 0
-            while ((line = br.readLine()) != null) {
-                String imagePath = line.trim();
-                boolean collision = Boolean.parseBoolean(br.readLine().trim());
-                tile[id] = new Tile(id, collision); // Tạo tile với ID tương ứng
-                tile[id].image = ImageIO.read(getClass().getResourceAsStream("/tiles/" + imagePath));
-                id++;
-            }
-            br.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void changeTile(int col, int row, int newTileID) {
         if (col >= 0 && col < gp.maxWorldCol && row >= 0 && row < gp.maxWorldRow) {
             mapTileNum[col][row] = newTileID;
-            // Không thay đổi thuộc tính collision của tile, dùng giá trị từ tiledata.txt
         }
     }
 
@@ -180,5 +160,11 @@ public class TileManager {
                 worldRow++;
             }
         }
+    }
+
+    // Thêm phương thức resetMap
+    public void resetMap() {
+        mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow]; // Khởi tạo lại mảng
+        loadMap("/maps/sample.txt"); // Tải lại map ban đầu
     }
 }

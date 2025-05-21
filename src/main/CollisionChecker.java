@@ -16,7 +16,6 @@ public class CollisionChecker {
 
     public void checkTile(Entity entity) {
 
-
         int entityLeftWorldX = entity.worldX + entity.solidArea.x;
         int entityRightWorldX = entity.worldX + entity.solidArea.x + entity.solidArea.width;
         int entityTopWorldY = entity.worldY + entity.solidArea.y;
@@ -108,7 +107,42 @@ public class CollisionChecker {
 				}
 				break;
 		}
-    }
+		// Sau khi xác định collisionOn, điều chỉnh vị trí nếu cần
+		int nextWorldX = entity.worldX;
+		int nextWorldY = entity.worldY;
+
+		// Tính toán vị trí dự kiến sau khi di chuyển
+		switch (entity.direction) {
+			case "up": nextWorldY -= entity.speed; break;
+			case "down": nextWorldY += entity.speed; break;
+			case "left": nextWorldX -= entity.speed; break;
+			case "right": nextWorldX += entity.speed; break;
+		}
+
+		// Kiểm tra collision tại vị trí dự kiến
+		boolean isColliding = isCollisionAt(nextWorldX, nextWorldY, entity);
+
+		if (isColliding) {
+			entity.collisionOn = true;
+		} else {
+			entity.worldX = nextWorldX;
+			entity.worldY = nextWorldY;
+		}
+	}
+
+	private boolean isCollisionAt(int x, int y, Entity entity) {
+		// Tính toán vị trí tile dựa trên x và y
+		int leftCol = (x + entity.solidArea.x) / gp.tileSize;
+		int rightCol = (x + entity.solidArea.x + entity.solidArea.width) / gp.tileSize;
+		int topRow = (y + entity.solidArea.y) / gp.tileSize;
+		int bottomRow = (y + entity.solidArea.y + entity.solidArea.height) / gp.tileSize;
+
+		// Kiểm tra các tile xung quanh
+		return gp.tileM.tile[gp.tileM.mapTileNum[leftCol][topRow]].collision ||
+			gp.tileM.tile[gp.tileM.mapTileNum[rightCol][topRow]].collision ||
+			gp.tileM.tile[gp.tileM.mapTileNum[leftCol][bottomRow]].collision ||
+			gp.tileM.tile[gp.tileM.mapTileNum[rightCol][bottomRow]].collision;
+	}
     
     public int checkObject(Entity entity, boolean player) {
     	
@@ -183,59 +217,10 @@ public class CollisionChecker {
 
 	// check enemy collision
 	public int checkEntity(Entity entity, Entity[] target) {
-		// int index = 999;
-    	
-    	// for (int i = 0; i < target.length; i++) {
-    	// 	if (target[i] != null) {
-    			
-    	// 		//get entity's solid area position
-    	// 		entity.solidArea.x = entity.worldX + entity.solidArea.x;
-    	// 		entity.solidArea.y = entity.worldY + entity.solidArea.y;
-    			
-    	// 		//get object's solid area position
-    	// 		target[i].solidArea.x = target[i].worldX + target[i].solidArea.x;
-    	// 		target[i].solidArea.y = target[i].worldY + target[i].solidArea.y;
-    			
-		// 		switch (entity.direction) {
-		// 		case "up":
-		// 			entity.solidArea.y -= entity.speed;
-        //             if (entity.solidArea.intersects(target[i].solidArea)) {
-        //                 entity.collisionOn = true;
-		// 				index = i;
-        //             }
-		// 			break;
-		// 		case "down":
-		// 			entity.solidArea.y += entity.speed;
-		// 			if (entity.solidArea.intersects(target[i].solidArea)) {
-		// 				entity.collisionOn = true;
-		// 				index = i;
-		// 			}
-		// 			break;
-		// 		case "left":
-		// 			entity.solidArea.x -= entity.speed;
-		// 			if (entity.solidArea.intersects(target[i].solidArea)) {
-		// 				entity.collisionOn = true;
-		// 				index = i;
-		// 			}
-		// 			break;
-		// 		case "right":
-		// 			entity.solidArea.x += entity.speed;
-		// 			if (entity.solidArea.intersects(target[i].solidArea)) {
-		// 				entity.collisionOn = true;
-		// 				index = i;
-		// 			}
-		// 			break;
-		// 		}
-    	// 		entity.solidArea.x = entity.solidAreaDefaultX;
-    	// 		entity.solidArea.y = entity.solidAreaDefaultY;
-    	// 		target[i].solidArea.x = target[i].solidAreaDefaultX;
-    	// 		target[i].solidArea.y = target[i].solidAreaDefaultY;
-    	// 	}
-    	// }
 
 		int index = 999;
 		for (int i = 0; i < target.length; i++) {
-			if (target[i] != null) {
+			if (target[i] != null && target[i] != entity) {
 				// Tính toán vùng va chạm
 				Rectangle entityArea = new Rectangle(
 					entity.worldX + entity.solidArea.x,
@@ -258,26 +243,30 @@ public class CollisionChecker {
 		}
 
 		for (Flame flame : gp.flames) {
-			if (flame != null) {
-				entity.solidArea.x = entity.worldX + entity.solidArea.x;
-				entity.solidArea.y = entity.worldY + entity.solidArea.y;
-				
-				flame.solidArea.x = flame.worldX + flame.solidArea.x;
-				flame.solidArea.y = flame.worldY + flame.solidArea.y;
-				
-				if (entity.solidArea.intersects(flame.solidArea)) {
-					entity.collisionOn = true;
-					index = 0;
-				}
-				
-				entity.solidArea.x = entity.solidAreaDefaultX;
-				entity.solidArea.y = entity.solidAreaDefaultY;
-				flame.solidArea.x = flame.solidAreaDefaultX;
-				flame.solidArea.y = flame.solidAreaDefaultY;
-			}
-		}
-    	
+        if (flame != null && flame.collision) {
+            Rectangle flameRect = new Rectangle(
+                flame.worldX + flame.solidArea.x,
+                flame.worldY + flame.solidArea.y,
+                flame.solidArea.width,
+                flame.solidArea.height
+            );
+            
+            Rectangle entityRect = new Rectangle(
+                entity.worldX + entity.solidArea.x,
+                entity.worldY + entity.solidArea.y,
+                entity.solidArea.width,
+                entity.solidArea.height
+            );
+            
+            if (flameRect.intersects(entityRect)) {
+                entity.takeDamage(1);
+                index = 0;
+                break;
+            }
+        }
+    }
     	return index;
+	
 	}
 
 	public void checkPlayer(Entity entity) {

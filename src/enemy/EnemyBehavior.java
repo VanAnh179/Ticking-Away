@@ -6,8 +6,8 @@ import java.util.Random;
 public class EnemyBehavior {
     // Logic đuổi theo player
     public static void chasePlayer(Entity enemy, int chaseRange, int stopRange) {
-        int xDistance = enemy.gp.player.worldX - enemy.worldX;
-        int yDistance = enemy.gp.player.worldY - enemy.worldY;
+        int xDistance = (int) enemy.gp.player.worldX - (int) enemy.worldX;
+        int yDistance = (int) enemy.gp.player.worldY - (int) enemy.worldY;
         // int totalDistance = xDistance + yDistance;
 
         // // Chuyển chaseRange và stopRange thành pixel
