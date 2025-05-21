@@ -3,6 +3,7 @@ package entity;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.AlphaComposite;
 import java.awt.image.BufferedImage;
 import main.GamePanel;
 import main.KeyHandler;
@@ -17,7 +18,7 @@ public class Player extends Entity {
     public int maxHealth = 4;
     public int health = maxHealth;
     public int invincibleCounter = 0;
-    public final int INVINCIBLE_TIME = 60;
+    public final int INVINCIBLE_TIME = 100;
     public boolean wasTouchingEnemy = false;
 
     public BufferedImage idleDown, idleUp, idleLeft, idleRight;
@@ -178,10 +179,6 @@ public class Player extends Entity {
             } else {
                 wasTouchingEnemy = false;
             }
-            // Giảm thời gian bất tử
-            if (invincibleCounter > 0) {
-                invincibleCounter--;
-            }
 
             // Di chuyển nếu không có va chạm
             if (!collisionOn) {
@@ -197,6 +194,12 @@ public class Player extends Entity {
             solidArea.x = solidAreaDefaultX;
             solidArea.y = solidAreaDefaultY;
             direction = lastDirection;
+        }
+
+        
+        // Giảm thời gian bất tử
+        if (invincibleCounter > 0) {
+            invincibleCounter--;
         }
 
         if(isTeleporting) {
@@ -329,7 +332,19 @@ public class Player extends Entity {
                     break;
             }
         }
+
+        // Thêm hiệu ứng nhấp nháy khi bất tử
+    if (invincibleCounter > 0) {
+        // Độ trong suốt thay đổi theo thời gian (nhấp nháy)
+        float alpha = (invincibleCounter % 12 < 6) ? 0.2f : 1.0f;
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+    }
+
         g2.drawImage(image, screenX, screenY, null);
+
+        // Reset composite để không ảnh hưởng đến các thành phần khác
+    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+
         // DEBUG check solidArea
         if (gp.keyH.debugMode) {
             g2.setColor(new Color(255, 0, 0, 128)); // Màu đỏ trong suốt

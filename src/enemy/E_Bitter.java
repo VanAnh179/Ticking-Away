@@ -3,6 +3,7 @@ package enemy;
 import entity.Entity;
 import main.GamePanel;
 import object.Bomb;
+import object.Flame;
 import object.SuperObject;
 import java.awt.*;
 import java.util.*;
@@ -54,14 +55,38 @@ public class E_Bitter extends Entity {
 
     @Override
     public void update() {
-        super.update();
-        bombCooldown = Math.max(0, bombCooldown - 1);
-        if (calculateDistanceToPlayer() < VISION_RANGE) {
-            calculateAStarPath();
+        super.update(); // Đảm bảo gọi super.update() để xử lý di chuyển
+    
+    // Kiểm tra va chạm với Flame
+    for (Flame flame : gp.flames) {
+        if (flame != null && flame.collision && invincibleCounter == 0) {
+            Rectangle flameRect = new Rectangle(
+                flame.worldX + flame.solidArea.x,
+                flame.worldY + flame.solidArea.y,
+                flame.solidArea.width,
+                flame.solidArea.height
+            );
+            Rectangle enemyRect = new Rectangle(
+                worldX + solidArea.x,
+                worldY + solidArea.y,
+                solidArea.width,
+                solidArea.height
+            );
+
+            if (flameRect.intersects(enemyRect)) {
+                takeDamage(1);
+                break; // Chỉ nhận damage 1 lần
+            }
         }
-        if (invincibleCounter > 0) {
-            invincibleCounter--;
-        }
+    }
+
+    bombCooldown = Math.max(0, bombCooldown - 1);
+    if (calculateDistanceToPlayer() < VISION_RANGE) {
+        calculateAStarPath();
+    }
+    if (invincibleCounter > 0) {
+        invincibleCounter--;
+    }
     }
 
     @Override
@@ -84,10 +109,6 @@ public void takeDamage(int damage) {
     if (invincibleCounter == 0) { // Chỉ nhận sát thương khi không bất tử
         health -= damage;
         if (health <= 0) {
-            if (indexInEnemyArray != -1) {
-                gp.enemy[indexInEnemyArray] = null; // Xóa enemy khỏi mảng
-                indexInEnemyArray = -1;
-            }
         } else {
             invincibleCounter = 60; // Kích hoạt thời gian bất tử
         }

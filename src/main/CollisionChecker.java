@@ -220,7 +220,7 @@ public class CollisionChecker {
 
 		int index = 999;
 		for (int i = 0; i < target.length; i++) {
-			if (target[i] != null) {
+			if (target[i] != null && target[i] != entity) {
 				// Tính toán vùng va chạm
 				Rectangle entityArea = new Rectangle(
 					entity.worldX + entity.solidArea.x,
@@ -243,25 +243,28 @@ public class CollisionChecker {
 		}
 
 		for (Flame flame : gp.flames) {
-			if (flame != null && entity != null) {
-				entity.solidArea.x = entity.worldX + entity.solidArea.x;
-				entity.solidArea.y = entity.worldY + entity.solidArea.y;
-				
-				flame.solidArea.x = flame.worldX + flame.solidArea.x;
-				flame.solidArea.y = flame.worldY + flame.solidArea.y;
-				
-				if (entity.solidArea.intersects(flame.solidArea)) {
-			entity.takeDamage(1);
-			entity.collisionOn = true;
-			index = 0;
-				
-				entity.solidArea.x = entity.solidAreaDefaultX;
-				entity.solidArea.y = entity.solidAreaDefaultY;
-				flame.solidArea.x = flame.solidAreaDefaultX;
-				flame.solidArea.y = flame.solidAreaDefaultY;
-			}
-		}
-    	}
+        if (flame != null && flame.collision) {
+            Rectangle flameRect = new Rectangle(
+                flame.worldX + flame.solidArea.x,
+                flame.worldY + flame.solidArea.y,
+                flame.solidArea.width,
+                flame.solidArea.height
+            );
+            
+            Rectangle entityRect = new Rectangle(
+                entity.worldX + entity.solidArea.x,
+                entity.worldY + entity.solidArea.y,
+                entity.solidArea.width,
+                entity.solidArea.height
+            );
+            
+            if (flameRect.intersects(entityRect)) {
+                entity.takeDamage(1);
+                index = 0;
+                break;
+            }
+        }
+    }
     	return index;
 	
 	}

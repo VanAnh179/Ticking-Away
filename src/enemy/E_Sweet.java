@@ -89,10 +89,7 @@ public void takeDamage(int damage) {
     if (invincibleCounter == 0) { // Chỉ nhận sát thương khi không bất tử
         health -= damage;
         if (health <= 0) {
-            if (indexInEnemyArray != -1) {
-                gp.enemy[indexInEnemyArray] = null; // Xóa enemy khỏi mảng
-                indexInEnemyArray = -1;
-            }
+            
         } else {
             invincibleCounter = 60; // Kích hoạt thời gian bất tử
         }
