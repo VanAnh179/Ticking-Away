@@ -47,6 +47,7 @@ public class KeyHandler implements KeyListener {
         // DEBUG Xử lý phím R để khởi động lại game
         if (code == KeyEvent.VK_R && gp.ui.gameFinished) {
             gp.resetGame();
+            return;
         }
     }
 

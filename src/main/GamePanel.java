@@ -82,6 +82,7 @@ public class GamePanel extends JPanel implements Runnable {
             }
         });
         setupGame();
+        this.requestFocusInWindow(); // Đảm bảo GamePanel có focus
     }
     
     public void setupGame() {
@@ -229,18 +230,21 @@ public class GamePanel extends JPanel implements Runnable {
         
         // player
         player.draw(g2); // Vẽ player
-        
+
+        // Vẽ flame chỉ khi game chưa kết thúc
+        if(!ui.gameFinished) {
+            for (Flame flame : flames) {
+                int screenX = flame.worldX - player.worldX + player.screenX + offsetX;
+                int screenY = flame.worldY - player.worldY + player.screenY + offsetY;
+                g2.drawImage(flame.image, screenX, screenY, null);
+            }
+        }
+            
         // UI
         ui.draw(g2);
 
         g2.translate(-offsetX, -offsetY);
         
-        // Vẽ flame chỉ khi game chưa kết thúc
-        for (Flame flame : flames) {
-            int screenX = flame.worldX - player.worldX + player.screenX + offsetX;
-            int screenY = flame.worldY - player.worldY + player.screenY + offsetY;
-            g2.drawImage(flame.image, screenX, screenY, null);
-        }
         
         // DEBUG
         if (keyH.checkDrawTime == true) {
@@ -280,7 +284,6 @@ public class GamePanel extends JPanel implements Runnable {
         stopMusic();
         keyH.reset();
         repaint(); // Đảm bảo giao diện được cập nhật
-        this.requestFocusInWindow(); // Đảm bảo focus để nhận phím
     }
 
     public void resetGame() {
@@ -298,17 +301,20 @@ public class GamePanel extends JPanel implements Runnable {
         tileM.resetMap();
         ui.resetTimer();
         setupGame();
-        if (gameThread != null && gameThread.isAlive()) {
-            try {
-                gameThread.join(); // Chờ thread cũ kết thúc
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        // Dừng thread hiện tại nếu đang chạy
+        if (gameThread != null) {
+            gameThread.interrupt();
             gameThread = null;
         }
-        playMusic(0); // Phát lại nhạc nền
-        repaint(); // Đảm bảo giao diện được làm mới
-        this.requestFocusInWindow(); // Đảm bảo panel nhận lại focus
         startGameThread();
+        playMusic(1); // Phát lại nhạc nền
+        this.requestFocusInWindow(); // Đảm bảo GamePanel có focus
+        ensureFocus();
+    }
+
+    public void ensureFocus() {
+        if (!this.isFocusOwner()) {
+            this.requestFocusInWindow();
+        }
     }
 }

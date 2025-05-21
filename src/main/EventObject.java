@@ -1,13 +1,13 @@
 package main;
 
 import entity.Player;
+import java.util.Random;
+import object.Chest;
 import object.SuperObject;
 import object.buffitems.IncreaseDamage;
 import object.buffitems.IncreaseHealth;
 import object.debuffitems.DecreaseSpeed;
 import object.debuffitems.Teleport;
-import object.Chest;
-import java.util.Random;
 
 public class EventObject {
     GamePanel gp;
