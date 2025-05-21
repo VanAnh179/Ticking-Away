@@ -3,11 +3,8 @@ package entity;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import main.GamePanel;
 import main.KeyHandler;
-import main.UtilityTool;
 import object.Bomb;
 
 public class Player extends Entity {
@@ -31,6 +28,10 @@ public class Player extends Entity {
     // Tính thời gian đặt bomb để tránh spam
     public int bombCooldown = 0; // biến cooldown cho đặt bomb
     public final int BOMB_COOLDOWN_TIME = 30; // 1 giây (60 frames)
+
+    public int bombRange = 1; // Phạm vi bom nổ
+    public int bombCooldownTime = 0; // Thời gian cooldown cho bomb
+
 
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp);
@@ -348,4 +349,6 @@ public class Player extends Entity {
             gp.ui.showMessage(direction);
         }
     }
+
+    
 }

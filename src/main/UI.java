@@ -15,6 +15,7 @@ public class UI {
 	public String message = "";
 	int messageCounter = 0;
 	public boolean gameFinished = false;
+	public boolean gameWon = false; // Thêm biến gameWon
 
 	//biến time
 	private long startTime;
@@ -77,7 +78,10 @@ public class UI {
 	}
 
 	public int getFinalScore() {
-		return visibleScore + backgroundScore;
+		if (gameFinished && !gameWon) {
+            return visibleScore;
+        }
+        return visibleScore + backgroundScore;
 	}
 
 	private String getFormattedTime() {
@@ -179,13 +183,42 @@ public class UI {
 	}
 
 	private void drawGameFinishedScreen(Graphics2D g2) {
-		g2.setColor(Color.white);
-		g2.setFont(new Font("Arial", Font.BOLD, 40));
+	
+        g2.setColor(new Color(0, 0, 0, 180));
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 
-		String text = gp.player.health <= 0 ? "Game Over" : "You Won";
-		int x = getXForCenteredText(text, g2);
-		g2.drawString(text, x, gp.screenHeight / 2);
-	}
+        int boxWidth = gp.screenWidth * 3/4;
+        int boxHeight = gp.screenHeight / 2;
+        int boxX = (gp.screenWidth - boxWidth) / 2;
+        int boxY = (gp.screenHeight - boxHeight) / 2;
+
+        g2.setColor(new Color(30, 30, 30));
+        g2.fillRoundRect(boxX, boxY, boxWidth, boxHeight, 20, 20);
+
+        g2.setColor(gameWon ? new Color(50, 200, 50) : new Color(200, 50, 50));
+        g2.setStroke(new BasicStroke(5));
+        g2.drawRoundRect(boxX, boxY, boxWidth, boxHeight, 20, 20);
+
+        String text = gameWon ? "You Won!" : "Game Over";
+        g2.setFont(new Font("Arial", Font.BOLD, 80));
+        g2.setColor(Color.white);
+        int x = getXForCenteredText(text, g2);
+        int y = boxY + boxHeight/2 - 20;
+        g2.drawString(text, x, y);
+
+        g2.setFont(new Font("Arial", Font.PLAIN, 30));
+        String scoreText = "Final Score: " + formatScore(getFinalScore());
+        x = getXForCenteredText(scoreText, g2);
+        y += 60;
+        g2.drawString(scoreText, x, y);
+
+        g2.setFont(new Font("Arial", Font.PLAIN, 25));
+        String restartText = "Press R to restart";
+        x = getXForCenteredText(restartText, g2);
+        y += 40;
+        g2.drawString(restartText, x, y);
+
+    }
 
 	private void drawMessage(Graphics2D g2) {
 		g2.setColor(Color.white);

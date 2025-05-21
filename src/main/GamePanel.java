@@ -8,13 +8,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-
 import javax.swing.JPanel;
-
 import object.Bomb;
 import object.Flame;
 import object.SuperObject;
 import tile.TileManager;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+
 
 
 public class GamePanel extends JPanel implements Runnable {
@@ -39,7 +40,7 @@ public class GamePanel extends JPanel implements Runnable {
     
     //system
     public TileManager tileM = new TileManager(this);
-    KeyHandler keyH = new KeyHandler();
+    public KeyHandler keyH ;
     Sound music = new Sound();
     Sound soundEffect = new Sound();
     public CollisionChecker cChecker = new CollisionChecker(this);
@@ -54,6 +55,8 @@ public class GamePanel extends JPanel implements Runnable {
     public Entity enemy[] = new Entity[10];
     public ArrayList<Flame> flames = new ArrayList<>();
 
+    public EventObject eventObj;
+
     /**
      * Hàm khởi tạo GamePanel.
      * Thiết lập kích thước panel, màu nền, bật double buffering, thêm key listener và cho phép focus.
@@ -62,14 +65,30 @@ public class GamePanel extends JPanel implements Runnable {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
+        
+        // Khởi tạo KeyHandler sau khi GamePanel đã được tạo
+        keyH = new KeyHandler(this);
         this.addKeyListener(keyH);
         this.setFocusable(true);
+        this.requestFocusInWindow(); // Đảm bảo GamePanel có focus
+
+        player = new Player(this, keyH);
         
         obj = new SuperObject[1000];
+        eventObj = new EventObject(this);
 
+        // Khởi tạo lại Player với KeyHandler đã cập nhật
+        player = new Player(this, keyH);
+
+        this.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                System.out.println("GamePanel gained focus");
+            }
+        });
         setupGame();
-    }
     
+    }
     public void setupGame() {
     	aSetter.setObject();
         aSetter.setEnemy();
@@ -81,8 +100,17 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public void startGameThread() {
         ui.resetTimer();
+        if (gameThread != null && gameThread.isAlive()) {
+            try {
+                gameThread.join(); // Chờ thread cũ kết thúc
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            gameThread = null;
+        }
         gameThread = new Thread(this);
         gameThread.start();
+        System.out.println("Game thread started");
     }
 
     /**
@@ -112,8 +140,16 @@ public class GamePanel extends JPanel implements Runnable {
      * Cập nhật vị trí của người chơi dựa trên phím bấm.
      */
     public void update() {
-        player.update();
+        if(!ui.gameFinished) {
+            player.update();
+        }
 
+        // Kiểm tra game over khi health <= 0
+        if (player.health <= 0) {
+            gameOver();
+            return; // Dừng update khi game over
+        }
+        
         //enemy
         for (int i = 0; i < enemy.length; i++) {
             if (enemy[i] != null) {
@@ -195,10 +231,12 @@ public class GamePanel extends JPanel implements Runnable {
         ui.draw(g2);
         
         // Vẽ flame
-        for (Flame flame : flames) {
-            int screenX = flame.worldX - player.worldX + player.screenX;
-            int screenY = flame.worldY - player.worldY + player.screenY;
-            g2.drawImage(flame.image, screenX, screenY, null);
+        if(!ui.gameFinished) {
+            for (Flame flame : flames) {
+                int screenX = flame.worldX - player.worldX + player.screenX;
+                int screenY = flame.worldY - player.worldY + player.screenY;
+                g2.drawImage(flame.image, screenX, screenY, null);
+            }
         }
         
         // DEBUG
@@ -224,4 +262,44 @@ public class GamePanel extends JPanel implements Runnable {
     	soundEffect.setFile(i);
     	soundEffect.play();
     }
+
+    public void gameOver() {
+        flames.clear();
+        ui.gameFinished = true;
+        ui.gameWon = false;
+        stopMusic();
+        keyH.reset();
+        repaint(); // Đảm bảo giao diện được cập nhật
+        this.requestFocusInWindow(); // Đảm bảo focus để nhận phím
+    }
+
+    public void resetGame() {
+        System.out.println("ResetGame called");
+        ui.gameFinished = false;
+        ui.gameWon = false;
+        player.resetPlayer();
+        flames.clear();
+        for(int i = 0; i < obj.length; i++) {
+            obj[i] = null;
+        }
+        for(int i = 0; i < enemy.length; i++) {
+            enemy[i] = null;
+        }
+        tileM.resetMap();
+        ui.resetTimer();
+        setupGame();
+        if (gameThread != null && gameThread.isAlive()) {
+            try {
+                gameThread.join(); // Chờ thread cũ kết thúc
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            gameThread = null;
+        }
+        playMusic(0); // Phát lại nhạc nền
+        repaint(); // Đảm bảo giao diện được làm mới
+        this.requestFocusInWindow(); // Đảm bảo panel nhận lại focus
+        startGameThread();
+    }
+}
 }

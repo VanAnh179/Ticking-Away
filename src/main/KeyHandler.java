@@ -1,12 +1,20 @@
 package main;
 
-import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import javax.swing.SwingUtilities;
 
 public class KeyHandler implements KeyListener{
 
     public boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed;
     boolean checkDrawTime;
+    public boolean debugMode = false;
+    private GamePanel gp;
+
+    public KeyHandler(GamePanel gp) {
+        this.gp = gp;
+    }
     
     @Override
     public void keyTyped(KeyEvent e) {
@@ -32,6 +40,13 @@ public class KeyHandler implements KeyListener{
         }
         if (code == KeyEvent.VK_SPACE) {
             spacePressed = true;
+        }
+
+         if (code == KeyEvent.VK_R && gp.ui.gameFinished) {
+            SwingUtilities.invokeLater(() -> {
+                gp.resetGame();
+            });
+            return;
         }
         
         // DEBUG
@@ -64,5 +79,14 @@ public class KeyHandler implements KeyListener{
         if (code == KeyEvent.VK_SPACE) {
             spacePressed = false;
         }
+    }
+
+     public void reset() {
+        upPressed = false;
+        downPressed = false;
+        leftPressed = false;
+        rightPressed = false;
+        spacePressed = false;
+        checkDrawTime = false;
     }
 }
