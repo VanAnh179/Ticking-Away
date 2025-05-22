@@ -1,4 +1,3 @@
-```markdown
 # ⏳ **TICKING AWAY** 🔥  
 <div align="center">
   <img src="assets/background/poster.png" alt="Cosmic Cipher" width="600">
@@ -57,7 +56,7 @@ Thoát khỏi mê cung trong bóng tối bằng cách:
 | Item      | Hiệu ứng               |
 |-----------|------------------------|
 | 💎 Crystal | Tăng phạm vi sáng     |
-| 🪖 Helmet | Tăng máu (giáp ảo)    |
+| ⛑ Helmet | Tăng máu (giáp ảo)    |
 | 🧪 Potion | Tăng phạm vi nổ bomb  |
 
 ### 🧨 Debuffed Items:  
@@ -122,10 +121,14 @@ Khi mở được **portal**, bạn sẽ khám phá:
 ## 🛠️ Technologies  
 <div align="center">
 <<<<<<< HEAD
+<<<<<<< HEAD
   <img src="diagram.png" width="800" alt="OOP Architecture">
 =======
   <img src="diagrams/oop_diagram.png" width="800" alt="OOP Architecture">
 >>>>>>> e497abc1584b231968e769df1ce8521101fce848
+=======
+  <img src="diagram.png" width="800" alt="OOP Architecture">
+>>>>>>> 22870e61336980f51d169273a07ff285aac2f1bf
   <br>
   <em>📐 UML Class Diagram - Modular Design Pattern</em>
 </div>
@@ -139,20 +142,24 @@ Khi mở được **portal**, bạn sẽ khám phá:
 | 📦 **OOP**      | Entity-component system design     | -        |
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 ```markdown
 >>>>>>> e497abc1584b231968e769df1ce8521101fce848
+=======
+>>>>>>> 22870e61336980f51d169273a07ff285aac2f1bf
 ---
 
 ## 📂 **CẤU TRÚC DỰ ÁN NÂNG CAO**
 ### 🗃️ Package Structure
 ```
 📁 src/
-├── 📁 button/                # Hệ thống nút bấm
-│   ├── Button.java          🖱️ Lớp abstract xử lý hover/click
-│   ├── StartButton.java     ▶️ Khởi tạo game khi nhấn
-│   └── UnMuteButton.java    🔇 Toggle âm thanh
+├── 📁 button/ # Hệ thống nút bấm
+│ ├── Button.java	 🖱️ Lớp trừu tượng xử lý hover/click
+│ ├── StartButton.java 	▶️ Khởi tạo game khi nhấn
+│ └── UnMuteButton.java 🔇 Bật/tắt âm thanh
 
+<<<<<<< HEAD
 ├── 📁 main/                  # Lõi game
 │   ├── UI.java              📊 Hiển thị máu, thời gian, điểm
 │   ├── EventObject.java     ⚡ Xử lý tương tác vật phẩm
@@ -190,24 +197,38 @@ Khi mở được **portal**, bạn sẽ khám phá:
 │   ├── GamePanel.java 🎮 Main game loop
 │   ├── KeyHandler.java ⌨️ Input processing
 │   └── Sound.java 🔊 Audio management
+=======
+├── 📁 main/ # Lõi game
+│ ├── UI.java 		📊 Hiển thị máu, thời gian, điểm
+│ ├── EventObject.java 	⚡ Xử lý tương tác vật phẩm
+│ ├── Main.java 	🚀 Khởi tạo JFrame
+│ ├── MenuScreen.java 	🖼️ Màn hình menu chính
+│ ├── UtilityTool.java 	🛠️ Công cụ load ảnh/xử lý file
+│ ├── AssetSetter.java 	🖼️ Trình tải tài nguyên
+│ ├── CollisionChecker.java 🚧 Hệ thống va chạm
+│ ├── GamePanel.java 	🎮 Vòng lặp game chính
+│ ├── KeyHandler.java 	⌨️ Xử lý đầu vào
+│ └── Sound.java 	🔊 Quản lý âm thanh
+>>>>>>> 22870e61336980f51d169273a07ff285aac2f1bf
 
-├── 📁 entity/                # Nhân vật
-│   ├── Entity.java          👤 Lớp cơ sở
-│   └── Player.java          🧍♂️ Điều khiển người chơi
+├── 📁 entity/ # Nhân vật
+│ ├── Entity.java 	👤 Lớp cơ sở
+│ └── Player.java 	🧍 Điều khiển người chơi
 
-├── 📁 enemy/ # Enemy AI system
-│ ├── E_Bitter.java 🍫 Bitter enemy logic
-│ ├── E_Sweet.java 🍬 Sweet enemy logic
-│ ├── E_Watermelon.java 🍉 Watermelon enemy
-│ ├── EnemyBehavior.java 🤖 AI state machine
-│ └── PathFinder.java 🧭 A* Implementation
+├── 📁 enemy/ # Hệ thống AI kẻ thù
+│ ├── E_Bitter.java 	🍫 Logic kẻ địch Bitter
+│ ├── E_Sweet.java 	🍬 Logic kẻ địch Sweet
+│ ├── E_Watermelon.java 🍉 Logic kẻ địch Watermelon
+│ ├── EnemyBehavior.java 🤖 Máy trạng thái AI
+│ └── PathFinder.java 	🧭 Triển khai thuật toán A*
 
-├── 📁 object/ # Interactive objects
-│ ├── 📁 buffitems/ ⚡ Power-ups
-│ │ ├── IncreaseDamage.java 💥 Damage boost
-│ │ ├── IncreaseHealth.java ❤️ Health boost
-│ │ └── IncreaseLight.java 💡 Light radius+
+├── 📁 object/ # Vật thể tương tác
+│ ├── 📁 buffitems/ ⚡ Vật phẩm tăng sức mạnh
+│ │ ├── IncreaseDamage.java 	💥 Tăng sát thương bom
+│ │ ├── IncreaseHealth.java 	❤️ Tăng máu
+│ │ └── IncreaseLight.java 	💡 Tăng phạm vi ánh sáng
 │ │
+<<<<<<< HEAD
 │ ├── 📁 debuffitems/ 🧨 Penalties
 >>>>>>> e497abc1584b231968e769df1ce8521101fce848
 │ │ ├── DecreaseLight.java 🌑 Light radius-
@@ -229,7 +250,20 @@ Khi mở được **portal**, bạn sẽ khám phá:
 ├── Tile.java 🧱 Single tile logic
 └── TileManager.java 🗺️ Whole map renderer
 >>>>>>> e497abc1584b231968e769df1ce8521101fce848
+=======
+│ ├── 📁 debuffitems/ 🧨 Vật phẩm gây bất lợi
+│ │ ├── DecreaseBomb.java 	🌑 Tăng thời gian hồi bomb
+│ │ ├── DecreaseSpeed.java 	🐌 Giảm tốc độ
+│ │ └── Teleport.java 		📖 Dịch chuyển ngẫu nhiên
+│ │
+│ ├── Bomb.java 	💣 Hệ thống bom nổ
+│ ├── Flame.java 	💥 Hệ thống lửa
+│ └── Chest.java 	🎁 Rương chứa vật phẩm
+>>>>>>> 22870e61336980f51d169273a07ff285aac2f1bf
 
+└── 📁 tile/ # Hệ thống bản đồ
+├── Tile.java 		🧱 Logic tile đơn lẻ
+└── TileManager.java 	🗺️ Trình render toàn bản đồ
 
 ```
 
@@ -370,6 +404,7 @@ public class Main {
 ---
 =======
 ---
+<<<<<<< HEAD
 
 <details>
 <summary>📦 Full Class Diagram (Click to Expand)</summary>
@@ -386,3 +421,5 @@ public class Main {
 </details>
 ```
 >>>>>>> e497abc1584b231968e769df1ce8521101fce848
+=======
+>>>>>>> 22870e61336980f51d169273a07ff285aac2f1bf
