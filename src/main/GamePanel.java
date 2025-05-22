@@ -2,13 +2,18 @@ package main;
 
 import entity.Entity;
 import entity.Player;
+
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RadialGradientPaint;
 import java.awt.Rectangle;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import object.Bomb;
@@ -46,6 +51,12 @@ public class GamePanel extends JPanel implements Runnable {
     public int shakeIntensity = 0; // Cường độ rung
     public int shakeDuration = 0;  // Thời gian rung (tính bằng frame)
     public int shakeCounter = 0;   // Đếm thời gian đã rung
+    int baseLightRadius = tileSize * 3;
+    int flickerFrame = 0;
+    final int baseRadiusMax = tileSize * 3;  // Bán kính tối đa ban đầu
+    final int baseRadiusMin = tileSize;      // Bán kính tối thiểu khi thu nhỏ hết cỡ
+    int timeElapsedFrames = 0;                // Đếm số frame đã chạy
+    private float flickerAngle = 0;
     Thread gameThread;
     
     // entity and object
@@ -151,6 +162,23 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             }
 
+            timeElapsedFrames++;
+            int durationFrames = FPS * 15; // 15 giây = 900 frame
+
+            if (timeElapsedFrames <= durationFrames) {
+                float ratio = 1.0f - ((float)timeElapsedFrames / durationFrames);
+                baseLightRadius = baseRadiusMin + (int)((baseRadiusMax - baseRadiusMin) * ratio);
+            } else {
+                baseLightRadius = baseRadiusMin;  // Giữ bán kính nhỏ nhất sau 10 giây
+            }
+
+            float flickerAmplitude = 5;
+            
+
+            flickerAngle += 0.1f;
+            if (flickerAngle > 2 * Math.PI) flickerAngle -= 2 * Math.PI;
+            baseLightRadius += (int)(Math.sin(flickerAngle) * flickerAmplitude);
+
             // Cập nhật flame
             for (int i = flames.size() - 1; i >= 0; i--) {
                 Flame flame = flames.get(i);
@@ -239,9 +267,6 @@ public class GamePanel extends JPanel implements Runnable {
                 g2.drawImage(flame.image, screenX, screenY, null);
             }
         }
-            
-        // UI
-        ui.draw(g2);
 
         g2.translate(-offsetX, -offsetY);
         
@@ -254,6 +279,40 @@ public class GamePanel extends JPanel implements Runnable {
             g2.drawString("Draw Time: " + passed, 10, 400);
             System.out.println("Draw Time: " + passed);
         }
+
+        if (!ui.gameFinished) {
+            int spotlightX = player.screenX + player.solidArea.x;
+            int spotlightY = player.screenY + player.solidArea.y;
+            drawDarknessEffect(g2, spotlightX, spotlightY, baseLightRadius);
+        }
+
+                    
+        // UI
+        ui.draw(g2);
+    }
+
+    public void drawDarknessEffect(Graphics2D g2, int centerX, int centerY, int radius) {
+        BufferedImage darkness = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D gDark = darkness.createGraphics();
+
+        // Tô nền tối mờ
+        gDark.setColor(new Color(0, 0, 0, 250)); // Alpha cao làm tối mạnh (chỉnh từ 200 đổ lên)
+        gDark.fillRect(0, 0, screenWidth, screenHeight);
+
+        // Dùng AlphaComposite để đục lỗ hình tròn
+        gDark.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f)); // Đục vùng này
+        gDark.setPaint(new RadialGradientPaint(
+            new Point(centerX, centerY),
+            radius,
+            new float[]{0f, 1f},
+            new Color[]{new Color(0, 0, 0, 1f), new Color(0, 0, 0, 0f)}
+        ));
+        gDark.fillOval(centerX - radius, centerY - radius, radius * 2, radius * 2);
+
+        gDark.dispose();
+
+        // Vẽ lớp darkness đã đục lỗ lên màn hình
+        g2.drawImage(darkness, 0, 0, null);
     }
 
     public void triggerShake(int intensity, int duration) {
