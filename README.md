@@ -56,7 +56,7 @@ Thoát khỏi mê cung trong bóng tối bằng cách:
 | Item      | Hiệu ứng               |
 |-----------|------------------------|
 | 💎 Crystal | Tăng phạm vi sáng     |
-| ⛑ Helmet | Tăng máu (giáp ảo)    |
+| 🪖 Helmet | Tăng máu (giáp ảo)    |
 | 🧪 Potion | Tăng phạm vi nổ bomb  |
 
 ### 🧨 Debuffed Items:  
@@ -119,8 +119,206 @@ Khi mở được **portal**, bạn sẽ khám phá:
 ---
 
 ## 🛠️ Technologies  
+<div align="center">
+  <img src="diagram.png" width="800" alt="OOP Architecture">
+  <br>
+  <em>📐 UML Class Diagram - Modular Design Pattern</em>
+</div>
+
+### 🧩 Tech Stack Breakdown  
+| Công nghệ       | Ứng dụng trong game                | Phiên bản |
+|-----------------|------------------------------------|----------|
+| ☕ **Java**      | Core game logic, AI system         | 17 LTS   |
+| 🖼️ **AWT/Swing**| Rendering engine, UI components    | 1.2      |
+| 🤖 **A***       | Pathfinding for enemy movement     | -        |
+| 📦 **OOP**      | Entity-component system design     | -        |
+
+---
+
+## 📂 **CẤU TRÚC DỰ ÁN NÂNG CAO**
+### 🗃️ Package Structure
+```
+📁 src/
+├── 📁 button/                # Hệ thống nút bấm
+│   ├── Button.java          🖱️ Lớp abstract xử lý hover/click
+│   ├── StartButton.java     ▶️ Khởi tạo game khi nhấn
+│   └── UnMuteButton.java    🔇 Toggle âm thanh
+
+├── 📁 main/                  # Lõi game
+│   ├── UI.java              📊 Hiển thị máu, thời gian, điểm
+│   ├── EventObject.java     ⚡ Xử lý tương tác vật phẩm
+│   ├── Main.java            🚀 Khởi tạo JFrame
+│   ├── MenuScreen.java      🖼️ Màn hình menu chính
+│   ├── UtilityTool.java     🛠️ Công cụ load ảnh/xử lý file
+│   ├── AssetSetter.java      🖼️ Resource loader
+│   ├── CollisionChecker.java 🚧 Collision system
+│   ├── GamePanel.java        🎮 Main game loop
+│   ├── KeyHandler.java       ⌨️ Input processing
+│   └── Sound.java            🔊 Audio management
+
+├── 📁 entity/                # Nhân vật
+│   ├── Entity.java          👤 Lớp cơ sở
+│   └── Player.java          🧍 Điều khiển người chơi
+
+├── 📁 enemy/ # Enemy AI system
+│ ├── E_Bitter.java          🍫 Bitter enemy logic
+│ ├── E_Sweet.java           🍬 Sweet enemy logic
+│ ├── E_Watermelon.java      🍉 Watermelon enemy
+│ ├── EnemyBehavior.java     🤖 AI state machine
+│ └── PathFinder.java        🧭 A* Implementation
+
+├── 📁 object/ # Interactive objects
+│ ├── 📁 buffitems/         ⚡ Power-ups
+│ │ ├── IncreaseDamage.java 💥 Damage boost
+│ │ ├── IncreaseHealth.java ❤️ Health boost
+│ │ └── IncreaseLight.java   💡 Light radius+
+│ │
+│ ├── 📁 debuffitems/      🧨 Penalties
+│ │ ├── DecreaseLight.java 🌑 Light radius-
+│ │ ├── DecreaseSpeed.java 🐌 Speed down
+│ │ └── Teleport.java 📖 Random TP
+│ │
+│ ├── Bomb.java            💣 Explosive system
+│ └── Chest.java           🎁 Loot container
+
+└── 📁 tile/ # Map system
+├── Tile.java              🧱 Single tile logic
+└── TileManager.java       🗺️ Whole map renderer
+
+
+```
+
+---
+
+## 🧩 **THÀNH PHẦN CHÍNH**
+
+### 🎮 **Hệ thống UI**
 ```java
-☕ Java  
-🖼️ AWT/Swing  
-🤖 A* Pathfinding  
-📦 OOP & Modular Design  
+public class UI {
+    // Hiển thị thanh máu
+    private void drawHealthBar(Graphics2D g2) {
+        for (int i = 0; i < gp.player.maxHealth; i++) {
+            if (i < gp.player.health) {
+                g2.drawImage(heart, x, y, size, size, null);
+            }
+        }
+    }
+
+    // Cập nhật điểm số
+    public void addScore(int points) {
+        visibleScore += points;
+    }
+}
+```
+**Chức năng:**  
+- Hiển thị 4 trái tim biểu thị máu  
+- Đếm thời gian dạng `mm:ss`  
+- Hiển thị điểm số real-time  
+- Màn hình kết thúc game (Thắng/Thua)
+
+### 🎯 **Xử lý sự kiện (EventObject)**
+```java
+public class EventObject {
+    public void handleItemPickup(int index) {
+        if (item instanceof IncreaseDamage) {
+            player.bombRange = Math.max(player.bombRange, 2);
+        }
+        else if (item instanceof Teleport) {
+            teleportPlayerToRandomLocation();
+        }
+    }
+}
+```
+**Logic chính:**  
+- Tăng phạm vi bomb khi nhặt `IncreaseDamage`  
+- Teleport ngẫu nhiên khi nhặt `Teleport`  
+- Giảm tốc độ tạm thời với `DecreaseSpeed`
+- ... 
+- Mở chest sinh vật phẩm ngẫu nhiên
+
+### 🖥️ **Menu hệ thống**
+```java
+public class MenuScreen extends JPanel {
+    // Tương tác với các nút
+    public void add(StartButton startBtn) {
+        startBtn.addActionListener(e -> {
+            gp.startGameThread();
+            setVisible(false);
+        });
+    }
+}
+```
+**Flow chính:**  
+1. Hiển thị background + animation  
+2. Xử lý click nút Start/Unmute  
+3. Chuyển đổi giữa các trạng thái game
+
+---
+
+## 🔗 **LUỒNG TƯƠNG TÁC CHÍNH**
+```mermaid
+sequenceDiagram
+    participant MenuScreen
+    participant StartButton
+    participant GamePanel
+    participant EventObject
+    
+    MenuScreen->>StartButton: addActionListener()
+    StartButton->>GamePanel: startGameThread()
+    GamePanel->>EventObject: handleItemPickup()
+    EventObject->>Player: applyItemEffect()
+    Player->>UI: updateHealth/Score()
+```
+
+---
+
+## 🛠️ **CÔNG CỤ & KỸ THUẬT**
+
+### 🖼️ UtilityTool.java
+```java
+public class UtilityTool {
+    public BufferedImage scaleImage(BufferedImage original, int width, int height) {
+		
+		BufferedImage scaledImage = new BufferedImage(width, height, 2);
+		Graphics2D g2 = scaledImage.createGraphics();
+		g2.drawImage(original, 0, 0, width, height, null);
+		g2.dispose();
+		
+		return scaledImage;
+	}
+}
+```
+
+### 🎛️ Main.java
+```java
+public class Main {
+    public static void main(String[] args) {
+        
+        JFrame window = new JFrame();
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setResizable(false);
+        window.setTitle("Ticking Away");
+
+        SwingUtilities.invokeLater(() -> {
+            new MenuScreen().setVisible(true);
+        });
+
+        window.pack();
+
+        window.setLocationRelativeTo(null);
+        window.setVisible(true);
+    }
+}
+```
+
+---
+
+## 📊 **THIẾT KẾ GIAO DIỆN**
+| Thành phần       | Mô tả                          | Hình ảnh tham khảo       |
+|------------------|--------------------------------|--------------------------|
+| Health Bar       | 4 trái tim hiển thị máu        | ❤️❤️❤️❤️               |
+| Timer            | Đếm time giữa màn hình        | ⏳ 02:30                 |
+| Score Board      | Điểm số góc trái               | 💯 Score: 12,450        |
+| Game Over Screen | Nền đen + thông báo            | 🎮 GAME OVER - Score: X |
+
+---
