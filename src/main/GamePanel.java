@@ -45,6 +45,8 @@ public class GamePanel extends JPanel implements Runnable {
     public KeyHandler keyH; // Sẽ khởi tạo sau với tham chiếu đến GamePanel
     Sound music = new Sound();
     Sound soundEffect = new Sound();
+    Sound deathE = new Sound();
+    Sound flameSe = new Sound();
     public CollisionChecker cChecker = new CollisionChecker(this);
     public AssetSetter aSetter = new AssetSetter(this);
     public UI ui = new UI(this);
@@ -77,6 +79,9 @@ public class GamePanel extends JPanel implements Runnable {
         this.addKeyListener(keyH);
         this.setFocusable(true);
         this.requestFocusInWindow(); // Đảm bảo GamePanel có focus
+
+        flameSe.setFile(8);
+        flameSe.play();
 
         player = new Player(this, keyH);
         
@@ -150,6 +155,8 @@ public class GamePanel extends JPanel implements Runnable {
                 if (enemy[i] != null) {
                     enemy[i].update();
                     if (enemy[i].health <= 0) {
+                        deathE.setFile(5);
+                        deathE.play();
                         enemy[i] = null;
                     }
                 }

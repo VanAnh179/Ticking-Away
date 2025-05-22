@@ -1,6 +1,7 @@
 package enemy;
 
 import main.GamePanel;
+import main.Sound;
 import object.Bomb;
 import object.Flame;
 
@@ -22,6 +23,7 @@ public class E_Bitter extends Entity {
     private enum State { CHASE, ESCAPE }
     private State aiState = State.CHASE;
     private int indexInEnemyArray = -1;
+    private Sound hurtSound = new Sound();
     private List<Node> pathList = new java.util.ArrayList<>();
 
     public E_Bitter(GamePanel gp) {
@@ -302,6 +304,8 @@ public class E_Bitter extends Entity {
     public void takeDamage(int damage) {
         if (invincibleCounter == 0) {
             health -= damage;
+            hurtSound.setFile(6);
+            hurtSound.play();
             if (health <= 0) {
                 // Có thể thêm hiệu ứng chết ở đây
             } else {

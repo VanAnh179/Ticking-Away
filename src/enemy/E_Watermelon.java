@@ -3,6 +3,7 @@ package enemy;
 import entity.Entity;
 import java.awt.Rectangle;
 import main.GamePanel;
+import main.Sound;
 import object.Flame;
 
 public class E_Watermelon extends Entity {
@@ -14,6 +15,7 @@ public class E_Watermelon extends Entity {
     private int invincibleCounter = 0;
     private boolean isStunned = false;
     private int stunCounter = 0;
+    private Sound hurtSound = new Sound();
     private final int STUN_DURATION = 60; // Thời gian bất động (1 giây)
 
 
@@ -137,6 +139,8 @@ public class E_Watermelon extends Entity {
     public void takeDamage(int damage) {
         if (invincibleCounter == 0) { 
             health -= damage;
+            hurtSound.setFile(7);
+            hurtSound.play();
             if (health <= 0) {
                 // Xử lý khi enemy chết
             } else {

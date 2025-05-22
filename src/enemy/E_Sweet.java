@@ -3,12 +3,13 @@ package enemy;
 import entity.Entity;
 import java.awt.Rectangle;
 import main.GamePanel;
+import main.Sound;
 import object.Flame;
 
 public class E_Sweet extends Entity {
     private int indexInEnemyArray = -1;
     private int invincibleCounter = 0;
-
+    private Sound hurtSound = new Sound();
 
     public E_Sweet(GamePanel gp) {
         super(gp);
@@ -88,8 +89,8 @@ public class E_Sweet extends Entity {
 public void takeDamage(int damage) {
     if (invincibleCounter == 0) { // Chỉ nhận sát thương khi không bất tử
         health -= damage;
+        hurtSound.setFile(4);
         if (health <= 0) {
-            
         } else {
             invincibleCounter = 60; // Kích hoạt thời gian bất tử
         }

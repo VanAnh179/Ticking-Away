@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 import javax.swing.text.StyledEditorKit.BoldAction;
 
 import main.GamePanel;
+import main.Sound;
 import main.UtilityTool;
 import tile.Tile;
 
@@ -22,6 +23,7 @@ public class Bomb extends SuperObject {
     private int animationDelay = 10; // Tốc độ animation
     public int indexInArray = -1;
     public int explosionRange = 1; // Phạm vi nổ
+    private Sound bombSound = new Sound();
 
     public Bomb(GamePanel gp) {
         this.gp = gp;
@@ -93,6 +95,10 @@ public class Bomb extends SuperObject {
 
     private void explode(int indexInArray) {
         exploded = true;
+
+        bombSound.setFile(2);
+        bombSound.play();
+
         int bombCol = worldX / gp.tileSize;
         int bombRow = worldY / gp.tileSize;
 

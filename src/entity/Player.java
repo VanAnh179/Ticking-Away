@@ -7,6 +7,7 @@ import java.awt.AlphaComposite;
 import java.awt.image.BufferedImage;
 import main.GamePanel;
 import main.KeyHandler;
+import main.Sound;
 import object.Bomb;
 
 public class Player extends Entity {
@@ -38,6 +39,8 @@ public class Player extends Entity {
 
     public boolean isTeleporting = false; // Biến kiểm tra xem có đang teleport hay không
     public int teleportCounter = 0; // Biến đếm thời gian teleport
+
+    private Sound loseHealth = new Sound();
 
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp);
@@ -364,7 +367,8 @@ public class Player extends Entity {
             if (health < 0) {
                 health = 0;
             }
-
+            loseHealth.setFile(3);
+            loseHealth.play();
             gp.ui.showMessage("-1 life");
             if (health <= 0) {
                 gp.gameOver();

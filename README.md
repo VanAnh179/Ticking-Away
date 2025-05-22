@@ -120,15 +120,7 @@ Khi mở được **portal**, bạn sẽ khám phá:
 
 ## 🛠️ Technologies  
 <div align="center">
-<<<<<<< HEAD
-<<<<<<< HEAD
   <img src="diagram.png" width="800" alt="OOP Architecture">
-=======
-  <img src="diagrams/oop_diagram.png" width="800" alt="OOP Architecture">
->>>>>>> e497abc1584b231968e769df1ce8521101fce848
-=======
-  <img src="diagram.png" width="800" alt="OOP Architecture">
->>>>>>> 22870e61336980f51d169273a07ff285aac2f1bf
   <br>
   <em>📐 UML Class Diagram - Modular Design Pattern</em>
 </div>
@@ -141,13 +133,6 @@ Khi mở được **portal**, bạn sẽ khám phá:
 | 🤖 **A***       | Pathfinding for enemy movement     | -        |
 | 📦 **OOP**      | Entity-component system design     | -        |
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-```markdown
->>>>>>> e497abc1584b231968e769df1ce8521101fce848
-=======
->>>>>>> 22870e61336980f51d169273a07ff285aac2f1bf
 ---
 
 ## 📂 **CẤU TRÚC DỰ ÁN NÂNG CAO**
@@ -155,115 +140,51 @@ Khi mở được **portal**, bạn sẽ khám phá:
 ```
 📁 src/
 ├── 📁 button/ # Hệ thống nút bấm
-│ ├── Button.java	 🖱️ Lớp trừu tượng xử lý hover/click
+│ ├── Button.java	    🖱️ Lớp trừu tượng xử lý hover/click
 │ ├── StartButton.java 	▶️ Khởi tạo game khi nhấn
 │ └── UnMuteButton.java 🔇 Bật/tắt âm thanh
 
-<<<<<<< HEAD
-├── 📁 main/                  # Lõi game
-│   ├── UI.java              📊 Hiển thị máu, thời gian, điểm
-│   ├── EventObject.java     ⚡ Xử lý tương tác vật phẩm
-│   ├── Main.java            🚀 Khởi tạo JFrame
-│   ├── MenuScreen.java      🖼️ Màn hình menu chính
-│   ├── UtilityTool.java     🛠️ Công cụ load ảnh/xử lý file
-<<<<<<< HEAD
-│   ├── AssetSetter.java      🖼️ Resource loader
-│   ├── CollisionChecker.java 🚧 Collision system
-│   ├── GamePanel.java        🎮 Main game loop
-│   ├── KeyHandler.java       ⌨️ Input processing
-│   └── Sound.java            🔊 Audio management
-
-├── 📁 entity/                # Nhân vật
-│   ├── Entity.java          👤 Lớp cơ sở
-│   └── Player.java          🧍 Điều khiển người chơi
-
-├── 📁 enemy/ # Enemy AI system
-│ ├── E_Bitter.java          🍫 Bitter enemy logic
-│ ├── E_Sweet.java           🍬 Sweet enemy logic
-│ ├── E_Watermelon.java      🍉 Watermelon enemy
-│ ├── EnemyBehavior.java     🤖 AI state machine
-│ └── PathFinder.java        🧭 A* Implementation
-
-├── 📁 object/ # Interactive objects
-│ ├── 📁 buffitems/         ⚡ Power-ups
-│ │ ├── IncreaseDamage.java 💥 Damage boost
-│ │ ├── IncreaseHealth.java ❤️ Health boost
-│ │ └── IncreaseLight.java   💡 Light radius+
-│ │
-│ ├── 📁 debuffitems/      🧨 Penalties
-=======
-│   ├── AssetSetter.java 🖼️ Resource loader
-│   ├── CollisionChecker.java 🚧 Collision system
-│   ├── GamePanel.java 🎮 Main game loop
-│   ├── KeyHandler.java ⌨️ Input processing
-│   └── Sound.java 🔊 Audio management
-=======
 ├── 📁 main/ # Lõi game
-│ ├── UI.java 		📊 Hiển thị máu, thời gian, điểm
+│ ├── UI.java 		    📊 Hiển thị máu, thời gian, điểm
 │ ├── EventObject.java 	⚡ Xử lý tương tác vật phẩm
-│ ├── Main.java 	🚀 Khởi tạo JFrame
+│ ├── Main.java 	    🚀 Khởi tạo JFrame
 │ ├── MenuScreen.java 	🖼️ Màn hình menu chính
 │ ├── UtilityTool.java 	🛠️ Công cụ load ảnh/xử lý file
 │ ├── AssetSetter.java 	🖼️ Trình tải tài nguyên
 │ ├── CollisionChecker.java 🚧 Hệ thống va chạm
 │ ├── GamePanel.java 	🎮 Vòng lặp game chính
 │ ├── KeyHandler.java 	⌨️ Xử lý đầu vào
-│ └── Sound.java 	🔊 Quản lý âm thanh
->>>>>>> 22870e61336980f51d169273a07ff285aac2f1bf
+│ └── Sound.java 	    🔊 Quản lý âm thanh
 
 ├── 📁 entity/ # Nhân vật
-│ ├── Entity.java 	👤 Lớp cơ sở
-│ └── Player.java 	🧍 Điều khiển người chơi
+│ ├── Entity.java 	    👤 Lớp cơ sở
+│ └── Player.java 	    🧍 Điều khiển người chơi
 
 ├── 📁 enemy/ # Hệ thống AI kẻ thù
 │ ├── E_Bitter.java 	🍫 Logic kẻ địch Bitter
-│ ├── E_Sweet.java 	🍬 Logic kẻ địch Sweet
+│ ├── E_Sweet.java 	    🍬 Logic kẻ địch Sweet
 │ ├── E_Watermelon.java 🍉 Logic kẻ địch Watermelon
-│ ├── EnemyBehavior.java 🤖 Máy trạng thái AI
+│ ├── EnemyBehavior.java🤖 Máy trạng thái AI
 │ └── PathFinder.java 	🧭 Triển khai thuật toán A*
 
 ├── 📁 object/ # Vật thể tương tác
-│ ├── 📁 buffitems/ ⚡ Vật phẩm tăng sức mạnh
+│ ├── 📁 buffitems/     ⚡ Vật phẩm tăng sức mạnh
 │ │ ├── IncreaseDamage.java 	💥 Tăng sát thương bom
 │ │ ├── IncreaseHealth.java 	❤️ Tăng máu
-│ │ └── IncreaseLight.java 	💡 Tăng phạm vi ánh sáng
+│ │ └── IncreaseLight.java 	    💡 Tăng phạm vi ánh sáng
 │ │
-<<<<<<< HEAD
-│ ├── 📁 debuffitems/ 🧨 Penalties
->>>>>>> e497abc1584b231968e769df1ce8521101fce848
-│ │ ├── DecreaseLight.java 🌑 Light radius-
-│ │ ├── DecreaseSpeed.java 🐌 Speed down
-│ │ └── Teleport.java 📖 Random TP
+│ ├── 📁 debuffitems/   🧨 Vật phẩm gây bất lợi
+│ │ ├── DecreaseBomb.java 	    💣 Tăng thời gian hồi bomb
+│ │ ├── DecreaseSpeed.java 	    🐌 Giảm tốc độ
+│ │ └── Teleport.java 		    📖 Dịch chuyển ngẫu nhiên
 │ │
-<<<<<<< HEAD
-│ ├── Bomb.java            💣 Explosive system
-│ └── Chest.java           🎁 Loot container
-
-└── 📁 tile/ # Map system
-├── Tile.java              🧱 Single tile logic
-└── TileManager.java       🗺️ Whole map renderer
-=======
-│ ├── Bomb.java 💣 Explosive system
-│ └── Chest.java 🎁 Loot container
-
-└── 📁 tile/ # Map system
-├── Tile.java 🧱 Single tile logic
-└── TileManager.java 🗺️ Whole map renderer
->>>>>>> e497abc1584b231968e769df1ce8521101fce848
-=======
-│ ├── 📁 debuffitems/ 🧨 Vật phẩm gây bất lợi
-│ │ ├── DecreaseBomb.java 	🌑 Tăng thời gian hồi bomb
-│ │ ├── DecreaseSpeed.java 	🐌 Giảm tốc độ
-│ │ └── Teleport.java 		📖 Dịch chuyển ngẫu nhiên
-│ │
-│ ├── Bomb.java 	💣 Hệ thống bom nổ
-│ ├── Flame.java 	💥 Hệ thống lửa
-│ └── Chest.java 	🎁 Rương chứa vật phẩm
->>>>>>> 22870e61336980f51d169273a07ff285aac2f1bf
+│ ├── Bomb.java 	            💣 Hệ thống bom nổ
+│ ├── Flame.java 	            💥 Hệ thống lửa
+│ └── Chest.java 	            🎁 Rương chứa vật phẩm
 
 └── 📁 tile/ # Hệ thống bản đồ
-├── Tile.java 		🧱 Logic tile đơn lẻ
-└── TileManager.java 	🗺️ Trình render toàn bản đồ
+├── Tile.java 		            🧱 Logic tile đơn lẻ
+└── TileManager.java 	        🗺️ Trình render toàn bản đồ
 
 ```
 
@@ -400,26 +321,4 @@ public class Main {
 | Score Board      | Điểm số góc trái               | 💯 Score: 12,450        |
 | Game Over Screen | Nền đen + thông báo            | 🎮 GAME OVER - Score: X |
 
-<<<<<<< HEAD
 ---
-=======
----
-<<<<<<< HEAD
-
-<details>
-<summary>📦 Full Class Diagram (Click to Expand)</summary>
-
-```plantuml
-@startuml
-<div align="center">
-  <img src="diagram.png" width="600" alt="Game Architecture">
-  <br>
-  <em>🔄 Core Game Loop-Driven Architecture</em>
-</div>
-@enduml
-```
-</details>
-```
->>>>>>> e497abc1584b231968e769df1ce8521101fce848
-=======
->>>>>>> 22870e61336980f51d169273a07ff285aac2f1bf
