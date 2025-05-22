@@ -1,42 +1,89 @@
-TICKING AWAY
+# ⏳ **TICKING AWAY** 🔥
+## 🧭 "You wake up in the dark... with only a flickering torch in hand."
 
-Mục đích:
-- Thoát khỏi mê cung bóng tối. Người chơi bị giới hạn tầm nhìn bởi ngọn đuốc phát sáng.
+---
 
-Điều kiện thắng:
-- Thu thập đủ 2 chìa khóa (key) được giấu dưới các tảng đá (rock) để mở khóa "portal" và chiến thắng.
+## 📖 **CỐT TRUYỆN - THE FLAME AND THE FORGOTTEN**
+**Bạn tỉnh dậy trong một khoảng không gian u tối, vô tận**, trí nhớ trống rỗng, chỉ còn lại ngọn đèn nhỏ run rẩy trên tay. **Không rõ bạn là ai**, nhưng trong tiềm thức luôn vang vọng một mục tiêu duy nhất:
 
-Vật cản:
-- Mê cung với các tường chắn. (xong)
-- Kẻ địch (enemies) đuổi theo người chơi. (xong)
-- Các tảng đá (rock) chắn đường, cần dùng bom để phá. (xong)
-- Vật phẩm chủ yếu nằm trong 7 chest và sẽ cho ngẫu nhiên.
+> "**Tìm chìa khóa. Mở cánh cửa.**"
 
-Kỹ năng người chơi:
-- Đặt bom (nổ theo hình dấu +, 5 ô) để phá vật cản. (xong)
-- Đặt bom tiêu diệt kẻ địch.
-- Làm sáng phạm vi xung quanh (bán kính nhất định).
-- Nhặt vật phẩm (key, item). (xong)
-- Mở khóa portal khi đủ key.
+**Trước mắt bạn là một lâu đài đổ nát** - đá vụn chắn mất lối đi. **Kỳ lạ thay**, bạn nhận ra mình có khả năng **tạo bom từ hạt nguyên tử** trong không khí - **vô hạn, mạnh mẽ**, và duy nhất bạn sở hữu được nó. 
 
-UI: (xong)
-- Health: 4 mạng.
-- Score: tính theo số enemies tiêu diệt (nhiều điểm), số rock bị phá (ít điểm hơn).
-- Time: thời gian hoàn thành, càng ở trong mê cung lâu thì phạm vi sáng càng giảm.
+**🔥 Ánh sáng mờ dần** theo từng phút trôi qua, bạn phải:
+- **Vượt qua mê cung** tối tăm
+- **Giải mã bí ẩn**
+- **Tìm cánh cổng thần bí**
 
-Items:
-- Buffed Items:
-    + Crystal: tăng phạm vi sáng. -- riêng item này sẽ được spawn ở nhiều nơi.
-    + Helmet: tăng máu (giáp ảo).
-    + Potion: tăng phạm vi nổ bom (+1 ô).
-- Debuffed Items:
-    + Book: dịch chuyển random đến vị trí khác.
-    + Candy: di chuyển chậm.
-    + Scroll: giảm phạm vi sáng.
+---
 
-Enemies:
-- Khi vào phạm vi sáng của người chơi sẽ đuổi theo, chạm vào trừ 1 máu và chỉ có thể tiêu diệt bởi bomb.
-- Watermelon (3 máu): gặp bomb thì sẽ bị stun 1s, khi người chơi đứng im sẽ hiện hình, di chuyển sẽ
-tàng hình, phạm vi đuổi theo player xa nhất.
-- Sweet (1 máu): đi xuyên qua mọi vật cản.
-- Bitter (5 máu): có khả năng bám theo người chơi và đặt bomb.
+## 🕹️ **GAMEPLAY OVERVIEW**
+### 🎯 **MỤC TIÊU**
+**Thoát khỏi mê cung** bằng cách:
+- 🔑 **Thu thập 2 chìa khóa** mở cổng
+- 💣 **Dùng bomb** phá đá/tiêu diệt kẻ địch
+- 🕯️ **Giữ ánh sáng** bằng cách thắp đuốc
+
+### ⚙️ **CƠ CHẾ GAME**
+#### 🌒 **TẦM NHÌN GIỚI HẠN**
+- Chỉ thấy xung quanh nhờ **ánh đuốc**
+- ⏳ **Cứ 15s** phạm vi sáng giảm
+- 🔥 **Thắp lại Chest** để khôi phục sáng
+
+#### 🧱 **VẬT CẢN**
+| Biểu tượng | Mô tả                   |
+|-----------|---------------------------|
+| 🧱   | **Tường mê cung**|
+|  🪨  | **Đá (phá bằng bomb)**           |
+| 👾 | **Kẻ địch rình rập**     |
+
+---
+
+## 📦 **ITEM SYSTEM**
+### 💎 **BUFF ITEMS**
+| Item     | Hiệu ứng                  |
+|----------|---------------------------|
+| 💎 Crystal | **Tăng phạm vi sáng**     |
+| 🪖 Helmet | **+1 Máu**                |
+| 🧪 Potion | **Tăng tầm bomb**         |
+
+### 📜 **DEBUFF ITEMS**
+| Item     | Hiệu ứng                  |
+|----------|---------------------------|
+| 📖 Book  | **Dịch chuyển ngẫu nhiên**|
+| 🍬 Candy | **Giảm tốc độ**           |
+| 📜 Scroll| **Tăng thời gian hồi bomb**     |
+
+---
+
+## 👾 **KẺ THÙ**
+### 🍉 **WATERMELON (HP: 3)**
+- ⚡ **Cơ chế**: 
+  - Hiện hình khi bạn đứng yên
+  - Tàng hình khi bạn di chuyển
+  - **Bị stun 1s** khi trúng bomb
+
+### 🍬 **SWEET (HP: 1)**
+- ⚠️ **Nguy hiểm**:
+  - Di chuyển xuyên tường
+  - Tốc độ cao
+  - Xuất hiện bất ngờ
+
+---
+
+## ✨ **WHY "TICKING AWAY"?**
+> **Bạn đang chạy đua với**:
+> - ⏳ Thời gian 
+> - 🌑 Bóng tối 
+> - 👻 Những mảnh ký ức tan biến...
+
+**Chỉ còn ánh sáng le lói** dẫn đường tới sự thật!
+
+---
+
+## 🛠️ **CÔNG NGHỆ**
+```java
+☕ Java 
+🖼️ AWT/Swing 
+🤖 A* Pathfinding 
+📦 OOP Design Pattern
