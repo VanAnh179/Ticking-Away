@@ -1,3 +1,4 @@
+```markdown
 # ⏳ **TICKING AWAY** 🔥  
 <div align="center">
   <img src="assets/background/poster.png" alt="Cosmic Cipher" width="600">
@@ -120,7 +121,11 @@ Khi mở được **portal**, bạn sẽ khám phá:
 
 ## 🛠️ Technologies  
 <div align="center">
+<<<<<<< HEAD
   <img src="diagram.png" width="800" alt="OOP Architecture">
+=======
+  <img src="diagrams/oop_diagram.png" width="800" alt="OOP Architecture">
+>>>>>>> e497abc1584b231968e769df1ce8521101fce848
   <br>
   <em>📐 UML Class Diagram - Modular Design Pattern</em>
 </div>
@@ -133,6 +138,10 @@ Khi mở được **portal**, bạn sẽ khám phá:
 | 🤖 **A***       | Pathfinding for enemy movement     | -        |
 | 📦 **OOP**      | Entity-component system design     | -        |
 
+<<<<<<< HEAD
+=======
+```markdown
+>>>>>>> e497abc1584b231968e769df1ce8521101fce848
 ---
 
 ## 📂 **CẤU TRÚC DỰ ÁN NÂNG CAO**
@@ -150,6 +159,7 @@ Khi mở được **portal**, bạn sẽ khám phá:
 │   ├── Main.java            🚀 Khởi tạo JFrame
 │   ├── MenuScreen.java      🖼️ Màn hình menu chính
 │   ├── UtilityTool.java     🛠️ Công cụ load ảnh/xử lý file
+<<<<<<< HEAD
 │   ├── AssetSetter.java      🖼️ Resource loader
 │   ├── CollisionChecker.java 🚧 Collision system
 │   ├── GamePanel.java        🎮 Main game loop
@@ -174,16 +184,51 @@ Khi mở được **portal**, bạn sẽ khám phá:
 │ │ └── IncreaseLight.java   💡 Light radius+
 │ │
 │ ├── 📁 debuffitems/      🧨 Penalties
+=======
+│   ├── AssetSetter.java 🖼️ Resource loader
+│   ├── CollisionChecker.java 🚧 Collision system
+│   ├── GamePanel.java 🎮 Main game loop
+│   ├── KeyHandler.java ⌨️ Input processing
+│   └── Sound.java 🔊 Audio management
+
+├── 📁 entity/                # Nhân vật
+│   ├── Entity.java          👤 Lớp cơ sở
+│   └── Player.java          🧍♂️ Điều khiển người chơi
+
+├── 📁 enemy/ # Enemy AI system
+│ ├── E_Bitter.java 🍫 Bitter enemy logic
+│ ├── E_Sweet.java 🍬 Sweet enemy logic
+│ ├── E_Watermelon.java 🍉 Watermelon enemy
+│ ├── EnemyBehavior.java 🤖 AI state machine
+│ └── PathFinder.java 🧭 A* Implementation
+
+├── 📁 object/ # Interactive objects
+│ ├── 📁 buffitems/ ⚡ Power-ups
+│ │ ├── IncreaseDamage.java 💥 Damage boost
+│ │ ├── IncreaseHealth.java ❤️ Health boost
+│ │ └── IncreaseLight.java 💡 Light radius+
+│ │
+│ ├── 📁 debuffitems/ 🧨 Penalties
+>>>>>>> e497abc1584b231968e769df1ce8521101fce848
 │ │ ├── DecreaseLight.java 🌑 Light radius-
 │ │ ├── DecreaseSpeed.java 🐌 Speed down
 │ │ └── Teleport.java 📖 Random TP
 │ │
+<<<<<<< HEAD
 │ ├── Bomb.java            💣 Explosive system
 │ └── Chest.java           🎁 Loot container
 
 └── 📁 tile/ # Map system
 ├── Tile.java              🧱 Single tile logic
 └── TileManager.java       🗺️ Whole map renderer
+=======
+│ ├── Bomb.java 💣 Explosive system
+│ └── Chest.java 🎁 Loot container
+
+└── 📁 tile/ # Map system
+├── Tile.java 🧱 Single tile logic
+└── TileManager.java 🗺️ Whole map renderer
+>>>>>>> e497abc1584b231968e769df1ce8521101fce848
 
 
 ```
@@ -321,4 +366,23 @@ public class Main {
 | Score Board      | Điểm số góc trái               | 💯 Score: 12,450        |
 | Game Over Screen | Nền đen + thông báo            | 🎮 GAME OVER - Score: X |
 
+<<<<<<< HEAD
 ---
+=======
+---
+
+<details>
+<summary>📦 Full Class Diagram (Click to Expand)</summary>
+
+```plantuml
+@startuml
+<div align="center">
+  <img src="diagram.png" width="600" alt="Game Architecture">
+  <br>
+  <em>🔄 Core Game Loop-Driven Architecture</em>
+</div>
+@enduml
+```
+</details>
+```
+>>>>>>> e497abc1584b231968e769df1ce8521101fce848
