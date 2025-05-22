@@ -1,5 +1,6 @@
 package entity;
 
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -7,6 +8,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import enemy.E_Watermelon;
 import main.GamePanel;
 import main.UtilityTool;
 
@@ -20,6 +22,10 @@ public class Entity {
     public BufferedImage right1, right2, right3, right4, right5, right6, right7, right8, right9;
     public BufferedImage down1, down2, down3, down4, down5, down6, down7, down8, down9;
     public BufferedImage left1, left2, left3, left4, left5, left6, left7, left8, left9;
+
+    public int spriteCounter = 0;
+    public int spriteNum = 1;
+    public String lastDirection = "down";
 
     public String direction;
     public Rectangle solidArea = new Rectangle();
@@ -45,40 +51,94 @@ public class Entity {
         gp.cChecker.checkTile(this);
         gp.cChecker.checkObject(this, false);
         gp.cChecker.checkPlayer(this);
+        
+        spriteCounter++;
+        if (spriteCounter > 12) {
+            spriteNum++;
+            if (spriteNum > 4) {
+                spriteNum = 1;
+            }
+            spriteCounter = 0;
+        }
 
         if (!collisionOn) {
             switch (direction) {
-                case "up":
+                case "up": worldY -= speed; break;
+                case "down": worldY += speed; break;
+                case "left": worldX -= speed; break;
+                case "right": worldX += speed; break;
+                case "up-left":
                     worldY -= speed;
-                    break;
-                case "down":
-                    worldY += speed;
-                    break;
-                case "left":
                     worldX -= speed;
                     break;
-                case "right":
+                case "up-right":
+                    worldY -= speed;
+                    worldX += speed;
+                    break;
+                case "down-left":
+                    worldY += speed;
+                    worldX -= speed;
+                    break;
+                case "down-right":
+                    worldY += speed;
                     worldX += speed;
                     break;
             }
         }
+        
     }
 
     public void takeDamage(int damage) {}
 
     public void draw(Graphics2D g2) {
         BufferedImage image = null;
+
         int screenX = worldX - gp.player.worldX + gp.player.screenX;
         int screenY = worldY - gp.player.worldY + gp.player.screenY;
 
-        switch (direction) {
-            case "up": image = up1; break;
-            case "down": image = down1; break;
-            case "left": image = left1; break;
-            case "right": image = right1; break;
-            default: image = down1; break;
+        // Xử lý trường hợp direction rỗng
+        String drawDirection = direction.isEmpty() ? lastDirection : direction;
+
+        switch (drawDirection) {
+            case "up":
+                if (spriteNum == 1) image = up1;
+                else if (spriteNum == 2) image = up2;
+                else if (spriteNum == 3) image = up3;
+                else image = up4;
+                break;
+            case "down":
+                if (spriteNum == 1) image = down1;
+                else if (spriteNum == 2) image = down2;
+                else if (spriteNum == 3) image = down3;
+                else image = down4;
+                break;
+            case "left":
+                if (spriteNum == 1) image = left1;
+                else if (spriteNum == 2) image = left2;
+                else if (spriteNum == 3) image = left3;
+                else image = left4;
+                break;
+            case "right":
+                if (spriteNum == 1) image = right1;
+                else if (spriteNum == 2) image = right2;
+                else if (spriteNum == 3) image = right3;
+                else image = right4;
+                break;
         }
+
+        // Vẽ hình ảnh mặc định nếu image null
+        if (image == null) {
+            image = down1; // Sử dụng hình ảnh mặc định
+        }
+        // Áp dụng hiệu ứng tàng hình nếu là E_Watermelon
+        if (this instanceof E_Watermelon && ((E_Watermelon)this).isInvisible()) {
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f)); // tàng hình 70%
+        }
+
         g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+
+        // Reset alpha
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 
     public BufferedImage setup(String imagePath) {

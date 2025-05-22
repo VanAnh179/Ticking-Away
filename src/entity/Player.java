@@ -10,7 +10,7 @@ import main.KeyHandler;
 import object.Bomb;
 
 public class Player extends Entity {
-    KeyHandler keyH;
+    public KeyHandler keyH;
 
     public final int screenX;
     public final int screenY;
@@ -18,7 +18,7 @@ public class Player extends Entity {
     public int maxHealth = 4;
     public int health = maxHealth;
     public int invincibleCounter = 0;
-    public final int INVINCIBLE_TIME = 100;
+    public final int INVINCIBLE_TIME = 180;
     public boolean wasTouchingEnemy = false;
 
     public BufferedImage idleDown, idleUp, idleLeft, idleRight;
@@ -29,7 +29,7 @@ public class Player extends Entity {
 
     // Tính thời gian đặt bomb để tránh spam
     public int bombCooldown = 0; // biến cooldown cho đặt bomb
-    public final int BOMB_COOLDOWN_TIME = 30; // 1 giây (60 frames)
+    public final int BOMB_COOLDOWN_TIME = 60; // 1 giây (60 frames)
 
     public int bombRange = 1; // Số ô bomb có thể nổ
 

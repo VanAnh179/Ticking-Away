@@ -6,31 +6,30 @@ import java.util.Random;
 public class EnemyBehavior {
     // Logic đuổi theo player
     public static void chasePlayer(Entity enemy, int chaseRange, int stopRange) {
-        int xDistance = (int) enemy.gp.player.worldX - (int) enemy.worldX;
-        int yDistance = (int) enemy.gp.player.worldY - (int) enemy.worldY;
-        // int totalDistance = xDistance + yDistance;
+        int xDistance = (int) (enemy.gp.player.worldX - enemy.worldX);
+        int yDistance = (int) (enemy.gp.player.worldY - enemy.worldY);
+        int totalDistance = Math.abs(xDistance) + Math.abs(yDistance);
 
-        // // Chuyển chaseRange và stopRange thành pixel
-        // int chaseRangePixel = chaseRange * enemy.gp.tileSize;
-        // int stopRangePixel = stopRange * enemy.gp.tileSize;
+        int chaseRangePixel = chaseRange * enemy.gp.tileSize;
+        int stopRangePixel = stopRange * enemy.gp.tileSize;
 
-        // if (totalDistance <= chaseRangePixel) {
-        //     // Đuổi theo
-        //     if (enemy.gp.player.worldX > enemy.worldX) enemy.direction = "right";
-        //     else if (enemy.gp.player.worldX < enemy.worldX) enemy.direction = "left";
-        //     if (enemy.gp.player.worldY > enemy.worldY) enemy.direction = "down";
-        //     else if (enemy.gp.player.worldY < enemy.worldY) enemy.direction = "up";
-        // } else if (totalDistance > stopRangePixel) {
-        //     enemy.direction = ""; // Dừng đuổi
-        // } else {
-        //     randomMove(enemy); // Di chuyển ngẫu nhiên
-        // }
-        
-        // Xác định hướng di chuyển ưu tiên trục X hoặc Y
-        if (Math.abs(xDistance) > Math.abs(yDistance)) {
-            enemy.direction = (xDistance > 0) ? "right" : "left";
+        if (totalDistance <= chaseRangePixel) {
+            StringBuilder dir = new StringBuilder();
+            // Thêm độ trễ khi đổi hướng để tạo cảm giác ma mị
+            if (new Random().nextInt(100) < 30) {
+                enemy.direction = dir.toString();
+            }
+            if (yDistance < 0) dir.append("up");
+            else if (yDistance > 0) dir.append("down");
+
+            if (xDistance < 0) dir.append((dir.length() > 0) ? "-left" : "left");
+            else if (xDistance > 0) dir.append((dir.length() > 0) ? "-right" : "right");
+
+            enemy.direction = dir.toString();
+        } else if (totalDistance > stopRangePixel) {
+            randomMove(enemy); // Dừng đuổi
         } else {
-            enemy.direction = (yDistance > 0) ? "down" : "up";
+            randomMove(enemy); // Di chuyển ngẫu nhiên
         }
     }
 
@@ -44,18 +43,16 @@ public class EnemyBehavior {
             Random random = new Random();
             int i = random.nextInt(100) + 1;
 
-            if (i <= 25) {
-                enemy.direction = "up";
-            }
-            if (i > 25 && i <= 50) {
-                enemy.direction = "down";
-            }
-            if (i > 50 && i <= 75) {
-                enemy.direction = "left";
-            }
-            if (i > 75 && i <= 100) {
-                enemy.direction = "right";
-            }
+            if (i <= 12) enemy.direction = "up";
+            else if (i <= 24) enemy.direction = "down";
+            else if (i <= 36) enemy.direction = "left";
+            else if (i <= 48) enemy.direction = "right";
+            else if (i <= 60) enemy.direction = "up-left";
+            else if (i <= 72) enemy.direction = "up-right";
+            else if (i <= 84) enemy.direction = "down-left";
+            else if (i <= 96) enemy.direction = "down-right";
+            else enemy.direction = ""; // đứng yên
+
             actionLockCounter = 0;
         }
     }

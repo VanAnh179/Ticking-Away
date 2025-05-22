@@ -35,7 +35,8 @@ Items:
     + Scroll: giảm phạm vi sáng.
 
 Enemies:
-- Khi vào phạm vi sáng của người chơi sẽ đuổi theo, chạm vào trừ 1 máu.
-- Watermelon: không đi qua tường, gặp vật cản thì dừng, di chuyển nhanh hơn Watermelon, số lượng 2-3.
-- Sweet: đi xuyên qua mọi vật cản, số lượng 1-2.
-- Bitter: khi đến gần người chơi ở khoảng cách nhất định sẽ bắt đầu kích hoạt thời gian nổ, nổ -2 máu.
+- Khi vào phạm vi sáng của người chơi sẽ đuổi theo, chạm vào trừ 1 máu và chỉ có thể tiêu diệt bởi bomb.
+- Watermelon (3 máu): gặp bomb thì sẽ bị stun 1s, khi người chơi đứng im sẽ hiện hình, di chuyển sẽ
+tàng hình, phạm vi đuổi theo player xa nhất.
+- Sweet (1 máu): đi xuyên qua mọi vật cản.
+- Bitter (5 máu): có khả năng bám theo người chơi và đặt bomb.
