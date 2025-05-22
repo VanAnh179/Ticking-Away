@@ -117,32 +117,48 @@ public class CollisionChecker {
 			case "down": nextWorldY += entity.speed; break;
 			case "left": nextWorldX -= entity.speed; break;
 			case "right": nextWorldX += entity.speed; break;
+			case "up-left":
+                    nextWorldY -= entity.speed;
+                    nextWorldX -= entity.speed;
+                    break;
+                case "up-right":
+                    nextWorldY -= entity.speed;
+                    nextWorldX += entity.speed;
+                    break;
+                case "down-left":
+                    nextWorldY += entity.speed;
+                    nextWorldX -= entity.speed;
+                    break;
+                case "down-right":
+                    nextWorldY += entity.speed;
+                    nextWorldX += entity.speed;
+                    break;
 		}
 
 		// Kiểm tra collision tại vị trí dự kiến
-		boolean isColliding = isCollisionAt(nextWorldX, nextWorldY, entity);
+		// boolean isColliding = isCollisionAt(nextWorldX, nextWorldY, entity);
 
-		if (isColliding) {
-			entity.collisionOn = true;
-		} else {
-			entity.worldX = nextWorldX;
-			entity.worldY = nextWorldY;
-		}
+		// if (isColliding) {
+		// 	entity.collisionOn = true;
+		// } else {
+		// 	entity.worldX = nextWorldX;
+		// 	entity.worldY = nextWorldY;
+		// }
 	}
 
-	private boolean isCollisionAt(int x, int y, Entity entity) {
-		// Tính toán vị trí tile dựa trên x và y
-		int leftCol = (x + entity.solidArea.x) / gp.tileSize;
-		int rightCol = (x + entity.solidArea.x + entity.solidArea.width) / gp.tileSize;
-		int topRow = (y + entity.solidArea.y) / gp.tileSize;
-		int bottomRow = (y + entity.solidArea.y + entity.solidArea.height) / gp.tileSize;
+	// private boolean isCollisionAt(int x, int y, Entity entity) {
+	// 	// Tính toán vị trí tile dựa trên x và y
+	// 	int leftCol = (x + entity.solidArea.x) / gp.tileSize;
+	// 	int rightCol = (x + entity.solidArea.x + entity.solidArea.width) / gp.tileSize;
+	// 	int topRow = (y + entity.solidArea.y) / gp.tileSize;
+	// 	int bottomRow = (y + entity.solidArea.y + entity.solidArea.height) / gp.tileSize;
 
-		// Kiểm tra các tile xung quanh
-		return gp.tileM.tile[gp.tileM.mapTileNum[leftCol][topRow]].collision ||
-			gp.tileM.tile[gp.tileM.mapTileNum[rightCol][topRow]].collision ||
-			gp.tileM.tile[gp.tileM.mapTileNum[leftCol][bottomRow]].collision ||
-			gp.tileM.tile[gp.tileM.mapTileNum[rightCol][bottomRow]].collision;
-	}
+	// 	// Kiểm tra các tile xung quanh
+	// 	return gp.tileM.tile[gp.tileM.mapTileNum[leftCol][topRow]].collision ||
+	// 		gp.tileM.tile[gp.tileM.mapTileNum[rightCol][topRow]].collision ||
+	// 		gp.tileM.tile[gp.tileM.mapTileNum[leftCol][bottomRow]].collision ||
+	// 		gp.tileM.tile[gp.tileM.mapTileNum[rightCol][bottomRow]].collision;
+	// }
     
     public int checkObject(Entity entity, boolean player) {
     	

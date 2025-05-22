@@ -20,20 +20,29 @@ public class AssetSetter {
 	}
 
 	public void setEnemy() {
+        addWatermelon(30, 5);
         addSweet(20, 9);
+        addSweet(24, 34);
         addSweet(14, 6);
         addBitter(28, 18);
         addWatermelon(41, 10);
         addSweet(8, 41);
         addSweet(14, 42);
-        addWatermelon(16, 39);
+        addSweet(21, 23);
+        addBitter(16, 39);
         addWatermelon(6, 41);
+        addWatermelon(26, 42);
+        addWatermelon(14, 37);
         addSweet(25, 42);
         addBitter(40, 44);
         addWatermelon(33, 43);
         addSweet(42, 42);
         addSweet(40, 38);
         addSweet(42, 32);
+        addSweet(41, 43);
+        addSweet(13, 37);
+        addSweet(6, 41);
+        addSweet(8, 44);
         addBitter(14, 43);
 	} 
 
