@@ -4,7 +4,7 @@ import main.GamePanel;
 import main.Sound;
 import object.Bomb;
 import object.Flame;
-
+import object.SuperObject;
 
 import java.awt.*;
 import java.util.List;
@@ -16,23 +16,24 @@ public class E_Bitter extends Entity {
     private final int VISION_RANGE = 7; // số tile
     private final int SAFE_DISTANCE = 2; // số tile để tránh bom
     public int bombCooldown = 0;
-    public final int BOMB_COOLDOWN_TIME = 240; // Mỗi 4 giây đặt 1 bomb
+    public final int BOMB_COOLDOWN_TIME = 300; // Mỗi 4 giây đặt 1 bomb
     public int bombRange = 1;
     public int invincibleCounter = 0;
     public final int INVINCIBLE_TIME = 60;
-    private enum State { CHASE, ESCAPE }
-    private State aiState = State.CHASE;
+    private enum State { CHASE, ESCAPE, WANDER }
+    private State aiState = State.WANDER; // Bắt đầu với trạng thái đi lang thang
     private int indexInEnemyArray = -1;
+    private Bomb placedBomb = null;
     private Sound hurtSound = new Sound();
-    private List<Node> pathList = new java.util.ArrayList<>();
+    List<Node> pathList = new java.util.ArrayList<>();
 
     public E_Bitter(GamePanel gp) {
         super(gp);
-        name = "E_Bitter";
+        name = "Bitter";
         speed = 2;
         maxHealth = 5;
         health = maxHealth;
-        solidArea = new Rectangle(8, 8, 32, 32);
+        solidArea = new Rectangle(8, 8, 32, 40);
         direction = "down";
         collisionOn = false;
 
@@ -63,70 +64,109 @@ public class E_Bitter extends Entity {
     public void update() {
         super.update();
 
-        // Giảm cooldown bomb (nếu dùng)
-        bombCooldown = Math.max(0, bombCooldown - 1);
-
-        if (bombCooldown > 0) {
-            bombCooldown--;
+        // Kiểm tra nếu bomb đã nổ
+        if (placedBomb != null && placedBomb.exploded) {
+            placedBomb = null;
+            aiState = State.CHASE; // Quay lại đuổi sau khi bomb nổ
         }
 
-        // Bất tử tạm thời
+        // Giảm cooldown bomb (nếu dùng)
+        bombCooldown = Math.max(0, bombCooldown - 1);
         if (invincibleCounter > 0) invincibleCounter--;
 
-        // Nếu bị trúng flame
         if (isHitByFlame()) {
             takeDamage(1);
         }
 
-        // Xử lý theo trạng thái AI
+        int enemyCol = (worldX + solidArea.x + solidArea.width / 2) / gp.tileSize;
+        int enemyRow = (worldY + solidArea.y + solidArea.height / 2) / gp.tileSize;
+        int playerCol = (gp.player.worldX + gp.player.solidArea.x + gp.player.solidArea.width / 2) / gp.tileSize;
+        int playerRow = (gp.player.worldY + gp.player.solidArea.y + gp.player.solidArea.height / 2) / gp.tileSize;
+
+        boolean isNextToPlayer = Math.abs(enemyCol - playerCol) <= 1 && Math.abs(enemyRow - playerRow) <= 1;
+
+        // Xử lý AI
         switch (aiState) {
             case ESCAPE:
-                if (isNearFlame()) {
-                    escapeFromBomb();
-                } else {
+                if (!isNearBomb() && !isNearFlame()) {
                     aiState = State.CHASE;
                     pathList.clear();
+                } else {
+                    escapeFromDanger();
+                    moveToTarget();
+                    applyMovement(); 
+                    if (pathList.isEmpty()) {
+                        EnemyBehavior.randomMove(this); // Di chuyển ngẫu nhiên nếu không tìm được đường
+                    }
                 }
                 break;
 
             case CHASE:
-                if (calculateDistanceToPlayer() < VISION_RANGE) {
+                if (isNextToPlayer && bombCooldown <= 0) {
+                    int bombCol = (worldX + solidArea.x + solidArea.width / 2) / gp.tileSize;
+                    int bombRow = (worldY + solidArea.y + solidArea.height / 2) / gp.tileSize;
+                    if (hasEscapeRouteAfterPlacingBomb(bombCol, bombRow)) {
+                        placeBomb();
+                        aiState = State.ESCAPE;
+                    }
+                } else if (calculateDistanceToPlayer() <= VISION_RANGE) {
                     calculateAStarPath();
+                } else {
+                    aiState = State.WANDER;
+                }
+                break;
+
+            case WANDER:
+                if (calculateDistanceToPlayer() <= VISION_RANGE) {
+                    aiState = State.CHASE;
+                } else {
+                    EnemyBehavior.smartWander(this);
+                    moveToTarget();  // di chuyển theo pathList nếu có
+                    // fallback: nếu pathList rỗng thì random
+                    if (pathList.isEmpty()) {
+                        EnemyBehavior.randomMove(this);
+                        applyMovement();
+                    }
                 }
                 break;
         }
 
-        // Di chuyển theo path
         moveToTarget();
-
-        // Kiểm tra nếu đủ gần để đặt bomb
-        double distanceToPlayer = Math.hypot(
-            (gp.player.worldX - this.worldX),
-            (gp.player.worldY - this.worldY)
-        );
-
-        if (aiState == State.CHASE && distanceToPlayer < gp.tileSize * 2) {
-            placeBomb();
-            aiState = State.ESCAPE;
-            pathList.clear();
-        }
-
-        // Va chạm tile
         collisionOn = false;
         gp.cChecker.checkTile(this);
-
-        // Nếu không bị kẹt thì di chuyển
         if (!collisionOn) {
-            switch (direction) {
-                case "up": worldY -= speed; break;
-                case "down": worldY += speed; break;
-                case "left": worldX -= speed; break;
-                case "right": worldX += speed; break;
-                case "upleft": worldX -= speed; worldY -= speed; break;
-                case "upright": worldX += speed; worldY -= speed; break;
-                case "downleft": worldX -= speed; worldY += speed; break;
-                case "downright": worldX += speed; worldY += speed; break;
-            }
+            applyMovement();
+        }
+        if (collisionOn && aiState == State.WANDER) {
+            // lập tức chọn lại hướng hợp lệ
+            EnemyBehavior.randomMove(this);
+            collisionOn = false;
+        }
+    }
+
+    private void applyMovement() {
+        // Lưu vị trí cũ để rollback nếu cần
+        int oldWorldX = worldX;
+        int oldWorldY = worldY;
+
+        switch (direction) {
+            case "up": worldY -= speed; break;
+            case "down": worldY += speed; break;
+            case "left": worldX -= speed; break;
+            case "right": worldX += speed; break;
+            case "upleft": worldX -= speed; worldY -= speed; break;
+            case "upright": worldX += speed; worldY -= speed; break;
+            case "downleft": worldX -= speed; worldY += speed; break;
+            case "downright": worldX += speed; worldY += speed; break;
+        }
+        // Kiểm tra collision sau khi di chuyển
+        collisionOn = false;
+        gp.cChecker.checkTile(this);
+        if (collisionOn) {
+            // Rollback vị trí nếu va chạm
+            worldX = oldWorldX;
+            worldY = oldWorldY;
+            pathList.clear(); // Hủy đường đi hiện tại
         }
     }
 
@@ -146,6 +186,8 @@ public class E_Bitter extends Entity {
         int bombWorldX = bombCol * gp.tileSize;
         int bombWorldY = bombRow * gp.tileSize;
 
+        if (!hasEscapeRouteAfterPlacingBomb(bombCol, bombRow)) return;
+
         if (bombCol < 0 || bombCol >= gp.maxWorldCol || bombRow < 0 || bombRow >= gp.maxWorldRow) return;
         if (gp.tileM.tile[gp.tileM.mapTileNum[bombCol][bombRow]].collision) return;
 
@@ -157,6 +199,7 @@ public class E_Bitter extends Entity {
                 bomb.explosionRange = this.bombRange;
                 gp.obj[i] = bomb;
                 bombCooldown = BOMB_COOLDOWN_TIME;
+                placedBomb = (Bomb) gp.obj[i];
                 break;
             }
         }
@@ -176,14 +219,27 @@ public class E_Bitter extends Entity {
         int dx = targetX - worldX;
         int dy = targetY - worldY;
 
-        // Di chuyển từng pixel
-        if (dx > 0) { worldX += speed; direction = "right"; }
-        else if (dx < 0) { worldX -= speed; direction = "left"; }
+        if (Math.abs(dx) > Math.abs(dy)) {
+            // Ưu tiên di chuyển theo trục X trước
+            if (dx > 0) {
+                direction = "right";
+                worldX += speed;
+            } else if (dx < 0) {
+                direction = "left";
+                worldX -= speed;
+            }
+        } else {
+            // Nếu trục Y lớn hơn thì di chuyển theo trục Y
+            if (dy > 0) {
+                direction = "down";
+                worldY += speed;
+            } else if (dy < 0) {
+                direction = "up";
+                worldY -= speed;
+            }
+        }
 
-        if (dy > 0) { worldY += speed; direction = "down"; }
-        else if (dy < 0) { worldY -= speed; direction = "up"; }
-
-        // Nếu đã đến nơi
+        // Nếu đến nơi
         if (Math.abs(dx) <= speed && Math.abs(dy) <= speed) {
             worldX = targetX;
             worldY = targetY;
@@ -209,32 +265,73 @@ public class E_Bitter extends Entity {
         int goalRow = gp.player.worldY / gp.tileSize;
 
         PathFinder pf = new PathFinder(gp);
-        List<Node> path = pf.findPath(startCol, startRow, goalCol, goalRow, true); // true = cho phép đi chéo
+        List<Node> path = pf.findPath(startCol, startRow, goalCol, goalRow, false); // true = cho phép đi chéo
         if (path != null) pathList = path;
     }
 
-    private void escapeFromBomb() {
-        int startCol = worldX / gp.tileSize;
-        int startRow = worldY / gp.tileSize;
-
+    private boolean hasEscapeRouteAfterPlacingBomb(int bombCol, int bombRow) {
         PathFinder pf = new PathFinder(gp);
-        int radius = 5; // phạm vi tìm tile an toàn
-        List<Node> safestPath = null;
+        int startCol = bombCol;
+        int startRow = bombRow;
 
+        int radius = 5;
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dy = -radius; dy <= radius; dy++) {
                 int testCol = startCol + dx;
                 int testRow = startRow + dy;
 
-                // Kiểm tra nằm trong giới hạn bản đồ
-                if (testCol < 0 || testRow < 0 || testCol >= gp.maxWorldCol || testRow >= gp.maxWorldRow) {
-                    continue;
-                }
+                if (testCol < 0 || testRow < 0 || testCol >= gp.maxWorldCol || testRow >= gp.maxWorldRow) continue;
+                if (!isSafeFromBomb(testCol, testRow, bombCol, bombRow)) continue;
 
-                if (isSafeTile(testCol, testRow)) {
-                    List<Node> path = pf.findPath(startCol, startRow, testCol, testRow, true);
-                    if (path != null && (safestPath == null || path.size() < safestPath.size())) {
-                        safestPath = path;
+                List<Node> path = pf.findPath(startCol, startRow, testCol, testRow, false);
+                if (path != null) return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isSafeFromBomb(int tileCol, int tileRow, int bombCol, int bombRow) {
+        if (tileCol == bombCol && Math.abs(tileRow - bombRow) <= bombRange) return false;
+        if (tileRow == bombRow && Math.abs(tileCol - bombCol) <= bombRange) return false;
+        if (tileCol == bombCol && tileRow == bombRow) return false; // Tránh tile bom đặt
+        return true;
+    }
+
+    private int countSafeNeighbors(int col, int row, int radius) {
+        int count = 0;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                int nCol = col + dx;
+                int nRow = row + dy;
+                if (isInBounds(nCol, nRow) && isSafeTile(nCol, nRow)) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    private void escapeFromDanger() {
+        int startCol = worldX / gp.tileSize;
+        int startRow = worldY / gp.tileSize;
+        PathFinder pf = new PathFinder(gp);
+        List<Node> safestPath = null;
+        int maxSafeNeighbors = -1;
+        int searchRadius = 5;
+        int radius = 3; // radius cho neighbors count
+
+        for (int dx = -searchRadius; dx <= searchRadius; dx++) {
+            for (int dy = -searchRadius; dy <= searchRadius; dy++) {
+                int testCol = startCol + dx;
+                int testRow = startRow + dy;
+                if (isInBounds(testCol, testRow) && isSafeTile(testCol, testRow)) {
+                    List<Node> path = pf.findPath(startCol, startRow, testCol, testRow, false);
+                    if (path != null) {
+                        int safeNeighbors = countSafeNeighbors(testCol, testRow, radius);
+                        if (safeNeighbors > maxSafeNeighbors || safestPath == null) {
+                            maxSafeNeighbors = safeNeighbors;
+                            safestPath = path;
+                        }
                     }
                 }
             }
@@ -242,16 +339,52 @@ public class E_Bitter extends Entity {
 
         if (safestPath != null) {
             pathList = safestPath;
+        } else {
+            EnemyBehavior.smartWander(this);
         }
     }
 
+    private boolean isNearBomb() {
+        int enemyCol = worldX / gp.tileSize;
+        int enemyRow = worldY / gp.tileSize;
+        for (SuperObject obj : gp.obj) {
+            if (obj instanceof Bomb) {
+                int bombCol = obj.worldX / gp.tileSize;
+                int bombRow = obj.worldY / gp.tileSize;
+                int dist = Math.abs(bombCol - enemyCol) + Math.abs(bombRow - enemyRow);
+                if (dist <= SAFE_DISTANCE) return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isInBounds(int col, int row) {
+        return col >= 0 && col < gp.maxWorldCol && row >= 0 && row < gp.maxWorldRow;
+    }
+
     private boolean isSafeTile(int col, int row) {
-        // Kiểm tra xem tile này có bị bomb hoặc flame đe dọa không
+        // Kiểm tra tile collision
+        if (gp.tileM.tile[gp.tileM.mapTileNum[col][row]].collision) return false;
+
+        // Kiểm tra bomb và flame
         for (Flame flame : gp.flames) {
-            if (flame != null && flame.collision) {
-                int flameCol = flame.worldX / gp.tileSize;
-                int flameRow = flame.worldY / gp.tileSize;
-                if (flameCol == col && flameRow == row) {
+            if (flame != null && flame.collision && 
+                flame.worldX / gp.tileSize == col && 
+                flame.worldY / gp.tileSize == row) {
+                return false;
+            }
+        }
+        // Kiểm tra bomb và các ô xung quanh bomb
+        for (SuperObject obj : gp.obj) {
+            if (obj instanceof Bomb) {
+                int bombCol = obj.worldX / gp.tileSize;
+                int bombRow = obj.worldY / gp.tileSize;
+
+                if (
+                    (col == bombCol && row == bombRow) || // chính ô bomb
+                    (col == bombCol && Math.abs(row - bombRow) == 1) || // trên/dưới
+                    (row == bombRow && Math.abs(col - bombCol) == 1)    // trái/phải
+                ) {
                     return false;
                 }
             }

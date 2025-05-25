@@ -19,10 +19,10 @@ public class E_Sweet extends Entity {
         health = maxHealth;
         direction = "down";
 
-        solidArea.x = 10;
-        solidArea.y = 20;
-        solidArea.width = 22;
-        solidArea.height = 28;
+        solidArea.x = 5;
+        solidArea.y = 10;
+        solidArea.width = 38;
+        solidArea.height = 38;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
 
@@ -55,6 +55,23 @@ public class E_Sweet extends Entity {
     public void update() {
         super.update();
 
+        int col = worldX / gp.tileSize;
+        int row = worldY / gp.tileSize;
+        boolean outOfBounds = col < 0 || col >= gp.maxWorldCol || row < 0 || row >= gp.maxWorldRow;
+
+        if (outOfBounds) {
+            switch (direction) {
+                case "up": direction = "down"; break;
+                case "down": direction = "up"; break;
+                case "left": direction = "right"; break;
+                case "right": direction = "left"; break;
+                case "up-left": direction = "down-right"; break;
+                case "up-right": direction = "down-left"; break;
+                case "down-left": direction = "up-right"; break;
+                case "down-right": direction = "up-left"; break;
+            }
+        }
+
         // Kiểm tra va chạm với flame
         for (Flame flame : gp.flames) {
         if (flame != null && flame.collision && invincibleCounter == 0) {
@@ -86,19 +103,20 @@ public class E_Sweet extends Entity {
     }
 
     @Override
-public void takeDamage(int damage) {
-    if (invincibleCounter == 0) { // Chỉ nhận sát thương khi không bất tử
-        health -= damage;
-        hurtSound.setFile(4);
-        if (health <= 0) {
-        } else {
-            invincibleCounter = 60; // Kích hoạt thời gian bất tử
+    public void takeDamage(int damage) {
+        if (invincibleCounter == 0) { // Chỉ nhận sát thương khi không bất tử
+            health -= damage;
+            hurtSound.setFile(4);
+            hurtSound.play();
+            if (health <= 0) {
+            } else {
+                invincibleCounter = 60; // Kích hoạt thời gian bất tử
+            }
         }
     }
-}
 
     @Override
     public void setAction() {
-        EnemyBehavior.chasePlayer(this, 5, 7);
+        EnemyBehavior.chasePlayer(this, 8, 13);
     }
 }

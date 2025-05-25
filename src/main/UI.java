@@ -3,16 +3,19 @@ package main;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.HashMap;
+
 import javax.imageio.ImageIO;
 
 public class UI {
     GamePanel gp;
-    BufferedImage heart;
+    BufferedImage heart, keyImage;
     public boolean messageOn = false;
     public String message = "";
     int messageCounter = 0;
     public boolean gameFinished = false;
     public boolean gameWon = false; // Thêm biến gameWon
+    protected Sound textSound = new Sound();
 
     private long startTime;
     private long lastBackgroundScoreUpdate;
@@ -22,14 +25,88 @@ public class UI {
     public int backgroundScore = 50000;
     public final int BG_SCORE_DECREASE = 13;
 
+    // Thêm các biến cho tutorial
+    public boolean showTutorial = true;
+    private String[] tutorialPages = {
+        "Tôi đang ở đâu thế này?\n...",
+        "...",
+        "Vừa tỉnh dậy ở một nơi xa lạ, xung quanh chỉ toàn là hư vô.\nTrước mắt tôi là một tòa lâu đài u ám.\nKhông còn cách nào khác...\ntôi buộc phải tiến vào.",
+        "Và giờ, tôi đứng đây... giữa đống đổ nát hoang tàn.",
+        "Ự...\n\nAAAA!",
+        "[SHOW_IMAGE portal_vision 2000]", // Placeholder để chèn ảnh
+        "Đau đầu quá...",
+        "Tôi... \ntôi phải tìm cách thoát khỏi đây ngay...\nMọi thứ đang sụp đổ, hoặc... chính tôi đang mất trí.",
+        "Hy vọng ngọn đuốc này có thể cháy đủ lâu...\nCho đến khi tôi tìm được cánh cửa đó.",
+        "Cơn đau đầu vừa rồi khiến tôi thấy một ảo ảnh...\nhình ảnh về một cánh cửa...",
+        "Chắc chắn đó là lối ra...\nVà thứ tôi cần bây giờ là...\nchìa khóa.",
+        "Được rồi.\nMình có khả năng tạo ra bom bằng cách\nkết hợp các hạt nguyên tử trong không khí.",
+        "Hãy thử với viên đá kia xem!"
+    };
+    private int currentTutorialPage = 0;
+    private int currentCharIndex = 0;
+    private long lastCharTime;
+    private final int CHAR_DELAY = 50; // Thời gian hiện từng chữ (ms)
+    private final Color BORDER_COLOR = new Color(255, 105, 180); // Màu viền hồng
+
+    public boolean showKeyMessage = false;
+    public boolean hasShownKeyMessage = false;
+    public int keyCharIndex = 0;
+    public long keyLastCharTime;
+    public boolean showKeySequence = false;
+    public String[] keyMessages = {
+        "A! Chìa khóa đây rồi!",
+        "[SHOW_IMAGE key_01d 2000]", // Hiệu ứng ảnh key
+        "Tuyệt quá!\nGiờ mình có thể thoát khỏi đây rồi!",
+        "Giờ tìm cánh cửa đó thôi nào"
+    };
+    private int currentKeyPage = 0;
+
+    public boolean showPortalSequence = false;
+    public String[] portalMessages = {
+        "Ô,...",
+        "...",
+        "Cánh cửa này cần tận 3 chìa khóa sao?",
+        "Phải tìm thêm chìa khóa mới được."
+    };
+    private int currentPortalPage = 0;
+
+    private Rectangle okButtonRect;
+
+    public BufferedNameEffect currentEffect;
+    public long effectStartTime;
+    public boolean showEffect = false;
+    private HashMap<String, BufferedImage> effectImages = new HashMap<>();
+
     public UI(GamePanel gp) {
         this.gp = gp;
+        textSound.setFile(11);
+        effectImages = new HashMap<>(); // Khởi tạo map
         try {
+            // Thêm load ảnh
+            BufferedImage portalImage = ImageIO.read(getClass().getResourceAsStream("/background/portal_vision.png"));
+            BufferedImage keyEffectImage = ImageIO.read(getClass().getResourceAsStream("/objects/key_01d.png"));
+            keyEffectImage = scaleImage(keyEffectImage, 128, 128);
+            effectImages.put("key_01d", keyEffectImage);
+            if (portalImage != null) {
+                portalImage = scaleImage(portalImage, 256, 256);
+                effectImages.put("portal_vision", portalImage);
+                System.out.println("Đã tải thành công ảnh portal_vision");
+            } else {
+                System.out.println("Không tìm thấy file ảnh portal_vision");
+            }
             heart = ImageIO.read(getClass().getResourceAsStream("/objects/health.png"));
+            keyImage = ImageIO.read(getClass().getResourceAsStream("/objects/key_01d.png")); // Load ảnh key
+            keyImage = scaleImage(keyImage, 30, 30);
         } catch (IOException e) {
+            System.err.println("Lỗi tải ảnh:");
             e.printStackTrace();
         }
         resetTimer();
+
+        System.out.println("Danh sách key trong effectImages:");
+        for (String key : effectImages.keySet()) {
+            System.out.println("[" + key + "]");
+        }
     }
     
     private BufferedImage scaleImage(BufferedImage original, int width, int height) {
@@ -41,25 +118,39 @@ public class UI {
     }
 
     public void resetTimer() {
-        startTime = System.currentTimeMillis();
-        lastBackgroundScoreUpdate = startTime;
-        isRunning = true;
+        isRunning = false;
         visibleScore = 0;
         backgroundScore = 50000;
     }
 
+    public void startTimer() {
+        startTime = System.currentTimeMillis();
+        lastBackgroundScoreUpdate = startTime;
+        isRunning = true;
+    }
+
     public void update() {
-        if(isRunning) {
+        if (isRunning && !showTutorial && !showKeyMessage) {
             long currentTime = System.currentTimeMillis();
-            if(currentTime - lastBackgroundScoreUpdate >= 1000) {
+            if (currentTime - lastBackgroundScoreUpdate >= 1000) {
                 backgroundScore -= BG_SCORE_DECREASE;
-                if(backgroundScore < 0) {
-                    backgroundScore = 0;
-                }
+                if (backgroundScore < 0) backgroundScore = 0;
                 lastBackgroundScoreUpdate = currentTime;
             }
         }
+        if (showEffect && System.currentTimeMillis() - effectStartTime > currentEffect.duration) {
+            System.out.println("Effect finished. Moving to next page.");
+            showEffect = false;
+            if (currentTutorialPage < tutorialPages.length - 1) {
+                currentTutorialPage++; // Chuyển trang
+                currentCharIndex = 0; // Reset chỉ số ký tự
+                // Đảm bảo không kích hoạt lại hiệu ứng khi đã chuyển trang
+                showEffect = false;
+                System.out.println("Current page: " + currentTutorialPage);
+            }
+        }
     }
+
 
     public void addScore(int points) {
         visibleScore += points;
@@ -73,7 +164,8 @@ public class UI {
     }
 
     private String getFormattedTime() {
-        long currentTime = isRunning ? System.currentTimeMillis() - startTime : 0;
+        if (!isRunning) return "00:00";
+        long currentTime = System.currentTimeMillis() - startTime;
         currentTime /= 1000;
         int minutes = (int) (currentTime / 60);
         int seconds = (int) (currentTime % 60);
@@ -93,6 +185,15 @@ public class UI {
         drawHealthBar(g2);
         drawClock(g2);
         drawScore(g2);
+        drawKeys(g2);
+
+        if (showTutorial) {
+            drawTutorial(g2); // Vẽ hộp thoại
+        }
+
+        if (showEffect) {
+            drawImageEffect(g2);
+        }
 
         if(gameFinished) {
             drawGameFinishedScreen(g2);
@@ -101,14 +202,22 @@ public class UI {
         if(messageOn) {
             drawMessage(g2);
         }
+
+        if (showKeySequence) {
+            drawKeySequence(g2);
+        }
+
+        if (showPortalSequence) {
+            drawPortalSequence(g2);
+        }
     }
 
     private void drawHealthBar(Graphics2D g2) {
         Composite originalComposite = g2.getComposite();
         try {
-            int startY = 20;
+            int startY = 3;
             int spacing = 5;
-            int heartSize = gp.tileSize * 3 / 4;
+            int heartSize = gp.tileSize;
             int startX = gp.screenWidth - 20 - (heartSize + spacing) * 4;
         
             for (int i = 0; i < gp.player.maxHealth; i++) {
@@ -127,13 +236,13 @@ public class UI {
     private void drawClock(Graphics2D g2) {
         Font originalFont = g2.getFont();
         Color originalColor = g2.getColor();
-        Font timeFont = new Font("Arial", Font.BOLD, 24);
+        Font timeFont = new Font("Arial", Font.BOLD, 30);
         g2.setFont(timeFont);
         g2.setColor(Color.white);
         String timeText = getFormattedTime();
         FontMetrics fm = g2.getFontMetrics();
         int x = (gp.screenWidth - fm.stringWidth(timeText)) / 2;
-        int y = 42;
+        int y = 40;
         g2.setColor(Color.white);
         g2.drawString(timeText, x, y);
         g2.setFont(originalFont);
@@ -142,13 +251,27 @@ public class UI {
 
     private void drawScore(Graphics2D g2) {
         Font originalFont = g2.getFont();
-        g2.setFont(new Font("Arial", Font.BOLD, 20));
+        g2.setFont(new Font("Arial", Font.BOLD, 30));
         String scoreText = "Score: " + formatScore(visibleScore);
         int x = 20;
-        int y = 48;
+        int y = 40;
         g2.setColor(Color.white);
         g2.drawString(scoreText, x, y);
         g2.setFont(originalFont);
+    }
+
+    private void drawKeys(Graphics2D g2) {
+        int keySize = gp.tileSize * 3 / 4; // Kích thước ảnh key
+        int x = 20; // Vị trí bắt đầu
+        int y = 48 + 45; // Dưới phần Score
+        
+        // Vẽ hình ảnh key
+        g2.drawImage(keyImage, x, y - keySize, keySize, keySize, null);
+        
+        // Vẽ số lượng key
+        g2.setFont(new Font("Arial", Font.BOLD, 30));
+        g2.setColor(Color.WHITE);
+        g2.drawString("x " + gp.hasKey, x + keySize + 5, y - 5);
     }
 
     private void drawGameFinishedScreen(Graphics2D g2) {
@@ -201,5 +324,237 @@ public class UI {
     private int getXForCenteredText(String text, Graphics2D g2) {
         int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
         return gp.screenWidth / 2 - length / 2;
+    }
+
+    public void nextTutorialPage() {
+        if (currentTutorialPage < tutorialPages.length - 1) {
+            textSound.stop();
+            currentTutorialPage++;
+            currentCharIndex = 0;
+        } else {
+            showTutorial = false;
+            startTimer(); // Bắt đầu đếm khi hộp thoại kết thúc
+        }
+    }
+
+    private void drawKeySequence(Graphics2D g2) {
+        String fullText = keyMessages[currentKeyPage];
+        
+        if (fullText.startsWith("[SHOW_IMAGE")) {
+            drawImageEffect(g2);
+        } else {
+            // Từng ký tự một
+            if (System.currentTimeMillis() - lastCharTime > CHAR_DELAY && currentCharIndex < fullText.length()) {
+                currentCharIndex++;
+                lastCharTime = System.currentTimeMillis();
+            }
+            drawTextBox(g2, fullText, currentCharIndex, 150, "-> tiếp", false);
+        }
+    }
+
+    private void drawPortalSequence(Graphics2D g2) {
+        String fullText = portalMessages[currentPortalPage];
+        if (System.currentTimeMillis() - lastCharTime > CHAR_DELAY && currentCharIndex < fullText.length()) {
+            currentCharIndex++;
+            lastCharTime = System.currentTimeMillis();
+        }
+        drawTextBox(g2, fullText, currentCharIndex, 150, "-> tiếp", false);
+    }
+
+    private void drawTutorial(Graphics2D g2) {
+        if (!showTutorial) return;
+        String fullText = tutorialPages[currentTutorialPage];
+
+        // Xử lý trang hiệu ứng
+        if (fullText.startsWith("[SHOW_IMAGE")) {
+            if (!showEffect) { // Chỉ kích hoạt hiệu ứng một lần
+                String[] parts = fullText.split(" ");
+                String imageName = parts[1].trim();
+                String durationStr = parts[2].replace("]", "").trim();
+                int duration = Integer.parseInt(durationStr);
+                triggerImageEffect(imageName, duration);
+            }
+            drawImageEffect(g2); // Vẽ ảnh
+            return; // Không vẽ nút "Next" cho trang này
+        }
+
+        // Từng ký tự một
+        if (System.currentTimeMillis() - lastCharTime > CHAR_DELAY && currentCharIndex < fullText.length()) {
+            currentCharIndex++;
+            lastCharTime = System.currentTimeMillis();
+        }
+        
+        
+        drawTextBox(g2, fullText, currentCharIndex, 150, "-> tiếp", false);
+    }
+
+    private void drawTextBox(Graphics2D g2, String fullText, int currentIndex, int boxHeight, String buttonLabel, boolean drawButton) {
+        int boxWidth = gp.screenWidth - 100;
+        int boxX = 50;
+        int boxY = 120;
+
+        if (currentIndex >= fullText.length()) {
+            if (textSound.clip != null && textSound.clip.isRunning()) {
+                textSound.stop();
+            }
+        }
+        else {
+            // Chỉ phát khi chưa kết thúc và không phải khoảng trắng
+            if (fullText.charAt(currentIndex) != ' ' && !textSound.clip.isRunning()) {
+                textSound.loop();
+            }
+        }
+        // Vẽ nền
+        g2.setColor(Color.BLACK);
+        g2.fillRoundRect(boxX, boxY, boxWidth, boxHeight, 20, 20);
+        g2.setColor(BORDER_COLOR);
+        g2.setStroke(new BasicStroke(3));
+        g2.drawRoundRect(boxX, boxY, boxWidth, boxHeight, 20, 20);
+
+        // Cắt text đến chỉ số hiện tại
+        String displayText = fullText.substring(0, Math.min(currentIndex, fullText.length()));
+        String[] lines = displayText.split("\n");
+
+        // Vẽ text
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("Arial", Font.PLAIN, 22));
+        int startY = boxY + 40;
+        for (String line : lines) {
+            g2.drawString(line, boxX + 20, startY);
+            startY += 30;
+        }
+
+        if (currentTutorialPage == tutorialPages.length - 1) {
+            drawButton = false;
+        }
+
+        // Vẽ nút nếu cần
+        if (drawButton) {
+            int buttonWidth = 80;
+            int buttonHeight = 30;
+            int buttonX = boxX + boxWidth - buttonWidth - 20;
+            int buttonY = boxY + boxHeight - buttonHeight - 10;
+
+            g2.setColor(BORDER_COLOR);
+            g2.fillRoundRect(buttonX, buttonY, buttonWidth, buttonHeight, 10, 10);
+            g2.setColor(Color.WHITE);
+            g2.drawString(buttonLabel, buttonX + 15, buttonY + 20);
+        
+            // Lưu vị trí nút OK để xử lý click
+            okButtonRect = new Rectangle(buttonX, buttonY, buttonWidth, buttonHeight);
+        } else if (currentTutorialPage < tutorialPages.length - 1) {
+            // Hiển thị hướng dẫn click để tiếp tục
+            g2.setFont(new Font("Arial", Font.ITALIC, 18));
+            String clickText = "Click anywhere to continue...";
+            int textWidth = g2.getFontMetrics().stringWidth(clickText);
+            g2.drawString(clickText, boxX + boxWidth - textWidth - 20, boxY + boxHeight - 15);
+        }
+    }
+
+    // Phương thức vẽ hiệu ứng
+    private void drawImageEffect(Graphics2D g2) {
+        if (currentEffect == null || currentEffect.image == null) return;
+
+        long elapsed = System.currentTimeMillis() - effectStartTime;
+        
+        // Tạo hiệu ứng nhấp nháy toàn màn hình bằng lớp phủ trắng
+        float flashIntensity = (float) Math.abs(Math.sin(elapsed / 200.0)) * 0.6f; // Dùng sin để tạo hiệu ứng mượt
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, flashIntensity));
+        g2.setColor(Color.WHITE);
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+        
+        // Vẽ ảnh gốc không bị ảnh hưởng bởi opacity
+        Composite originalComposite = g2.getComposite();
+        g2.setComposite(AlphaComposite.SrcOver); // Reset composite
+        g2.drawImage(
+            currentEffect.image, 
+            gp.screenWidth/2 - currentEffect.image.getWidth()/2,
+            gp.screenHeight/2 - currentEffect.image.getHeight()/2,
+            null
+        );
+        g2.setComposite(originalComposite);
+        
+        // Tự động tắt hiệu ứng sau khi đủ thời gian
+        if (elapsed > currentEffect.duration) {
+            showEffect = false;
+        }
+    }
+
+    public void triggerKeySequence() {
+        showKeySequence = true;
+        currentKeyPage = 0;
+    }
+
+    private void nextKeyPage() {
+        if (currentKeyPage < keyMessages.length - 1) {
+            textSound.stop();
+            currentKeyPage++;
+            checkForImageEffect(keyMessages[currentKeyPage]);
+        } else {
+            showKeySequence = false;
+        }
+    }
+
+    private void checkForImageEffect(String text) {
+        if (text.startsWith("[SHOW_IMAGE")) {
+            String[] parts = text.split(" ");
+            String imageName = parts[1].trim();
+            String durationStr = parts[2].replace("]", "").trim();
+            int duration = Integer.parseInt(durationStr);
+            triggerImageEffect(imageName, duration);
+        }
+    }
+
+    public void triggerPortalSequence() {
+        showPortalSequence = true;
+        currentPortalPage = 0;
+    }
+
+    private void nextPortalPage() {
+        if (currentPortalPage < portalMessages.length - 1) {
+            currentPortalPage++;
+        } else {
+            showPortalSequence = false;
+            // Kích hoạt kiểm tra key sau khi hội thoại kết thúc
+            gp.eventObj.checkPortalAfterDialog();
+        }
+    }
+
+    // Phương thức trigger effect
+    private void triggerImageEffect(String imageName, int duration) {
+        BufferedImage img = effectImages.get(imageName);
+        if (img != null) {
+            currentEffect = new BufferedNameEffect(img, duration);
+            effectStartTime = System.currentTimeMillis();
+            showEffect = true;
+            System.out.println("Triggered effect: " + imageName + ", duration: " + duration + "ms");
+        } else {
+            System.err.println("Không tìm thấy ảnh: " + imageName);
+        }
+    }
+
+    public void handleClick(int mouseX, int mouseY) {
+        if (showKeyMessage && okButtonRect != null && okButtonRect.contains(mouseX, mouseY)) {
+            showKeyMessage = false;
+        } 
+        // Xử lý click khi đang hiển thị ảnh effect
+        else if (showEffect) { 
+            showEffect = false;
+            nextTutorialPage();
+        } 
+        // Cho phép click bất kỳ đâu để tiếp tục khi đang trong tutorial (không phải effect)
+        else if (showTutorial && !showEffect) {
+            textSound.stop();
+            nextTutorialPage();
+        }
+        if (showKeySequence) {
+            textSound.stop();
+            if (showEffect) {
+                showEffect = false;
+            }
+            nextKeyPage();
+        } else if (showPortalSequence) {
+            nextPortalPage();
+        }
     }
 }

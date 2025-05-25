@@ -114,11 +114,10 @@ public class PathFinder {
         for (int[] d : directions) {
             int newCol = node.col + d[0];
             int newRow = node.row + d[1];
-            if (isInBounds(newCol, newRow)) {
+            if (isInBounds(newCol, newRow) && !gp.tileM.tile[gp.tileM.mapTileNum[newCol][newRow]].collision) {
                 neighbors.add(grid[newCol][newRow]);
             }
         }
-
         return neighbors;
     }
 

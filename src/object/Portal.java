@@ -6,17 +6,18 @@ import javax.imageio.ImageIO;
 
 import main.GamePanel;
 
-public class Chest extends SuperObject {
+public class Portal extends SuperObject {
 	
 	GamePanel gp;
 	
-	public Chest(GamePanel gp) {
+	public Portal(GamePanel gp) {
 		
 		this.gp = gp;
+		collision = false;
 		
-		name = "Chest";
+		name = "Portal";
 		try {
-			image = ImageIO.read(getClass().getResourceAsStream("/objects/chest_1.png"));
+			image = ImageIO.read(getClass().getResourceAsStream("/objects/portal.png"));
 			uTool.scaleImage(image, gp.tileSize, gp.tileSize);
 		} catch(IOException e) {
 			e.printStackTrace();

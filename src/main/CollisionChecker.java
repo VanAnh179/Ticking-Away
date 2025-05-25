@@ -22,9 +22,15 @@ public class CollisionChecker {
         int entityBottomWorldY = entity.worldY + entity.solidArea.y + entity.solidArea.height;
 
         int entityLeftCol = entityLeftWorldX / gp.tileSize;
-        int entityRightCol = entityRightWorldX / gp.tileSize;
-        int entityTopRow = entityTopWorldY / gp.tileSize;
-        int entityBottomRow = entityBottomWorldY / gp.tileSize;
+		int entityRightCol = entityRightWorldX / gp.tileSize;
+		int entityTopRow = entityTopWorldY / gp.tileSize;
+		int entityBottomRow = entityBottomWorldY / gp.tileSize;
+
+		// RÀNG BUỘC GIỚI HẠN ĐỂ TRÁNH CRASH
+		entityLeftCol = Math.max(0, Math.min(entityLeftCol, gp.maxWorldCol - 1));
+		entityRightCol = Math.max(0, Math.min(entityRightCol, gp.maxWorldCol - 1));
+		entityTopRow = Math.max(0, Math.min(entityTopRow, gp.maxWorldRow - 1));
+		entityBottomRow = Math.max(0, Math.min(entityBottomRow, gp.maxWorldRow - 1));
 
         int tileNum1, tileNum2;
 
@@ -145,20 +151,6 @@ public class CollisionChecker {
 		// 	entity.worldY = nextWorldY;
 		// }
 	}
-
-	// private boolean isCollisionAt(int x, int y, Entity entity) {
-	// 	// Tính toán vị trí tile dựa trên x và y
-	// 	int leftCol = (x + entity.solidArea.x) / gp.tileSize;
-	// 	int rightCol = (x + entity.solidArea.x + entity.solidArea.width) / gp.tileSize;
-	// 	int topRow = (y + entity.solidArea.y) / gp.tileSize;
-	// 	int bottomRow = (y + entity.solidArea.y + entity.solidArea.height) / gp.tileSize;
-
-	// 	// Kiểm tra các tile xung quanh
-	// 	return gp.tileM.tile[gp.tileM.mapTileNum[leftCol][topRow]].collision ||
-	// 		gp.tileM.tile[gp.tileM.mapTileNum[rightCol][topRow]].collision ||
-	// 		gp.tileM.tile[gp.tileM.mapTileNum[leftCol][bottomRow]].collision ||
-	// 		gp.tileM.tile[gp.tileM.mapTileNum[rightCol][bottomRow]].collision;
-	// }
     
     public int checkObject(Entity entity, boolean player) {
     	

@@ -13,9 +13,13 @@ import java.awt.RadialGradientPaint;
 import java.awt.Rectangle;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.JPanel;
+
+import java.awt.event.MouseEvent;
+
 import object.Bomb;
 import object.Flame;
 import object.SuperObject;
@@ -63,11 +67,12 @@ public class GamePanel extends JPanel implements Runnable {
     
     // entity and object
     public Player player = new Player(this, keyH);
-    public SuperObject obj[] = new SuperObject[1000];
-    public Entity enemy[] = new Entity[10];
+    public SuperObject obj[] = new SuperObject[500];
+    public Entity enemy[] = new Entity[100];
     public ArrayList<Flame> flames = new ArrayList<>();
 
     public EventObject eventObj;
+    public int hasKey = 0;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -81,7 +86,7 @@ public class GamePanel extends JPanel implements Runnable {
         this.requestFocusInWindow(); // Đảm bảo GamePanel có focus
 
         flameSe.setFile(8);
-        flameSe.play();
+        flameSe.loop();
 
         player = new Player(this, keyH);
         
@@ -99,6 +104,16 @@ public class GamePanel extends JPanel implements Runnable {
         });
         setupGame();
         this.requestFocusInWindow(); // Đảm bảo GamePanel có focus
+
+        // Thêm MouseListener để xử lý nút "Next"
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (ui != null) {
+                    ui.handleClick(e.getX(), e.getY());
+                }
+            }
+        });
     }
     
     public void setupGame() {
@@ -141,6 +156,11 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
+        // Tạm dừng mọi hoạt động nếu đang hiện tutorial hoặc thoại
+        if (ui.showTutorial) {
+            return;
+        }
+
         if (!ui.gameFinished) { // Chỉ update khi game chưa kết thúc
             player.update();
 
@@ -152,7 +172,7 @@ public class GamePanel extends JPanel implements Runnable {
 
             // enemy
             for (int i = 0; i < enemy.length; i++) {
-                if (enemy[i] != null) {
+                if (enemy[i] != null && enemy[i].health > 0) {
                     enemy[i].update();
                     if (enemy[i].health <= 0) {
                         deathE.setFile(5);
@@ -164,6 +184,9 @@ public class GamePanel extends JPanel implements Runnable {
 
             // Cập nhật bomb
             for (int i = 0; i < obj.length; i++) {
+                if (obj[i] != null) {
+                    obj[i].update();
+                }
                 if (obj[i] != null && obj[i].name.equals("Bomb")) {
                     ((Bomb) obj[i]).update();
                 }
@@ -258,7 +281,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         // enemy
         for (int i = 0; i < enemy.length; i++) {
-            if (enemy[i] != null) {
+            if (enemy[i] != null && enemy[i].health > 0) {
                 enemy[i].draw(g2);
             }
         }
@@ -276,16 +299,6 @@ public class GamePanel extends JPanel implements Runnable {
         }
 
         g2.translate(-offsetX, -offsetY);
-        
-        
-        // DEBUG
-        if (keyH.checkDrawTime == true) {
-            long drawEnd = System.nanoTime();
-            long passed = drawEnd - drawStart;
-            g2.setColor(Color.WHITE);
-            g2.drawString("Draw Time: " + passed, 10, 400);
-            System.out.println("Draw Time: " + passed);
-        }
 
         if (!ui.gameFinished) {
             int spotlightX = player.screenX + player.solidArea.x;
@@ -303,7 +316,7 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D gDark = darkness.createGraphics();
 
         // Tô nền tối mờ
-        gDark.setColor(new Color(0, 0, 0, 250)); // Alpha cao làm tối mạnh (chỉnh từ 200 đổ lên)
+        gDark.setColor(new Color(0, 0, 0, 150)); // Alpha cao làm tối mạnh (chỉnh từ 200 đổ lên)
         gDark.fillRect(0, 0, screenWidth, screenHeight);
 
         // Dùng AlphaComposite để đục lỗ hình tròn
@@ -364,6 +377,7 @@ public class GamePanel extends JPanel implements Runnable {
         for(int i = 0; i < enemy.length; i++) {
             enemy[i] = null;
         }
+        eventObj.firstPortalContact = true;
         tileM.resetMap();
         ui.resetTimer();
         setupGame();

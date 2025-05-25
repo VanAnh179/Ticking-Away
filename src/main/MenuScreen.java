@@ -20,11 +20,14 @@ public class MenuScreen extends JFrame {
         BackgroundPanel backgroundPanel = new BackgroundPanel();
         backgroundPanel.setLayout(null);
 
-        // Tạo tiêu đề "Ticking Away"
-        JLabel titleLabel = new JLabel("Ticking Away", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Serif", Font.BOLD, 50));
-        titleLabel.setForeground(Color.BLACK);
-        titleLabel.setBounds(180, 180, 440, 60);
+        // Thay thế JLabel bằng TextOutlineLabel
+        TextOutlineLabel titleLabel = new TextOutlineLabel("Ticking Away");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Serif", Font.BOLD, 60)); // Dùng font Impact đậm
+        titleLabel.setBounds(230, 150, 600, 80); // Điều chỉnh kích thước
+
+        // Thêm hiệu ứng bóng mờ
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
         // Tạo nút Start
         startButton = new StartButton();

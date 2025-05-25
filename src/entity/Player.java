@@ -34,8 +34,16 @@ public class Player extends Entity {
 
     public int bombRange = 1; // Số ô bomb có thể nổ
 
+    public Sound walkSound = new Sound();
     public int baseSpeed = 4; // Tốc độ di chuyển cơ bản
     public int speed = baseSpeed; // Tốc độ di chuyển hiện tại
+    public boolean isJumping = false;
+    public int jumpCount = 0;
+    public final int MAX_JUMP_COUNT = 2; // Số lần nhảy
+    public float jumpForce = -9f; // Lực nhảy (âm để đi lên)
+    public float gravity = 0.9f; // Trọng lực
+    public float verticalVelocity = 0; // Vận tốc dọc
+    public float initialY;
 
     public boolean isTeleporting = false; // Biến kiểm tra xem có đang teleport hay không
     public int teleportCounter = 0; // Biến đếm thời gian teleport
@@ -56,6 +64,7 @@ public class Player extends Entity {
         solidArea.height = 13;
         solidAreaDefaultX = solidArea.x;
         solidAreaDefaultY = solidArea.y;
+        walkSound.setFile(10);
 
         setDefaultValues();
         getPlayerImage();
@@ -64,7 +73,6 @@ public class Player extends Entity {
     public void setDefaultValues() {
         worldX = gp.tileSize * 31;
         worldY = gp.tileSize * 4;
-        speed = 4;
         direction = "";
         maxHealth = 4;
         health = maxHealth;
@@ -119,86 +127,109 @@ public class Player extends Entity {
     }
     
     public void update() {
+        if (gp.ui.showTutorial) return;
+
         // Giảm cooldown mỗi frame nếu > 0
         if (bombCooldown > 0) {
             bombCooldown--;
         }
-
-        // Cập nhật hướng di chuyển dựa trên phím nhấn
-        if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
-            String newDirection = direction;
-            // Cập nhật direction và lastDirection khi di chuyển
-            if (keyH.upPressed) {
-                direction = "up";
-                lastDirection = "up";
-            } else if (keyH.downPressed) {
-                direction = "down";
-                lastDirection = "down";
-            } else if (keyH.leftPressed) {
-                direction = "left";
-                lastDirection = "left";
-            } else if (keyH.rightPressed) {
-                direction = "right";
-                lastDirection = "right";
-            }
-            if (keyH.spacePressed) {
-                placeBomb();
-                keyH.spacePressed = false;
-            }
-
-            // Nếu hướng thay đổi, kiểm tra collision ngay
-            if (!newDirection.equals(direction)) {
-                solidArea.x = solidAreaDefaultX;
-                solidArea.y = solidAreaDefaultY;
-                collisionOn = false;
-                gp.cChecker.checkTile(this);
-                if (collisionOn) {
-                    // Điều chỉnh vị trí nếu cần
-                    switch (newDirection) {
-                        case "up": worldY += speed; break;
-                        case "down": worldY -= speed; break;
-                        case "left": worldX += speed; break;
-                        case "right": worldX -= speed; break;
+        
+        if (!isJumping) {
+            // Cập nhật hướng di chuyển dựa trên phím nhấn
+            if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
+                speed = baseSpeed;
+                String newDirection = direction;
+                // Cập nhật direction và lastDirection khi di chuyển
+                if (keyH.upPressed) {
+                    direction = "up";
+                    lastDirection = "up";
+                } else if (keyH.downPressed) {
+                    direction = "down";
+                    lastDirection = "down";
+                } else if (keyH.leftPressed) {
+                    direction = "left";
+                    lastDirection = "left";
+                } else if (keyH.rightPressed) {
+                    direction = "right";
+                    lastDirection = "right";
+                }
+                if (keyH.spacePressed) {
+                    placeBomb();
+                    keyH.spacePressed = false;
+                }
+    
+                // Nếu hướng thay đổi, kiểm tra collision ngay
+                if (!newDirection.equals(direction)) {
+                    solidArea.x = solidAreaDefaultX;
+                    solidArea.y = solidAreaDefaultY;
+                    collisionOn = false;
+                    gp.cChecker.checkTile(this);
+                    if (collisionOn) {
+                        // Điều chỉnh vị trí nếu cần
+                        switch (newDirection) {
+                            case "up": worldY += speed; break;
+                            case "down": worldY -= speed; break;
+                            case "left": worldX += speed; break;
+                            case "right": worldX -= speed; break;
+                        }
                     }
                 }
-            }
-            solidArea.x = solidAreaDefaultX;
-            solidArea.y = solidAreaDefaultY;
-
-            // Kiểm tra va chạm
-            collisionOn = false;
-            gp.cChecker.checkTile(this);
-
-            //check obj collision
-            int objIndex = gp.cChecker.checkObject(this, true);
-            pickUpObject(objIndex);
-
-            //check enemy collision
-            int enemyIndex = gp.cChecker.checkEntity(this, gp.enemy);
-            // Chỉ trừ máu khi vừa mới va chạm (trước đó chưa va chạm)
-            if (enemyIndex != 999 && invincibleCounter == 0) {
-                interactEnemy(enemyIndex);
-                wasTouchingEnemy = true;
+                solidArea.x = solidAreaDefaultX;
+                solidArea.y = solidAreaDefaultY;
+    
+                // Kiểm tra va chạm
+                collisionOn = false;
+                gp.cChecker.checkTile(this);
+    
+                //check obj collision
+                int objIndex = gp.cChecker.checkObject(this, true);
+                pickUpObject(objIndex);
+    
+                //check enemy collision
+                int enemyIndex = gp.cChecker.checkEntity(this, gp.enemy);
+                // Chỉ trừ máu khi vừa mới va chạm (trước đó chưa va chạm)
+                if (enemyIndex != 999 && invincibleCounter == 0) {
+                    interactEnemy(enemyIndex);
+                    wasTouchingEnemy = true;
+                } else {
+                    wasTouchingEnemy = false;
+                }
+    
+                // Di chuyển nếu không có va chạm
+                if (!collisionOn) {
+                    switch (direction) {
+                        case "up": worldY -= speed; break;
+                        case "down": worldY += speed; break;
+                        case "left": worldX -= speed; break;
+                        case "right": worldX += speed; break;
+                    }
+                }
             } else {
-                wasTouchingEnemy = false;
+                // Khi không di chuyển, vẫn reset solidArea để tránh chồng lấn
+                solidArea.x = solidAreaDefaultX;
+                solidArea.y = solidAreaDefaultY;
+                direction = lastDirection;
+                speed = 0;
             }
+            
+            // Kiểm tra di chuyển và phát âm thanh
+            boolean isMoving = (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) && !collisionOn;
 
-            // Di chuyển nếu không có va chạm
-            if (!collisionOn) {
-                switch (direction) {
-                    case "up": worldY -= speed; break;
-                    case "down": worldY += speed; break;
-                    case "left": worldX -= speed; break;
-                    case "right": worldX += speed; break;
+            if (isMoving) {
+                if (!walkSound.clip.isRunning()) {
+                    walkSound.loop();
+                }
+            } else {
+                if (walkSound.clip != null && walkSound.clip.isRunning()) {
+                    walkSound.stop();
                 }
             }
         } else {
-            // Khi không di chuyển, vẫn reset solidArea để tránh chồng lấn
-            solidArea.x = solidAreaDefaultX;
-            solidArea.y = solidAreaDefaultY;
-            direction = lastDirection;
+            // Dừng âm thanh khi đang nhảy
+            if (walkSound.clip != null && walkSound.clip.isRunning()) {
+                walkSound.stop();
+            }
         }
-
         
         // Giảm thời gian bất tử
         if (invincibleCounter > 0) {
@@ -210,6 +241,28 @@ public class Player extends Entity {
             if(teleportCounter > 30) {
                 isTeleporting = false;
                 teleportCounter = 0;
+            }
+        }
+
+        // Xử lý nhảy
+        if (isJumping) {
+            verticalVelocity += gravity;
+            worldY += verticalVelocity;
+
+            // Khi chạm đất (reset vị trí)
+            if (worldY >= initialY) {
+                worldY = (int) initialY;
+                verticalVelocity = 0;
+                jumpCount++;
+
+                // Kết thúc sau 3 lần nhảy
+                if (jumpCount >= MAX_JUMP_COUNT) {
+                    isJumping = false;
+                    jumpCount = 0;
+                } else {
+                    // Nhảy lần tiếp theo
+                    verticalVelocity = jumpForce;
+                }
             }
         }
     }
@@ -389,5 +442,7 @@ public class Player extends Entity {
         isTeleporting = false; // Đặt lại trạng thái teleport
         teleportCounter = 0; // Đặt lại đếm thời gian teleport
         lastDirection = "down"; // Đặt lại hướng cuối cùng
+        walkSound.stop(); // Dừng âm thanh khi reset
+        initialY = worldY; // Khởi tạo initialY bằng vị trí Y ban đầu
     }
 }

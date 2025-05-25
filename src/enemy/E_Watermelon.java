@@ -2,26 +2,22 @@ package enemy;
 
 import entity.Entity;
 import java.awt.Rectangle;
+import java.util.Random;
+
 import main.GamePanel;
 import main.Sound;
 import object.Flame;
 
 public class E_Watermelon extends Entity {
-    public boolean isInvisible = false; // Trạng thái tàng hình
-    private int invisibilityCounter = 0; // Bộ đếm thời gian tàng hình
-    private final int INVISIBILITY_DURATION = 120; // Thời gian tàng hình (2 giây)
-    private final int VISIBILITY_DURATION = 180; // Thời gian hiện hình (3 giây)
     private int indexInEnemyArray = -1;
     private int invincibleCounter = 0;
-    private boolean isStunned = false;
-    private int stunCounter = 0;
     private Sound hurtSound = new Sound();
-    private final int STUN_DURATION = 60; // Thời gian bất động (1 giây)
-
+    private int stuckTimer = 0;
+    private final int MAX_STUCK_TIME = 5 * 60; // 5 giây (60 FPS)
 
     public E_Watermelon(GamePanel gp) {
         super(gp);
-        name = "Sweet";
+        name = "Watermelon";
         speed = 1;
         maxHealth = 3;
         health = maxHealth;
@@ -35,10 +31,6 @@ public class E_Watermelon extends Entity {
         solidAreaDefaultY = solidArea.y;
 
         getImage();
-    }
-
-    public boolean isInvisible() {
-        return isInvisible;
     }
 
     public void getImage() {
@@ -65,70 +57,34 @@ public class E_Watermelon extends Entity {
 
     @Override
     public void update() {
-        // Kiểm tra trạng thái bất động
-        if (isStunned) {
-            stunCounter--;
-            if (stunCounter <= 0) {
-                isStunned = false;
-            }
-            return; // Không di chuyển nếu đang bất động
-        }
-
         super.update();
-
-         // Logic tàng hình/hiện hình và di chuyển
-        boolean isPlayerMoving = gp.player.keyH.upPressed || 
-                                gp.player.keyH.downPressed || 
-                                gp.player.keyH.leftPressed || 
-                                gp.player.keyH.rightPressed;
-
-        if (isPlayerMoving) {
-            isInvisible = true;
-            invisibilityCounter++;
-            if (invisibilityCounter >= INVISIBILITY_DURATION) {
-                isInvisible = false;
-                invisibilityCounter = 0;
-            }
-            setAction(); // Di chuyển khi player di chuyển
-        } else {
-            isInvisible = false;
-            invisibilityCounter = 0;
-            direction = ""; // Đứng yên
-        }
+        // Kiểm tra collision trước khi đuổi
+        gp.cChecker.checkTile(this);
 
         // Kiểm tra va chạm với flame
         for (Flame flame : gp.flames) {
-        if (flame != null && flame.collision && invincibleCounter == 0) {
-            Rectangle flameRect = new Rectangle(
-                flame.worldX + flame.solidArea.x,
-                flame.worldY + flame.solidArea.y,
-                flame.solidArea.width,
-                flame.solidArea.height
-            );
-            Rectangle enemyRect = new Rectangle(
-                worldX + solidArea.x,
-                worldY + solidArea.y,
-                solidArea.width,
-                solidArea.height
-            );
+            if (flame != null && flame.collision && invincibleCounter == 0) {
+                Rectangle flameRect = new Rectangle(
+                    flame.worldX + flame.solidArea.x,
+                    flame.worldY + flame.solidArea.y,
+                    flame.solidArea.width,
+                    flame.solidArea.height
+                );
+                Rectangle enemyRect = new Rectangle(
+                    worldX + solidArea.x,
+                    worldY + solidArea.y,
+                    solidArea.width,
+                    solidArea.height
+                );
 
-            if (flameRect.intersects(enemyRect)) {
-                takeDamage(1); // Chỉ gọi takeDamage() một lần
-                break;
+                if (flameRect.intersects(enemyRect)) {
+                    takeDamage(1); // Chỉ gọi takeDamage() một lần
+                    break;
+                }
             }
         }
-    }
-    if (isStunned) {
-    System.out.println("STUNNED - countdown: " + stunCounter); // Debug
-    stunCounter--;
-    if (stunCounter <= 0) {
-        isStunned = false;
-        System.out.println("Recovered from stun.");
-    }
-    return;
-}
 
-    if (invincibleCounter > 0) invincibleCounter--;
+        if (invincibleCounter > 0) invincibleCounter--;
     }
 
     public void setIndexInEnemyArray(int index) {
@@ -144,22 +100,20 @@ public class E_Watermelon extends Entity {
             if (health <= 0) {
                 // Xử lý khi enemy chết
             } else {
-                invincibleCounter = 60; 
-                isStunned = true;
-                stunCounter = STUN_DURATION;
+                invincibleCounter = 60;
             }
         }
     }
 
-    
-
     @Override
     public void setAction() {
-        EnemyBehavior.chasePlayer(this, 15, 17); // Điều chỉnh phạm vi đuổi
-        if (direction.isEmpty()) {
-            direction = lastDirection; // Giữ hướng cuối cùng
+        gp.cChecker.checkTile(this);
+        // Chỉ đuổi nếu player đang di chuyển
+        if (!collisionOn && gp.player.speed > 0) {
+            EnemyBehavior.chasePlayer(this, 13, 15);
         } else {
-            lastDirection = direction; // Cập nhật hướng mới
+            // Dừng đuổi và di chuyển ngẫu nhiên
+            EnemyBehavior.randomMove(this);
         }
     }
 }

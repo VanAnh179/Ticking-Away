@@ -6,7 +6,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 public class Sound {
-    Clip clip;
+    public Clip clip;
     URL soundURL[] = new URL[30];
     
     public Sound() {
@@ -19,6 +19,9 @@ public class Sound {
         soundURL[6] = getClass().getResource("/sound/hurtE2.wav");
         soundURL[7] = getClass().getResource("/sound/hurtE3.wav");
         soundURL[8] = getClass().getResource("/sound/fire-sound.wav");
+        soundURL[9] = getClass().getResource("/sound/key.wav");
+        soundURL[10] = getClass().getResource("/sound/walking.wav");
+        soundURL[11] = getClass().getResource("/sound/text.wav");
     }
     
     public void setFile(int i) {
@@ -33,7 +36,9 @@ public class Sound {
     }
     
     public void play() {
-        if (clip != null && !clip.isRunning()) {
+        if (clip != null) {
+            clip.stop();        // Dừng clip hiện tại
+            clip.setFramePosition(0); // Reset về đầu
             clip.start(); // Tiếp tục từ vị trí dừng
         }
     }
@@ -44,7 +49,9 @@ public class Sound {
     
     public void stop() {
         if (clip != null && clip.isRunning()) {
-            clip.stop(); // Chỉ dừng, KHÔNG đóng clip
+            clip.stop();
+            clip.flush(); // Thêm dòng này để xóa buffer
+            clip.setFramePosition(0); // Reset về đầu
         }
     }
 }

@@ -1,8 +1,12 @@
 package main;
 
 import entity.Player;
+
+import java.awt.Rectangle;
 import java.util.Random;
 import object.Chest;
+import object.Key;
+import object.Portal;
 import object.SuperObject;
 import object.buffitems.IncreaseDamage;
 import object.buffitems.IncreaseHealth;
@@ -11,6 +15,7 @@ import object.debuffitems.Teleport;
 
 public class EventObject {
     GamePanel gp;
+    public boolean firstPortalContact = true;
 
     public EventObject(GamePanel gp) {
         this.gp = gp;
@@ -20,7 +25,13 @@ public class EventObject {
         if (index == 999) return; // Không có item để nhặt
 
         SuperObject item = gp.obj[index];
-        
+
+        if (item instanceof Key) {
+            checkKeyPickup(index);
+        }
+        if (item instanceof Portal) {
+            checkPortalEvent(index);
+        }
         if (item instanceof IncreaseDamage) {
             applyBombRangeEffect(index);
         }
@@ -28,10 +39,10 @@ public class EventObject {
         else if (item instanceof IncreaseHealth) {
             applyHealthEffect(index);
         }
-        else if(item instanceof DecreaseSpeed) {
+        else if (item instanceof DecreaseSpeed) {
             applySpeedDebuff(index);
         }
-        else if(item instanceof Teleport) {
+        else if (item instanceof Teleport) {
             applyTeleportEffect(index);
         }
     }
@@ -120,6 +131,60 @@ public class EventObject {
                     gp.obj[i] = item;
                     break;
                 }
+            }
+        }
+    }
+
+    public void checkPortalEvent(int i) {
+        Rectangle playerRect = new Rectangle(gp.player.worldX, gp.player.worldY, gp.tileSize, gp.tileSize);
+        Rectangle portalRect = new Rectangle(gp.obj[i].worldX, gp.obj[i].worldY, gp.tileSize, gp.tileSize);
+        
+        if (playerRect.intersects(portalRect)) {
+            if (firstPortalContact) {
+                gp.ui.triggerPortalSequence();
+                firstPortalContact = false;
+            } else {
+                checkPortalCondition();
+            }
+        }
+    }
+
+    public void checkPortalAfterDialog() {
+        checkPortalCondition();
+    }
+
+    private void checkPortalCondition() {
+        if (gp.hasKey >= 3) {
+            gp.ui.gameFinished = true;
+            gp.ui.gameWon = true;
+            gp.stopMusic();
+        } else {
+            gp.ui.showMessage("Bạn cần 3 chìa khóa để mở cổng!");
+        }
+    }
+
+    public void checkKeyPickup(int i) {
+        Rectangle playerRect = new Rectangle(gp.player.worldX, gp.player.worldY, gp.tileSize, gp.tileSize);
+        Rectangle keyRect = new Rectangle(gp.obj[i].worldX, gp.obj[i].worldY, gp.tileSize / 5, gp.tileSize / 5);
+        if (playerRect.intersects(keyRect)) {
+            gp.hasKey++;
+            gp.obj[i] = null; // Xóa Key khỏi map
+
+            gp.playSoundEffect(9);
+
+            // Kích hoạt nhảy
+            gp.player.isJumping = true;
+            gp.player.initialY = gp.player.worldY; // Lưu vị trí ban đầu
+            gp.player.verticalVelocity = gp.player.jumpForce;
+            
+            gp.ui.showMessage("Key collected!" + gp.hasKey); // Hiển thị thông báo
+            System.out.println("Key picked! Total keys: " + gp.hasKey);
+            if (gp.ui != null && !gp.ui.hasShownKeyMessage && gp.ui.showKeySequence == false) {
+                gp.ui.showKeyMessage = true;
+                gp.ui.hasShownKeyMessage = true;
+                gp.ui.keyCharIndex = 0;
+                gp.ui.triggerKeySequence();
+                gp.ui.keyLastCharTime = System.currentTimeMillis();
             }
         }
     }

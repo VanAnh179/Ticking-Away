@@ -125,7 +125,7 @@ false
 tile64.png
 true
 tile65.png
-false
+true
 tile66.png
 true
 tile67.png

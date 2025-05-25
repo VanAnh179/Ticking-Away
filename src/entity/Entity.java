@@ -8,7 +8,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import enemy.E_Watermelon;
 import main.GamePanel;
 import main.UtilityTool;
 
@@ -129,10 +128,6 @@ public class Entity {
         // Vẽ hình ảnh mặc định nếu image null
         if (image == null) {
             image = down1; // Sử dụng hình ảnh mặc định
-        }
-        // Áp dụng hiệu ứng tàng hình nếu là E_Watermelon
-        if (this instanceof E_Watermelon && ((E_Watermelon)this).isInvisible()) {
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f)); // tàng hình 70%
         }
 
         g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
