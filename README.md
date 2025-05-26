@@ -25,7 +25,7 @@ Trước mắt bạn là một lâu đài đổ nát, đá vụn chắn mất l�
 ## 🕹️ Gameplay Overview  
 ### 🎯 Objective  
 Thoát khỏi mê cung trong bóng tối bằng cách:  
-🔑 Thu thập đủ 2 chìa khóa để mở **Cánh cổng thần bí (portal)**  
+🔑 Thu thập đủ 3 chìa khóa để mở **Cánh cổng thần bí (portal)**  
 💣 Dùng bomb để phá đá, tiêu diệt kẻ địch  
 🕯️ Giữ ánh sáng bằng cách thắp lại ngọn đuốc  
 
@@ -69,9 +69,9 @@ Thoát khỏi mê cung trong bóng tối bằng cách:
 ---
 
 ## 👾 Enemies  
-### 🍉 Watermelon (HP: 3)  
-- Hiện hình khi bạn **đứng yên**  
-- Tàng hình khi bạn **di chuyển**  
+### 🍉 Watermelon (HP: 3)   
+- Chỉ đuổi theo bạn khi bạn **di chuyển** 
+- Máu trâu hơn Sweet 
 - Bị **stun 1s** khi trúng bomb  
 
 ### 🍬 Sweet (HP: 1)  
@@ -79,7 +79,7 @@ Thoát khỏi mê cung trong bóng tối bằng cách:
 - Tốc độ cao & xuất hiện bất ngờ  
 
 ### 🍫 Bitter (HP: 5)  
-- Có thể **đặt bomb** như người chơi  
+- Có thể **đặt bomb**, tránh bomb mà nó đã đặt.  
 - Bám đuổi dai dẳng + tốc độ cao  
 
 ---
@@ -139,33 +139,32 @@ Khi mở được **portal**, bạn sẽ khám phá:
 ### 🗃️ Package Structure
 ```
 📁 src/
-├── 📁 button/ # Hệ thống nút bấm
-│ ├── Button.java	    🖱️ Lớp trừu tượng xử lý hover/click
-│ ├── StartButton.java 	▶️ Khởi tạo game khi nhấn
-│ └── UnMuteButton.java 🔇 Bật/tắt âm thanh
-
 ├── 📁 main/ # Lõi game
-│ ├── UI.java 		    📊 Hiển thị máu, thời gian, điểm
-│ ├── EventObject.java 	⚡ Xử lý tương tác vật phẩm
-│ ├── Main.java 	    🚀 Khởi tạo JFrame
-│ ├── MenuScreen.java 	🖼️ Màn hình menu chính
-│ ├── UtilityTool.java 	🛠️ Công cụ load ảnh/xử lý file
-│ ├── AssetSetter.java 	🖼️ Trình tải tài nguyên
-│ ├── CollisionChecker.java 🚧 Hệ thống va chạm
-│ ├── GamePanel.java 	🎮 Vòng lặp game chính
-│ ├── KeyHandler.java 	⌨️ Xử lý đầu vào
-│ └── Sound.java 	    🔊 Quản lý âm thanh
+│ ├── UI.java 		            📊 Hiển thị máu, thời gian, điểm
+│ ├── EventObject.java 	        ⚡ Xử lý tương tác vật phẩm
+│ ├── Main.java 	            🚀 Khởi tạo JFrame
+│ ├── MenuPanel.java 	        🖼️ Màn hình menu chính
+│ ├── UtilityTool.java 	        🛠️ Công cụ load ảnh/xử lý file
+│ ├── AssetSetter.java 	        🖼️ Trình tải tài nguyên
+│ ├── CollisionChecker.java     🚧 Hệ thống va chạm
+│ ├── GamePanel.java 	        🎮 Vòng lặp game chính
+│ ├── KeyHandler.java 	        ⌨️ Xử lý đầu vào
+│ ├── GradientTitleLabel.java   ⌨️ Vẽ Title
+│ ├── BufferedNameEffect.java   🖼️ Xử lý hiệu ứng hình ảnh
+│ ├── MainFrame.java 	        🎮 Xử lý thay đổi màn hình
+│ └── Sound.java 	            🔊 Quản lý âm thanh
 
 ├── 📁 entity/ # Nhân vật
-│ ├── Entity.java 	    👤 Lớp cơ sở
-│ └── Player.java 	    🧍 Điều khiển người chơi
+│ ├── Entity.java 	            👤 Lớp cơ sở
+│ └── Player.java 	            🧍 Điều khiển người chơi
 
 ├── 📁 enemy/ # Hệ thống AI kẻ thù
-│ ├── E_Bitter.java 	🍫 Logic kẻ địch Bitter
-│ ├── E_Sweet.java 	    🍬 Logic kẻ địch Sweet
-│ ├── E_Watermelon.java 🍉 Logic kẻ địch Watermelon
-│ ├── EnemyBehavior.java🤖 Máy trạng thái AI
-│ └── PathFinder.java 	🧭 Triển khai thuật toán A*
+│ ├── E_Bitter.java 	        🍫 Logic kẻ địch Bitter
+│ ├── E_Sweet.java 	            🍬 Logic kẻ địch Sweet
+│ ├── E_Watermelon.java         🍉 Logic kẻ địch Watermelon
+│ ├── EnemyBehavior.java        🤖 Máy trạng thái AI
+│ ├── Node.java                 📊 Hỗ trợ thuật toán A*
+│ └── PathFinder.java 	        🧭 Triển khai thuật toán A*
 
 ├── 📁 object/ # Vật thể tương tác
 │ ├── 📁 buffitems/     ⚡ Vật phẩm tăng sức mạnh
@@ -180,6 +179,9 @@ Khi mở được **portal**, bạn sẽ khám phá:
 │ │
 │ ├── Bomb.java 	            💣 Hệ thống bom nổ
 │ ├── Flame.java 	            💥 Hệ thống lửa
+│ ├── Key.java 	                🔑 Chìa khóa mở Portal
+│ ├── Portal.java 	            🧩 Điều kiện để thắng
+│ ├── SuperObject.java 	        🤖 Logic object chung
 │ └── Chest.java 	            🎁 Rương chứa vật phẩm
 
 └── 📁 tile/ # Hệ thống bản đồ
@@ -258,12 +260,12 @@ public class MenuScreen extends JPanel {
 ## 🔗 **LUỒNG TƯƠNG TÁC CHÍNH**
 ```mermaid
 sequenceDiagram
-    participant MenuScreen
+    participant MenuPanel
     participant StartButton
     participant GamePanel
     participant EventObject
     
-    MenuScreen->>StartButton: addActionListener()
+    MenuPanel->>StartButton: addActionListener()
     StartButton->>GamePanel: startGameThread()
     GamePanel->>EventObject: handleItemPickup()
     EventObject->>Player: applyItemEffect()
@@ -314,11 +316,13 @@ public class Main {
 ---
 
 ## 📊 **THIẾT KẾ GIAO DIỆN**
-| Thành phần       | Mô tả                          | Hình ảnh tham khảo       |
-|------------------|--------------------------------|--------------------------|
-| Health Bar       | 4 trái tim hiển thị máu        | ❤️❤️❤️❤️               |
-| Timer            | Đếm time giữa màn hình        | ⏳ 02:30                 |
-| Score Board      | Điểm số góc trái               | 💯 Score: 12,450        |
-| Game Over Screen | Nền đen + thông báo            | 🎮 GAME OVER - Score: X |
+| Thành phần           | Mô tả                          | Hình ảnh tham khảo       |
+|------------------    |--------------------------------|--------------------------|
+| Health Bar           | 4 trái tim hiển thị máu        | ❤️❤️❤️❤️               |
+| Timer                | Đếm time giữa màn hình         | ⏳ 02:30                 |
+| Key                  | Đếm số key đã nhặt được        | 🔑 x 3                  |
+| Menu Button          | Nút trở về menu                | 🏁 Menu                 |
+| Score Board          | Điểm số góc trái               | 💯 Score: 12,450        |
+| Game Over/ Win Screen| Nền đen + thông báo            | 🎮 GAME OVER - Score: X |
 
 ---
