@@ -6,9 +6,11 @@ import entity.Player;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.BorderLayout;
 import java.awt.RadialGradientPaint;
 import java.awt.Rectangle;
 import java.awt.event.FocusAdapter;
@@ -16,6 +18,9 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import java.awt.event.MouseEvent;
@@ -45,6 +50,8 @@ public class GamePanel extends JPanel implements Runnable {
     int FPS = 60;
     
     // system
+    public boolean isPaused = false;
+    MainFrame mainFrame;
     public TileManager tileM = new TileManager(this);
     public KeyHandler keyH; // Sẽ khởi tạo sau với tham chiếu đến GamePanel
     Sound music = new Sound();
@@ -63,7 +70,14 @@ public class GamePanel extends JPanel implements Runnable {
     final int baseRadiusMin = tileSize;      // Bán kính tối thiểu khi thu nhỏ hết cỡ
     int timeElapsedFrames = 0;                // Đếm số frame đã chạy
     private float flickerAngle = 0;
-    Thread gameThread;
+    public boolean isStartingEffect = true;
+    private long effectStartTime;
+    private final int FADE_IN_DURATION = 5000; // 5 giây
+    private final int FLASH_DURATION = 300; // Thời gian chớp
+    private int flashCount = 0;
+    private long pauseStartTime; // Thời điểm bắt đầu pause
+    public long totalPausedTime = 0; // Tổng thời gian đã pause
+    private Thread gameThread;
     
     // entity and object
     public Player player = new Player(this, keyH);
@@ -74,7 +88,9 @@ public class GamePanel extends JPanel implements Runnable {
     public EventObject eventObj;
     public int hasKey = 0;
 
-    public GamePanel() {
+    public GamePanel(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+        effectStartTime = System.currentTimeMillis();
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
@@ -115,6 +131,42 @@ public class GamePanel extends JPanel implements Runnable {
             }
         });
     }
+
+    private void styleButton(JButton button) {
+        Color baseColor = new Color(255, 105, 180);
+        Color hoverColor = baseColor.darker();
+
+        Dimension normalSize = new Dimension(screenWidth / 20 + 5, screenHeight / 20);
+        Dimension hoverSize = new Dimension(screenWidth / 20 + 7, screenHeight / 20 + 7);
+        
+        button.setBackground(baseColor); // Màu hồng
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
+        button.setFont(new Font("Arial", Font.BOLD, 15));
+        Dimension size = button.getPreferredSize();
+        button.setBounds(screenWidth - size.width - 20, 48, size.width, size.height);
+        button.setMaximumSize(normalSize);
+
+        // Hover effect
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(hoverColor);
+                button.setPreferredSize(hoverSize);
+                button.setMaximumSize(hoverSize);
+                button.revalidate();
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(baseColor);
+                button.setPreferredSize(normalSize);
+                button.setMaximumSize(normalSize);
+                button.revalidate();
+            }
+        });
+    }
     
     public void setupGame() {
         aSetter.setObject();
@@ -123,18 +175,24 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void startGameThread() {
-        ui.resetTimer();
-        if (gameThread != null && gameThread.isAlive()) {
-            try {
-                gameThread.join(); // Chờ thread cũ kết thúc
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (gameThread == null || !gameThread.isAlive()) {
+            gameThread = new Thread(this); // this implements Runnable
+            gameThread.start();
+            System.out.println("Game thread started");
+        } else {
+            System.out.println("Game thread already running");
+        }
+    }
+
+    public void stopGameThread() {
+        if (gameThread != null) {
+            gameThread.interrupt();
             gameThread = null;
         }
-        gameThread = new Thread(this);
-        gameThread.start();
-        System.out.println("Game thread started");
+    }
+
+    public MainFrame getMainFrame() {
+        return mainFrame;
     }
 
     @Override
@@ -143,11 +201,11 @@ public class GamePanel extends JPanel implements Runnable {
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
-        while (gameThread != null) { // Giữ vòng lặp hoạt động để xử lý sự kiện
+        while (gameThread != null) {
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime) / drawInterval;
             lastTime = currentTime;
-            if (delta >= 1) {
+            if (delta >= 1 && !isPaused) { // Chỉ update khi không paused
                 update();
                 repaint();
                 delta--;
@@ -157,7 +215,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void update() {
         // Tạm dừng mọi hoạt động nếu đang hiện tutorial hoặc thoại
-        if (ui.showTutorial) {
+        if (isPaused || ui.showTutorial || ui.showKeySequence || ui.showPortalSequence || isStartingEffect) {
             return;
         }
 
@@ -172,7 +230,8 @@ public class GamePanel extends JPanel implements Runnable {
 
             // enemy
             for (int i = 0; i < enemy.length; i++) {
-                if (enemy[i] != null && enemy[i].health > 0) {
+                if (enemy[i] == null) continue;
+                if (enemy[i].health > 0) {
                     enemy[i].update();
                     if (enemy[i].health <= 0) {
                         deathE.setFile(5);
@@ -199,7 +258,7 @@ public class GamePanel extends JPanel implements Runnable {
                 float ratio = 1.0f - ((float)timeElapsedFrames / durationFrames);
                 baseLightRadius = baseRadiusMin + (int)((baseRadiusMax - baseRadiusMin) * ratio);
             } else {
-                baseLightRadius = baseRadiusMin;  // Giữ bán kính nhỏ nhất sau 10 giây
+                baseLightRadius = baseRadiusMin;
             }
 
             float flickerAmplitude = 5;
@@ -252,63 +311,96 @@ public class GamePanel extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D)g;
+
+        // Vẽ các thành phần game
+        tileM.draw(g2);
         
-        // Xử lý hiệu ứng rung
-        int offsetX = 0;
-        int offsetY = 0;
-        if (shakeCounter < shakeDuration) {
-            offsetX = (int)(Math.random() * shakeIntensity * 2 - shakeIntensity);
-            offsetY = (int)(Math.random() * shakeIntensity * 2 - shakeIntensity);
-            shakeCounter++;
-        }
-        g2.translate(offsetX, offsetY); // Áp dụng dịch chuyển
+
+        player.draw(g2);
         
-        // DEBUG
-        long drawStart = 0;
-        if (keyH.checkDrawTime == true) {
-            drawStart = System.nanoTime();
+        // Vẽ hiệu ứng mở đầu
+        if (isStartingEffect) {
+            drawStartEffect(g2);
         }
 
-        // tile
-        tileM.draw(g2); // Vẽ tile
-        
-        // object
-        for (int i = 0; i < obj.length; i++) {
-            if (obj[i] != null) {
-                obj[i].draw(g2, this);
+        // Chỉ vẽ các thành phần game và darkness khi hiệu ứng mở đầu đã kết thúc
+        if (!isStartingEffect) {
+            // Xử lý hiệu ứng rung
+            int offsetX = 0;
+            int offsetY = 0;
+            if (shakeCounter < shakeDuration) {
+                offsetX = (int) (Math.random() * shakeIntensity * 2 - shakeIntensity);
+                offsetY = (int) (Math.random() * shakeIntensity * 2 - shakeIntensity);
+                shakeCounter++;
             }
-        }
-
-        // enemy
-        for (int i = 0; i < enemy.length; i++) {
-            if (enemy[i] != null && enemy[i].health > 0) {
-                enemy[i].draw(g2);
+            for (int i = 0; i < obj.length; i++) {
+                if (obj[i] != null) {
+                    obj[i].draw(g2, this);
+                }
             }
-        }
-        
-        // player
-        player.draw(g2); // Vẽ player
-
-        // Vẽ flame chỉ khi game chưa kết thúc
-        if(!ui.gameFinished) {
-            for (Flame flame : flames) {
-                int screenX = flame.worldX - player.worldX + player.screenX + offsetX;
-                int screenY = flame.worldY - player.worldY + player.screenY + offsetY;
-                g2.drawImage(flame.image, screenX, screenY, null);
+            for (int i = 0; i < enemy.length; i++) {
+                if (enemy[i] != null && enemy[i].health > 0) {
+                    enemy[i].draw(g2);
+                }
             }
+            // Vẽ flame và darkness effect
+            if (!ui.gameFinished) {
+                for (Flame flame : flames) {
+                    int screenX = flame.worldX - player.worldX + player.screenX + offsetX;
+                    int screenY = flame.worldY - player.worldY + player.screenY + offsetY;
+                    g2.drawImage(flame.image, screenX, screenY, null);
+                }
+                int spotlightX = player.screenX + player.solidArea.x;
+                int spotlightY = player.screenY + player.solidArea.y;
+                drawDarknessEffect(g2, spotlightX, spotlightY, baseLightRadius);
+            }
+            g2.translate(-offsetX, -offsetY);
         }
-
-        g2.translate(-offsetX, -offsetY);
-
-        if (!ui.gameFinished) {
-            int spotlightX = player.screenX + player.solidArea.x;
-            int spotlightY = player.screenY + player.solidArea.y;
-            drawDarknessEffect(g2, spotlightX, spotlightY, baseLightRadius);
-        }
-
                     
         // UI
         ui.draw(g2);
+    }
+
+    private void drawStartEffect(Graphics2D g2) {
+        long currentTime = System.currentTimeMillis();
+        long elapsed = currentTime - effectStartTime;
+
+        // Hiệu ứng fade in từ đen
+        if (elapsed < FADE_IN_DURATION) {
+            float progress = (float) elapsed / FADE_IN_DURATION * 0.5f;
+            float opacity = 1.0f - progress * progress;
+            // Thêm một lớp phủ đen phụ với opacity cố định
+            g2.setColor(new Color(0, 0, 0, 0.8f)); // Lớp phủ thêm
+            g2.fillRect(0, 0, screenWidth, screenHeight);
+            // Lớp phủ chính
+            g2.setColor(new Color(0, 0, 0, opacity));
+            g2.fillRect(0, 0, screenWidth, screenHeight);
+        }
+
+        // Hiệu ứng chớp trắng 2 lần
+        else if (flashCount < 2) {
+            // Tính thời gian đã trôi qua kể từ khi fade in kết thúc
+            long flashElapsed = elapsed - FADE_IN_DURATION;
+
+            // Chớp trắng trong khoảng thời gian FLASH_DURATION
+            if (flashElapsed % (FLASH_DURATION * 2) < FLASH_DURATION) {
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
+                g2.setColor(Color.WHITE);
+                g2.fillRect(0, 0, screenWidth, screenHeight);
+            }
+
+            // Tăng flashCount sau mỗi 2 lần chớp (1 chu kỳ sáng + tắt)
+            if (flashElapsed >= (FLASH_DURATION * 2) * (flashCount + 1)) {
+                flashCount++;
+            }
+        }
+
+        // Kết thúc hiệu ứng sau 2 lần chớp
+        else {
+            isStartingEffect = false;
+        }
+
+        g2.setComposite(AlphaComposite.SrcOver); // Reset composite
     }
 
     public void drawDarknessEffect(Graphics2D g2, int centerX, int centerY, int radius) {
@@ -316,8 +408,8 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D gDark = darkness.createGraphics();
 
         // Tô nền tối mờ
-        gDark.setColor(new Color(0, 0, 0, 150)); // Alpha cao làm tối mạnh (chỉnh từ 200 đổ lên)
-        gDark.fillRect(0, 0, screenWidth, screenHeight);
+        gDark.setColor(new Color(0, 0, 0, 250)); // Alpha cao làm tối mạnh (chỉnh từ 200 đổ lên)
+        gDark.fillRect(0, 0, screenWidth + 50, screenHeight + 50);
 
         // Dùng AlphaComposite để đục lỗ hình tròn
         gDark.setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f)); // Đục vùng này
@@ -339,6 +431,32 @@ public class GamePanel extends JPanel implements Runnable {
         this.shakeIntensity = intensity;
         this.shakeDuration = duration;
         this.shakeCounter = 0;
+    }
+
+    public boolean isGameFinished() {
+        return ui.gameFinished;
+    }
+
+    public void pauseGame() {
+        isPaused = true;
+        pauseStartTime = System.currentTimeMillis(); // Ghi lại thời điểm pause
+        stopMusic();
+        if (gameThread != null) {
+            gameThread.interrupt();
+            gameThread = null;
+        }
+    }
+
+    public void resumeGame() {
+        if (isPaused) {
+            totalPausedTime += System.currentTimeMillis() - pauseStartTime;
+            isPaused = false;
+        }
+        if (gameThread == null) {
+            startGameThread();
+            playMusic(1);
+        }
+        requestFocusInWindow();
     }
     
     public void playMusic(int i) {
@@ -366,10 +484,15 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void resetGame() {
+        totalPausedTime = 0;
+        stopGameThread();
         System.out.println("ResetGame called");
         ui.gameFinished = false;
         ui.gameWon = false;
         player.resetPlayer();
+        hasKey = 0;
+        ui.textSound.stop();
+        ui.tutorialSound.stop();
         flames.clear();
         for(int i = 0; i < obj.length; i++) {
             obj[i] = null;
@@ -377,10 +500,13 @@ public class GamePanel extends JPanel implements Runnable {
         for(int i = 0; i < enemy.length; i++) {
             enemy[i] = null;
         }
+        obj = new SuperObject[1000];
+        enemy = new Entity[100];
         eventObj.firstPortalContact = true;
         tileM.resetMap();
         ui.resetTimer();
         setupGame();
+        ui.startTimer();
         // Dừng thread hiện tại nếu đang chạy
         if (gameThread != null) {
             gameThread.interrupt();

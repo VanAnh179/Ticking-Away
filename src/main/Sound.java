@@ -7,6 +7,7 @@ import javax.sound.sampled.Clip;
 
 public class Sound {
     public Clip clip;
+    private long pausePosition = 0;
     URL soundURL[] = new URL[30];
     
     public Sound() {
@@ -22,6 +23,8 @@ public class Sound {
         soundURL[9] = getClass().getResource("/sound/key.wav");
         soundURL[10] = getClass().getResource("/sound/walking.wav");
         soundURL[11] = getClass().getResource("/sound/text.wav");
+        soundURL[12] = getClass().getResource("/sound/tutorial_bm.wav");
+        soundURL[13] = getClass().getResource("/sound/win_jojo.wav");
     }
     
     public void setFile(int i) {
@@ -52,6 +55,20 @@ public class Sound {
             clip.stop();
             clip.flush(); // Thêm dòng này để xóa buffer
             clip.setFramePosition(0); // Reset về đầu
+        }
+    }
+
+    public void pause() {
+        if (clip != null && clip.isRunning()) {
+            pausePosition = clip.getMicrosecondPosition();
+            clip.stop();
+        }
+    }
+
+    public void resume() {
+        if (clip != null && !clip.isRunning()) {
+            clip.setMicrosecondPosition(pausePosition);
+            clip.start();
         }
     }
 }

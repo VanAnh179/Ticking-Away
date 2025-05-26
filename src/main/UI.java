@@ -16,8 +16,9 @@ public class UI {
     public boolean gameFinished = false;
     public boolean gameWon = false; // Thêm biến gameWon
     protected Sound textSound = new Sound();
+    protected Sound tutorialSound = new Sound();
 
-    private long startTime;
+    long startTime;
     private long lastBackgroundScoreUpdate;
     private boolean isRunning;
     
@@ -48,7 +49,6 @@ public class UI {
     private final int CHAR_DELAY = 50; // Thời gian hiện từng chữ (ms)
     private final Color BORDER_COLOR = new Color(255, 105, 180); // Màu viền hồng
 
-    public boolean showKeyMessage = false;
     public boolean hasShownKeyMessage = false;
     public int keyCharIndex = 0;
     public long keyLastCharTime;
@@ -77,9 +77,15 @@ public class UI {
     public boolean showEffect = false;
     private HashMap<String, BufferedImage> effectImages = new HashMap<>();
 
+    private Rectangle menuButtonRect;
+    private final Color MENU_BUTTON_COLOR = new Color(255, 105, 180); // Màu hồng
+    private final Color MENU_BUTTON_TEXT_COLOR = Color.WHITE;
+
+
     public UI(GamePanel gp) {
         this.gp = gp;
         textSound.setFile(11);
+        tutorialSound.setFile(12);
         effectImages = new HashMap<>(); // Khởi tạo map
         try {
             // Thêm load ảnh
@@ -124,14 +130,16 @@ public class UI {
     }
 
     public void startTimer() {
-        startTime = System.currentTimeMillis();
-        lastBackgroundScoreUpdate = startTime;
-        isRunning = true;
+        if (!isRunning || !showTutorial || !gp.isStartingEffect) { // Chỉ start timer khi không có hiệu ứng khởi động
+            startTime = System.currentTimeMillis();
+            lastBackgroundScoreUpdate = startTime;
+            isRunning = true;
+        }
     }
 
     public void update() {
-        if (isRunning && !showTutorial && !showKeyMessage) {
-            long currentTime = System.currentTimeMillis();
+        if (!gp.isPaused && isRunning && !showTutorial && !showKeySequence && !gp.isStartingEffect) {
+            long currentTime = System.currentTimeMillis() - startTime - gp.totalPausedTime;
             if (currentTime - lastBackgroundScoreUpdate >= 1000) {
                 backgroundScore -= BG_SCORE_DECREASE;
                 if (backgroundScore < 0) backgroundScore = 0;
@@ -165,7 +173,8 @@ public class UI {
 
     private String getFormattedTime() {
         if (!isRunning) return "00:00";
-        long currentTime = System.currentTimeMillis() - startTime;
+        long currentTime = System.currentTimeMillis() - startTime - gp.totalPausedTime;
+        currentTime = Math.max(currentTime, 0); // Ngăn giá trị âm
         currentTime /= 1000;
         int minutes = (int) (currentTime / 60);
         int seconds = (int) (currentTime % 60);
@@ -182,33 +191,36 @@ public class UI {
     }
     
     public void draw(Graphics2D g2) {
-        drawHealthBar(g2);
-        drawClock(g2);
-        drawScore(g2);
-        drawKeys(g2);
+        if (!gp.isStartingEffect) {
+            drawHealthBar(g2);
+            drawClock(g2);
+            drawScore(g2);
+            drawKeys(g2);
+            drawMenuButton(g2);
 
-        if (showTutorial) {
-            drawTutorial(g2); // Vẽ hộp thoại
-        }
+            if (showTutorial) {
+                drawTutorial(g2); // Vẽ hộp thoại
+            }
 
-        if (showEffect) {
-            drawImageEffect(g2);
-        }
+            if (showEffect) {
+                drawImageEffect(g2);
+            }
 
-        if(gameFinished) {
-            drawGameFinishedScreen(g2);
-        }
+            if(gameFinished) {
+                drawGameFinishedScreen(g2);
+            }
 
-        if(messageOn) {
-            drawMessage(g2);
-        }
+            if(messageOn) {
+                drawMessage(g2);
+            }
 
-        if (showKeySequence) {
-            drawKeySequence(g2);
-        }
+            if (showKeySequence) {
+                drawKeySequence(g2);
+            }
 
-        if (showPortalSequence) {
-            drawPortalSequence(g2);
+            if (showPortalSequence) {
+                drawPortalSequence(g2);
+            }
         }
     }
 
@@ -218,7 +230,7 @@ public class UI {
             int startY = 3;
             int spacing = 5;
             int heartSize = gp.tileSize;
-            int startX = gp.screenWidth - 20 - (heartSize + spacing) * 4;
+            int startX = gp.screenWidth - 130 - (heartSize + spacing) * 4;
         
             for (int i = 0; i < gp.player.maxHealth; i++) {
                 if (i < gp.player.health) {
@@ -260,6 +272,34 @@ public class UI {
         g2.setFont(originalFont);
     }
 
+    // phương thức vẽ nút Menu
+    private void drawMenuButton(Graphics2D g2) {
+        int buttonWidth = 80;
+        int buttonHeight = 30;
+        int x = gp.screenWidth - buttonWidth - 40; // Căn phải
+        int y = 15; // Căn trên
+
+        // Vẽ nền nút
+        g2.setColor(MENU_BUTTON_COLOR);
+        g2.fillRoundRect(x, y, buttonWidth, buttonHeight, 15, 15);
+
+        // Vẽ viền
+        g2.setColor(Color.WHITE);
+        g2.setStroke(new BasicStroke(2));
+        g2.drawRoundRect(x, y, buttonWidth, buttonHeight, 15, 15);
+
+        // Vẽ text
+        g2.setColor(MENU_BUTTON_TEXT_COLOR);
+        g2.setFont(new Font("Arial", Font.BOLD, 18));
+        String text = "MENU";
+        int textX = x + (buttonWidth - g2.getFontMetrics().stringWidth(text)) / 2;
+        int textY = y + (buttonHeight / 2) + 7;
+        g2.drawString(text, textX, textY);
+
+        // Lưu vùng click
+        menuButtonRect = new Rectangle(x, y, buttonWidth, buttonHeight);
+    }
+
     private void drawKeys(Graphics2D g2) {
         int keySize = gp.tileSize * 3 / 4; // Kích thước ảnh key
         int x = 20; // Vị trí bắt đầu
@@ -277,7 +317,10 @@ public class UI {
     private void drawGameFinishedScreen(Graphics2D g2) {
         g2.setColor(new Color(0, 0, 0, 180));
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
-
+        if (!textSound.clip.isRunning()) {
+            textSound.setFile(13);
+            textSound.play();
+        }
         int boxWidth = gp.screenWidth * 3/4;
         int boxHeight = gp.screenHeight / 2;
         int boxX = (gp.screenWidth - boxWidth) / 2;
@@ -313,7 +356,7 @@ public class UI {
     private void drawMessage(Graphics2D g2) {
         g2.setColor(Color.white);
         g2.setFont(new Font("Arial", Font.PLAIN, 20));
-        g2.drawString(message, 20, gp.screenHeight - 40);
+        g2.drawString(message, 20, gp.screenHeight - 80);
         messageCounter++;
         if(messageCounter > 120) {
             messageCounter = 0;
@@ -364,7 +407,9 @@ public class UI {
     private void drawTutorial(Graphics2D g2) {
         if (!showTutorial) return;
         String fullText = tutorialPages[currentTutorialPage];
-
+        if (!tutorialSound.clip.isRunning()) {
+            tutorialSound.play();
+        }
         // Xử lý trang hiệu ứng
         if (fullText.startsWith("[SHOW_IMAGE")) {
             if (!showEffect) { // Chỉ kích hoạt hiệu ứng một lần
@@ -534,8 +579,16 @@ public class UI {
     }
 
     public void handleClick(int mouseX, int mouseY) {
-        if (showKeyMessage && okButtonRect != null && okButtonRect.contains(mouseX, mouseY)) {
-            showKeyMessage = false;
+        if (gp.isStartingEffect) {
+            return;
+        }
+        if (menuButtonRect != null && menuButtonRect.contains(mouseX, mouseY)) {
+            gp.mainFrame.switchToMenu();
+            gp.pauseGame();
+            return;
+        }
+        if (showKeySequence) {
+            showKeySequence = false;
         } 
         // Xử lý click khi đang hiển thị ảnh effect
         else if (showEffect) { 
@@ -555,6 +608,8 @@ public class UI {
             nextKeyPage();
         } else if (showPortalSequence) {
             nextPortalPage();
+        } else if (!showTutorial) {
+            tutorialSound.stop();
         }
     }
 }

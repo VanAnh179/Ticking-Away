@@ -164,27 +164,30 @@ public class EventObject {
     }
 
     public void checkKeyPickup(int i) {
-        Rectangle playerRect = new Rectangle(gp.player.worldX, gp.player.worldY, gp.tileSize, gp.tileSize);
-        Rectangle keyRect = new Rectangle(gp.obj[i].worldX, gp.obj[i].worldY, gp.tileSize / 5, gp.tileSize / 5);
+        if (gp.obj[i] == null || gp.obj[i].collision) return;
+
+        Rectangle playerRect = new Rectangle(
+            gp.player.worldX + gp.player.solidArea.x,
+            gp.player.worldY + gp.player.solidArea.y,
+            gp.player.solidArea.width,
+            gp.player.solidArea.height
+        );
+        Rectangle keyRect = new Rectangle(gp.obj[i].worldX + 10, gp.obj[i].worldY + 10, gp.tileSize - 20, gp.tileSize - 20);
+
         if (playerRect.intersects(keyRect)) {
             gp.hasKey++;
-            gp.obj[i] = null; // Xóa Key khỏi map
-
+            gp.obj[i] = null; // Xóa key ngay lập tức
             gp.playSoundEffect(9);
-
-            // Kích hoạt nhảy
             gp.player.isJumping = true;
-            gp.player.initialY = gp.player.worldY; // Lưu vị trí ban đầu
+            gp.player.initialY = gp.player.worldY;
             gp.player.verticalVelocity = gp.player.jumpForce;
-            
-            gp.ui.showMessage("Key collected!" + gp.hasKey); // Hiển thị thông báo
+            gp.ui.showMessage("Key collected! " + gp.hasKey);
             System.out.println("Key picked! Total keys: " + gp.hasKey);
-            if (gp.ui != null && !gp.ui.hasShownKeyMessage && gp.ui.showKeySequence == false) {
-                gp.ui.showKeyMessage = true;
-                gp.ui.hasShownKeyMessage = true;
-                gp.ui.keyCharIndex = 0;
+
+            // Kích hoạt hiệu ứng sequence chỉ một lần
+            if (!gp.ui.hasShownKeyMessage) {
                 gp.ui.triggerKeySequence();
-                gp.ui.keyLastCharTime = System.currentTimeMillis();
+                gp.ui.hasShownKeyMessage = true;
             }
         }
     }
