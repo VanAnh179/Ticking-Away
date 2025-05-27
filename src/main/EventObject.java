@@ -1,16 +1,17 @@
 package main;
 
 import entity.Player;
-
 import java.awt.Rectangle;
-import java.util.Random;
-import object.Chest;
+import object.Chest1;
+import object.Chest2;
 import object.Key;
 import object.Portal;
 import object.SuperObject;
 import object.buffitems.IncreaseDamage;
 import object.buffitems.IncreaseHealth;
+import object.buffitems.IncreaseLight;
 import object.debuffitems.DecreaseSpeed;
+import object.debuffitems.IncreaseBombTime;
 import object.debuffitems.Teleport;
 
 public class EventObject {
@@ -32,6 +33,12 @@ public class EventObject {
         if (item instanceof Portal) {
             checkPortalEvent(index);
         }
+        if (item instanceof Chest1) {
+            Chest1 chest = (Chest1) item;
+            if(!chest.isOpened()) {
+                chest.startOpening();
+            }
+        }
         if (item instanceof IncreaseDamage) {
             applyBombRangeEffect(index);
         }
@@ -39,21 +46,47 @@ public class EventObject {
         else if (item instanceof IncreaseHealth) {
             applyHealthEffect(index);
         }
+        else if (item instanceof IncreaseBombTime) {
+            applyBombTimeDebuff(index);
+        }
         else if (item instanceof DecreaseSpeed) {
             applySpeedDebuff(index);
         }
         else if (item instanceof Teleport) {
             applyTeleportEffect(index);
+        } 
+        else if (item instanceof Chest2) {
+            Chest2 chest2 = (Chest2) item;
+            if(!chest2.isOpened()) {
+                chest2.startOpening();
+            }
+        } 
+        else if (item instanceof IncreaseLight) {
+            gp.obj[index] = null;
+            applyLightBuff(index);
         }
     }
 
     private void applyBombRangeEffect(int itemIndex) {
         // Tăng phạm vi bom nổ (không cộng dồn)
         Player player = gp.player;
-        player.bombRange = Math.max(player.bombRange, 2); // Mặc định là 1, tăng lên 2
+        player.tempBombRange = player.bombRange + 1; // Tăng phạm vi bom nổ
+        player.bombRangeExpireTime = System.currentTimeMillis() + 30000; // 30 giây 
+        player.bombRange = Math.max(player.originalBombRange, player.tempBombRange); // Cập nhật phạm vi bom nổ
+
+        gp.ui.showMessage("Bomb range +1");
 
         // Xóa item khỏi map
         gp.obj[itemIndex] = null;
+
+        new java.util.Timer().schedule(new java.util.TimerTask() {
+            @Override
+            public void run() {
+                player.tempBombRange = 0;
+                player.bombRange = player.originalBombRange;
+                gp.ui.showMessage("Bomb range returned to normal");
+            }
+        }, 30000); //tăng phạm vi bomb nổ trong 30s 
 
     }
 
@@ -61,9 +94,15 @@ public class EventObject {
         Player player = gp.player;
         if(player.maxHealth < 4) {
             player.maxHealth++;
-            player.health = player.maxHealth;
-            gp.obj[itemIndex] = null; // Xóa item khỏi map
+            player.health = player.maxHealth; // Khôi phục máu
+            gp.ui.showMessage("Health +1");
+        } else {
+            player.tempHealth += 1; // Tăng máu tạm thời
+            player.tempHealthExpireTime = System.currentTimeMillis() + 30000; // 30 giây
+            player.health = player.getTotalHealth();
+            gp.ui.showMessage("Temp Health +1");
         }
+        gp.obj[itemIndex] = null; // Xóa item khỏi map
     }
 
     private void applySpeedDebuff(int itemIndex) {
@@ -79,7 +118,7 @@ public class EventObject {
                 public void run() {
                     player.speed = 4; // Khôi phục tốc độ ban đầu
                 }
-            }, 10000); // Khôi phục sau 5 giây
+            }, 20000); // Khôi phục sau 10 giây
         }
     }
 
@@ -104,35 +143,31 @@ public class EventObject {
         }
     }
 
-    private void opendChest(int itemIndex) {
-        if(gp.obj[itemIndex] instanceof Chest) {
-            Chest chest = (Chest) gp.obj[itemIndex];
-            
-            spawnRandomItem(chest.worldX, chest.worldY);
-
-            gp.obj[itemIndex] = null; // Xóa chest khỏi map
-        }
+    private void applyLightBuff(int itemIndex) {
+        Player player = gp.player;
+        player.bonusLightRadius += gp.tileSize;
+        gp.ui.showMessage("Light Radius Increased!");
+        gp.obj[itemIndex] = null;
     }
 
-    private void spawnRandomItem(int x, int y) {
-        int randomItem = new Random().nextInt(4);
-        SuperObject item = switch (randomItem) {
-            case 0 -> new IncreaseDamage(gp);
-            case 1 -> new IncreaseHealth(gp);
-            case 2 -> new DecreaseSpeed(gp);
-            case 3 -> new Teleport(gp);
-            default -> null;
-        };
-        if (item != null) {
-            item.worldX = x;
-            item.worldY = y;
-            for (int i = 0; i < gp.obj.length; i++) {
-                if (gp.obj[i] == null) {
-                    gp.obj[i] = item;
-                    break;
-                }
+    private void applyBombTimeDebuff(int itemIndex) {
+        Player player = gp.player;
+        // Lưu giá trị cooldown gốc và tăng cooldown lên gấp đôi (hoặc giá trị mong muốn)
+        player.originalBombCooldown = player.BOMB_COOLDOWN_TIME;
+        player.tempBombCooldown = player.BOMB_COOLDOWN_TIME * 5; // Ví dụ: tăng gấp đôi
+        player.bombCooldownExpireTime = System.currentTimeMillis() + 15000; // 15 giây
+
+        gp.ui.showMessage("Bomb cooldown increased to 5ss!");
+        gp.obj[itemIndex] = null; // Xóa item khỏi map
+
+        new java.util.Timer().schedule(new java.util.TimerTask() {
+            @Override
+            public void run() {
+                // Khôi phục giá trị cooldown ban đầu
+                player.tempBombCooldown = 0;
+                gp.ui.showMessage("Bomb cooldown back to normal");
             }
-        }
+        }, 15000); // Hiệu ứng kéo dài 1515 giây
     }
 
     public void checkPortalEvent(int i) {
@@ -154,7 +189,8 @@ public class EventObject {
     }
 
     private void checkPortalCondition() {
-        if (gp.hasKey >= 3) {
+        if (gp.hasKey >= 2) {
+            gp.ui.finishGame(true);
             gp.ui.gameFinished = true;
             gp.ui.gameWon = true;
             gp.stopMusic();

@@ -1,7 +1,7 @@
 package main;
 
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class MainFrame extends JFrame {
     private CardLayout cardLayout;
@@ -9,7 +9,7 @@ public class MainFrame extends JFrame {
     private MenuPanel menuPanel;
     private GamePanel gamePanel;
     private boolean isNewGame = true;
-    private UI ui = new UI(gamePanel);
+    private UI ui;
 
     public MainFrame() {
         setTitle("Ticking Away");
@@ -23,6 +23,9 @@ public class MainFrame extends JFrame {
         // Khởi tạo các panel
         menuPanel = new MenuPanel(this);
         gamePanel = new GamePanel(this);
+
+        ui = new UI(gamePanel);
+        ui.setGamePanel(gamePanel);
 
         mainPanel.add(menuPanel, "Menu");
         mainPanel.add(gamePanel, "Game");
@@ -39,6 +42,7 @@ public class MainFrame extends JFrame {
             // Tạo game mới nếu là game mới hoặc game đã kết thúc
             gamePanel = new GamePanel(this);
             mainPanel.add(gamePanel, "Game");
+            ui.setGamePanel(gamePanel);
             isNewGame = false;
         }
         cardLayout.show(mainPanel, "Game");
@@ -67,6 +71,13 @@ public class MainFrame extends JFrame {
     // Thêm phương thức cho nút Start
     public void startNewGame() {
         isNewGame = true;
+        gamePanel = new GamePanel(this); // Reset gamePanel để đảm bảo biến mới được khởi tạo
+        mainPanel.add(gamePanel, "Game");
+        ui.setGamePanel(gamePanel);
         switchToGame();
+    }
+
+    public GamePanel getGamePanel() {
+        return gamePanel;
     }
 }

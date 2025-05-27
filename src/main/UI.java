@@ -1,15 +1,16 @@
 package main;
 
+import entity.Entity;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
-
 import javax.imageio.ImageIO;
 
 public class UI {
+    //private MainFrame mainFrame;
     GamePanel gp;
-    BufferedImage heart, keyImage;
+    BufferedImage heart, keyImage, heart2;
     public boolean messageOn = false;
     public String message = "";
     int messageCounter = 0;
@@ -101,8 +102,10 @@ public class UI {
                 System.out.println("Không tìm thấy file ảnh portal_vision");
             }
             heart = ImageIO.read(getClass().getResourceAsStream("/objects/health.png"));
+            heart2 = ImageIO.read(getClass().getResourceAsStream("/objects/heart2.png"));
             keyImage = ImageIO.read(getClass().getResourceAsStream("/objects/key_01d.png")); // Load ảnh key
             keyImage = scaleImage(keyImage, 30, 30);
+            heart2 = scaleImage(heart, 30, 30);
         } catch (IOException e) {
             System.err.println("Lỗi tải ảnh:");
             e.printStackTrace();
@@ -124,17 +127,21 @@ public class UI {
     }
 
     public void resetTimer() {
-        isRunning = false;
-        visibleScore = 0;
-        backgroundScore = 50000;
+        if (gp.isNewGame) {
+            isRunning = false;
+            visibleScore = 0;
+            backgroundScore = 50000;
+            startTime = System.currentTimeMillis();
+            lastBackgroundScoreUpdate = startTime;
+        }
     }
 
     public void startTimer() {
-        if (!isRunning || !showTutorial || !gp.isStartingEffect) { // Chỉ start timer khi không có hiệu ứng khởi động
-            startTime = System.currentTimeMillis();
-            lastBackgroundScoreUpdate = startTime;
-            isRunning = true;
+        if (gp.isNewGame && !gp.isStartingEffect && !showTutorial) {
+            gp.gameStartTime = System.currentTimeMillis(); // Khởi tạo thời gian bắt đầu game
+            gp.totalPausedDuration = 0; // Reset tổng thời gian pause
         }
+        isRunning = true;
     }
 
     public void update() {
@@ -159,9 +166,12 @@ public class UI {
         }
     }
 
-
-    public void addScore(int points) {
+    public void addScoreForRock(int points) {
         visibleScore += points;
+    }
+
+    public void addScore(Entity enemy) {
+        visibleScore += gp.addScoreForEnemy(enemy);
     }
 
     public int getFinalScore() {
@@ -172,10 +182,10 @@ public class UI {
     }
 
     private String getFormattedTime() {
-        if (!isRunning) return "00:00";
-        long currentTime = System.currentTimeMillis() - startTime - gp.totalPausedTime;
-        currentTime = Math.max(currentTime, 0); // Ngăn giá trị âm
-        currentTime /= 1000;
+        if (gp == null || !isRunning) return "00:00";
+        long currentTime = System.currentTimeMillis() - gp.gameStartTime - gp.totalPausedDuration;
+        currentTime = Math.max(currentTime, 0);
+        currentTime /= 1000;       
         int minutes = (int) (currentTime / 60);
         int seconds = (int) (currentTime % 60);
         return String.format("%02d:%02d", minutes, seconds);
@@ -231,13 +241,41 @@ public class UI {
             int spacing = 5;
             int heartSize = gp.tileSize;
             int startX = gp.screenWidth - 130 - (heartSize + spacing) * 4;
-        
+            
+            //vẽ máu thậtthật
             for (int i = 0; i < gp.player.maxHealth; i++) {
                 if (i < gp.player.health) {
                     g2.drawImage(heart, 
                             startX + (i * (heartSize + spacing)), 
                             startY, 
                             heartSize, heartSize, null);
+                }
+            }
+
+            //vẽ máu ảo
+            if (gp.player.tempHealth > 0) {
+                long remainingTime = gp.player.tempHealthExpireTime - System.currentTimeMillis();
+                if (remainingTime > 0) {
+                    // Tính alpha dựa trên thời gian còn lại (30 giây = 30,000 ms)
+                    float fadeDuration = 30000f; // 30 giây
+                    float initialAlpha = 0.7f;
+                    float alpha = initialAlpha * (remainingTime / fadeDuration);
+                    if (alpha < 0) alpha = 0; // Đảm bảo alpha không âm
+                    if (alpha > initialAlpha) alpha = initialAlpha; // Giới hạn alpha tối đa
+
+                    AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+                    g2.setComposite(ac);
+                    int tempStartY = startY + heartSize + 5;
+                    for (int i = 0; i < gp.player.tempHealth; i++) {
+                        g2.drawImage(heart2, 
+                                startX + (i * (heartSize + spacing)), 
+                                tempStartY, 
+                                heartSize, heartSize, null);
+                    }
+                } else {
+                    // Nếu hết thời gian, đặt tempHealth về 0
+                    gp.player.tempHealth = 0;
+                    gp.player.tempHealthExpireTime = 0;
                 }
             }
         } finally {
@@ -611,5 +649,33 @@ public class UI {
         } else if (!showTutorial) {
             tutorialSound.stop();
         }
+    }
+
+    // Trong phương thức xử lý khi game kết thúc (thắng hoặc thua)
+    public void finishGame(boolean won) {
+        gameFinished = true;
+        gameWon = won;
+        isRunning = false;
+        
+        // Tính toán chính xác thời gian đã chơi (bao gồm cả pause)
+        long elapsedTime = System.currentTimeMillis() - startTime - gp.getTotalPausedTime();
+        int secondsPlayed = (int)(elapsedTime / 1000);
+        backgroundScore = Math.max(0, 50000 - (secondsPlayed * BG_SCORE_DECREASE));
+    }
+
+    public void adjustStartTime(long pausedTime) {
+        // Điều chỉnh startTime để bù lại thời gian đã pause
+        startTime += pausedTime;
+        lastBackgroundScoreUpdate = startTime; // Cập nhật cả thời điểm cập nhật score cuối cùng
+    }
+
+    // Phương thức đồng bộ thời gian đã pause
+    public void syncPausedTime(long pausedDuration) {
+        this.startTime += pausedDuration; 
+        this.lastBackgroundScoreUpdate = System.currentTimeMillis();
+    }
+
+    public void setGamePanel(GamePanel gamePanel) {
+        this.gp = gamePanel;
     }
 }

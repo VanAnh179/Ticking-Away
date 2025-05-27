@@ -1,9 +1,9 @@
 package entity;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.AlphaComposite;
 import java.awt.image.BufferedImage;
 import main.GamePanel;
 import main.KeyHandler;
@@ -18,6 +18,8 @@ public class Player extends Entity {
 
     public int maxHealth = 4;
     public int health = maxHealth;
+    public int tempHealth = 0;
+    public long tempHealthExpireTime = 0;
     public int invincibleCounter = 0;
     public final int INVINCIBLE_TIME = 180;
     public boolean wasTouchingEnemy = false;
@@ -33,6 +35,12 @@ public class Player extends Entity {
     public final int BOMB_COOLDOWN_TIME = 60; // 1 giây (60 frames)
 
     public int bombRange = 1; // Số ô bomb có thể nổ
+    public int originalBombRange = 1; // Lưu lại phạm vi bomb gốc
+    public int tempBombRange = 0;
+    public long bombRangeExpireTime = 0;
+    public int originalBombCooldown = BOMB_COOLDOWN_TIME;
+    public int tempBombCooldown = 0;
+    public long bombCooldownExpireTime = 0;
 
     public Sound walkSound = new Sound();
     public int baseSpeed = 4; // Tốc độ di chuyển cơ bản
@@ -49,6 +57,14 @@ public class Player extends Entity {
     public int teleportCounter = 0; // Biến đếm thời gian teleport
 
     private Sound loseHealth = new Sound();
+
+    public int score = 0;
+    public final int BitterScore = 300;
+    public final int SweetScore = 200;
+    public final int WatermelonScore = 150;
+
+    public int bonusLightRadius = 0;
+    private int originalLightRadius = gp.tileSize * 3; // Lưu lại bán kính ánh sáng gốc
 
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp);
@@ -132,6 +148,17 @@ public class Player extends Entity {
         // Giảm cooldown mỗi frame nếu > 0
         if (bombCooldown > 0) {
             bombCooldown--;
+        }
+
+        if (tempBombCooldown > 0 && System.currentTimeMillis() > bombCooldownExpireTime) {
+            tempBombCooldown = 0;
+        }
+
+        if(tempHealth > 0 && System.currentTimeMillis() > tempHealthExpireTime) {
+            tempHealth = 0;
+            if(health > maxHealth) {
+                health = maxHealth;
+            }
         }
         
         if (!isJumping) {
@@ -304,6 +331,9 @@ public class Player extends Entity {
                 break;
             }
         }
+
+        int currentCooldown = (tempBombCooldown > 0) ? tempBombCooldown : BOMB_COOLDOWN_TIME;
+        bombCooldown = currentCooldown; // Kích hoạt cooldown
     }
 
     public void pickUpObject(int i) {
@@ -416,7 +446,12 @@ public class Player extends Entity {
     @Override
     public void takeDamage(int damage) {
         if (invincibleCounter == 0) { // Chỉ nhận sát thương khi không bất tử
-            health -= damage;
+            int damageToTemp = Math.min(damage, tempHealth);
+            tempHealth -= damageToTemp;
+            damage -= damageToTemp;
+            if(damage > 0) {
+                health -= damage;
+            }
             if (health < 0) {
                 health = 0;
             }
@@ -435,6 +470,8 @@ public class Player extends Entity {
     public void resetPlayer() {
         setDefaultValues(); // Đặt lại vị trí, health, speed, v.v.
         hasKey = 0; // Đặt lại số lượng key
+        score = 0; // Đặt lại điểm số
+        this.bonusLightRadius = 0; // Đặt lại bán kính ánh sáng
         invincibleCounter = 0; // Đặt lại trạng thái bất tử
         bombCooldown = 0; // Đặt lại cooldown bomb
         bombRange = 1; // Đặt lại phạm vi bomb
@@ -444,5 +481,13 @@ public class Player extends Entity {
         lastDirection = "down"; // Đặt lại hướng cuối cùng
         walkSound.stop(); // Dừng âm thanh khi reset
         initialY = worldY; // Khởi tạo initialY bằng vị trí Y ban đầu
+    }
+
+    public int getTotalHealth() {
+        return health + tempHealth;
+    }
+    
+    public int getMaxTotalHealth() {
+        return maxHealth + tempHealth;
     }
 }

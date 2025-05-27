@@ -42,7 +42,13 @@ public class MenuPanel extends JPanel {
         // Nút Resume (Khởi tạo trước)
         resumeButton = new JButton("RESUME");
         styleButton(resumeButton);
-        resumeButton.addActionListener(e -> mainFrame.switchToGame());
+       resumeButton.addActionListener(e -> {
+            mainFrame.switchToGame();
+            // Đảm bảo game được resume đúng cách
+            if (mainFrame.getGamePanel() != null) {
+                mainFrame.getGamePanel().resumeGame();
+            }
+        });
         resumeButton.setVisible(false);
 
         // Nút Start

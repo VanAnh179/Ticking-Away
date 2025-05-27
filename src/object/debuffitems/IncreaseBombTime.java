@@ -1,18 +1,15 @@
 package object.debuffitems;
 
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
 import main.GamePanel;
-
 import object.*;
 
-public class DecreaseLight extends SuperObject {
+public class IncreaseBombTime extends SuperObject {
 	
 	GamePanel gp;
 	
-	public DecreaseLight(GamePanel gp) {
+	public IncreaseBombTime(GamePanel gp) {
 		
 		this.gp = gp;
 		
@@ -23,5 +20,6 @@ public class DecreaseLight extends SuperObject {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
+		collision = false;
 	}
 }

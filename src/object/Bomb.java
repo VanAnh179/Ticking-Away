@@ -4,8 +4,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.swing.text.StyledEditorKit.BoldAction;
-
 import main.GamePanel;
 import main.Sound;
 import main.UtilityTool;
@@ -174,7 +172,7 @@ public class Bomb extends SuperObject {
         // Kiểm tra ID và collision
         if (currentTile.id == 1 && currentTile.collision) {
             gp.tileM.changeTile(targetCol, targetRow, 41); // Đổi sang tile không chặn (ID 41)
-            gp.ui.addScore(70); // Cộng 70 điểm khi phá rock
+            gp.ui.addScoreForRock(70); // Cộng 70 điểm khi phá rock
         }
     }
 

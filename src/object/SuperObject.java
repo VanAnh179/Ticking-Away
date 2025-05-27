@@ -3,7 +3,6 @@ package object;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-
 import main.GamePanel;
 import main.UtilityTool;
 
@@ -16,6 +15,9 @@ public class SuperObject {
 	public int solidAreaDefaultX = 0;
 	public int solidAreaDefaultY = 0;
 	protected UtilityTool uTool = new UtilityTool();
+	public long spawnTime;
+	public boolean temporary = false;
+	public boolean shouldDisappear = false;
 	
 	public void draw(Graphics2D g2, GamePanel gp) {
 		int screenX = (int) worldX - (int) gp.player.worldX + gp.player.screenX;
