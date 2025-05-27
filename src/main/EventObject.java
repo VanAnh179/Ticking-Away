@@ -62,7 +62,6 @@ public class EventObject {
             }
         } 
         else if (item instanceof IncreaseLight) {
-            gp.obj[index] = null;
             applyLightBuff(index);
         }
     }
@@ -92,9 +91,8 @@ public class EventObject {
 
     private void applyHealthEffect(int itemIndex) {
         Player player = gp.player;
-        if(player.maxHealth < 4) {
-            player.maxHealth++;
-            player.health = player.maxHealth; // Khôi phục máu
+        if(player.health < 4) {
+            player.health++;
             gp.ui.showMessage("Health +1");
         } else {
             player.tempHealth += 1; // Tăng máu tạm thời
@@ -107,18 +105,18 @@ public class EventObject {
 
     private void applySpeedDebuff(int itemIndex) {
         Player player = gp.player;
-        int newSpeed = Math.max(1, (int)(player.speed * 0.7));
-
-        if(newSpeed < player.speed) {
+        int newSpeed = player.speed - 1;
+        if(newSpeed > 0) {
             player.speed = newSpeed;
-            gp.obj[itemIndex] = null; // Xóa item khỏi map
-
+            gp.obj[itemIndex] = null;
+            gp.ui.showMessage("Speed - 1");
             new java.util.Timer().schedule(new java.util.TimerTask() {
                 @Override
                 public void run() {
-                    player.speed = 4; // Khôi phục tốc độ ban đầu
+                    player.speed = player.baseSpeed;
+                    gp.ui.showMessage("Speed back to normal");
                 }
-            }, 20000); // Khôi phục sau 10 giây
+            }, 10000);
         }
     }
 
@@ -189,8 +187,7 @@ public class EventObject {
     }
 
     private void checkPortalCondition() {
-        if (gp.hasKey >= 2) {
-            gp.ui.finishGame(true);
+        if (gp.hasKey >= 1) {
             gp.ui.gameFinished = true;
             gp.ui.gameWon = true;
             gp.stopMusic();

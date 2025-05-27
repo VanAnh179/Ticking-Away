@@ -127,21 +127,17 @@ public class UI {
     }
 
     public void resetTimer() {
-        if (gp.isNewGame) {
-            isRunning = false;
-            visibleScore = 0;
-            backgroundScore = 50000;
-            startTime = System.currentTimeMillis();
-            lastBackgroundScoreUpdate = startTime;
-        }
+        isRunning = false;
+        visibleScore = 0;
+        backgroundScore = 50000;
     }
 
     public void startTimer() {
-        if (gp.isNewGame && !gp.isStartingEffect && !showTutorial) {
-            gp.gameStartTime = System.currentTimeMillis(); // Khởi tạo thời gian bắt đầu game
-            gp.totalPausedDuration = 0; // Reset tổng thời gian pause
+        if(!isRunning || !showTutorial || !gp.isStartingEffect) {
+            startTime = System.currentTimeMillis();
+            lastBackgroundScoreUpdate = startTime;
+            isRunning = true;
         }
-        isRunning = true;
     }
 
     public void update() {
@@ -171,7 +167,7 @@ public class UI {
     }
 
     public void addScore(Entity enemy) {
-        visibleScore += gp.addScoreForEnemy(enemy);
+        gp.addScoreForEnemy(enemy);
     }
 
     public int getFinalScore() {
@@ -183,7 +179,7 @@ public class UI {
 
     private String getFormattedTime() {
         if (gp == null || !isRunning) return "00:00";
-        long currentTime = System.currentTimeMillis() - gp.gameStartTime - gp.totalPausedDuration;
+        long currentTime = System.currentTimeMillis() - startTime - gp.totalPausedTime;
         currentTime = Math.max(currentTime, 0);
         currentTime /= 1000;       
         int minutes = (int) (currentTime / 60);
@@ -651,31 +647,4 @@ public class UI {
         }
     }
 
-    // Trong phương thức xử lý khi game kết thúc (thắng hoặc thua)
-    public void finishGame(boolean won) {
-        gameFinished = true;
-        gameWon = won;
-        isRunning = false;
-        
-        // Tính toán chính xác thời gian đã chơi (bao gồm cả pause)
-        long elapsedTime = System.currentTimeMillis() - startTime - gp.getTotalPausedTime();
-        int secondsPlayed = (int)(elapsedTime / 1000);
-        backgroundScore = Math.max(0, 50000 - (secondsPlayed * BG_SCORE_DECREASE));
-    }
-
-    public void adjustStartTime(long pausedTime) {
-        // Điều chỉnh startTime để bù lại thời gian đã pause
-        startTime += pausedTime;
-        lastBackgroundScoreUpdate = startTime; // Cập nhật cả thời điểm cập nhật score cuối cùng
-    }
-
-    // Phương thức đồng bộ thời gian đã pause
-    public void syncPausedTime(long pausedDuration) {
-        this.startTime += pausedDuration; 
-        this.lastBackgroundScoreUpdate = System.currentTimeMillis();
-    }
-
-    public void setGamePanel(GamePanel gamePanel) {
-        this.gp = gamePanel;
-    }
 }

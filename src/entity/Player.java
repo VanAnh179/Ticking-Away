@@ -66,6 +66,8 @@ public class Player extends Entity {
     public int bonusLightRadius = 0;
     private int originalLightRadius = gp.tileSize * 3; // Lưu lại bán kính ánh sáng gốc
 
+    public long speedExpiredTime = 0; // Lưu tốc độ gốc để có thể phục hồi sau debuff
+    
     public Player(GamePanel gp, KeyHandler keyH) {
         super(gp);
         this.keyH = keyH;

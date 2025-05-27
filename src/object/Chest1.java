@@ -6,11 +6,7 @@ import java.io.IOException;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import main.GamePanel;
-import object.buffitems.IncreaseDamage;
-import object.buffitems.IncreaseHealth;
-import object.buffitems.IncreaseLight;
 import object.debuffitems.DecreaseSpeed;
-import object.debuffitems.Teleport;
 
 public class Chest1 extends SuperObject {
     
@@ -108,14 +104,10 @@ public class Chest1 extends SuperObject {
     public void spawnItem() {
         if(isOpened && !hasSpawnItem) {
             Random rand = new Random();
-            int randomItem = rand.nextInt(5); // 5 loại item với tỉ lệ bằng nhau
+            int randomItem = rand.nextInt(1); // 5 loại item với tỉ lệ bằng nhau
             
             SuperObject item = switch (randomItem) {
-                case 0 -> new IncreaseDamage(gp);
-                case 1 -> new IncreaseHealth(gp);
-                case 2 -> new DecreaseSpeed(gp);
-                case 3 -> new Teleport(gp);
-                case 4 -> new IncreaseLight(gp);
+                case 0 -> new DecreaseSpeed(gp);
                 default -> null;
             };
 

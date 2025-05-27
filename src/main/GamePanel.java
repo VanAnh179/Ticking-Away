@@ -51,7 +51,6 @@ public class GamePanel extends JPanel implements Runnable {
     
     // system
     public boolean isPaused = false;
-    public boolean isNewGame = true;
     MainFrame mainFrame;
     public TileManager tileM = new TileManager(this);
     public KeyHandler keyH; // Sẽ khởi tạo sau với tham chiếu đến GamePanel
@@ -78,8 +77,6 @@ public class GamePanel extends JPanel implements Runnable {
     private int flashCount = 0;
     private long pauseStartTime; // Thời điểm bắt đầu pause
     public long totalPausedTime = 0; // Tổng thời gian đã pause
-    public long gameStartTime; // Thời điểm bắt đầu game thực sự (đã trừ pause)
-    public long totalPausedDuration = 0; // Tổng thời gian đã pause
     private Thread gameThread;
     
     // entity and object
@@ -171,9 +168,6 @@ public class GamePanel extends JPanel implements Runnable {
         });
     }
 
-    public long getTotalPausedTime() {
-        return totalPausedTime;
-    }
     
     public void setupGame() {
         aSetter.setObject();
@@ -182,7 +176,6 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void startGameThread() {
-        ui.resetTimer();
         if (gameThread == null || !gameThread.isAlive()) {
             gameThread = new Thread(this); // this implements Runnable
             gameThread.start();
@@ -277,6 +270,7 @@ public class GamePanel extends JPanel implements Runnable {
                     if (enemy[i].health <= 0) {
                         deathE.setFile(5);
                         deathE.play();
+                        addScoreForEnemy(enemy[i]);
                         enemy[i] = null;
                     }
                 }
@@ -493,8 +487,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void resumeGame() {
         if (isPaused) {
-            long pausedDuration = System.currentTimeMillis() - pauseStartTime;
-            totalPausedDuration += pausedDuration; // Cập nhật tổng thời gian pause
+            totalPausedTime += System.currentTimeMillis() - pauseStartTime; // Cập nhật tổng thời gian pause
             isPaused = false;
         }
         if (gameThread == null) {
@@ -522,7 +515,6 @@ public class GamePanel extends JPanel implements Runnable {
     public void gameOver() {
         flames.clear();
         ui.gameFinished = true;
-        ui.finishGame(false);
         ui.gameWon = false;
         stopMusic();
         keyH.reset();
@@ -531,8 +523,6 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void resetGame() {
         totalPausedTime = 0;
-        isNewGame = true;
-        ui.syncPausedTime(0);
         stopGameThread();
         System.out.println("ResetGame called");
         ui.gameFinished = false;
@@ -544,8 +534,7 @@ public class GamePanel extends JPanel implements Runnable {
         flames.clear();
 
         baseLightRadius = tileSize * 3; // Reset bán kính ánh sáng
-        player.bonusLightRadius = 0; // Reset bonus light radius
-        timeElapsedFrames = 0; // Reset thời gian đã trôi qua
+        player.bonusLightRadius = tileSize; // Reset bonus light radius
 
         for(int i = 0; i < obj.length; i++) {
             obj[i] = null;
@@ -577,7 +566,7 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    public double addScoreForEnemy(Entity enemy) {
+    public void addScoreForEnemy(Entity enemy) {
         double score = 0;
         if(enemy instanceof  E_Bitter) {
             score = player.BitterScore;
@@ -589,6 +578,6 @@ public class GamePanel extends JPanel implements Runnable {
             score = player.WatermelonScore;
             ui.showMessage("+" + player.WatermelonScore + "points!");
         }
-        return score;
+        ui.visibleScore += score;
     }
 }

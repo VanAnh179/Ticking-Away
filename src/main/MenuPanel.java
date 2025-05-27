@@ -1,13 +1,10 @@
 package main;
 
-import javax.swing.*;
-
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
-import javax.imageio.ImageIO;
 import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class MenuPanel extends JPanel {
     private MainFrame mainFrame;
@@ -42,13 +39,7 @@ public class MenuPanel extends JPanel {
         // Nút Resume (Khởi tạo trước)
         resumeButton = new JButton("RESUME");
         styleButton(resumeButton);
-       resumeButton.addActionListener(e -> {
-            mainFrame.switchToGame();
-            // Đảm bảo game được resume đúng cách
-            if (mainFrame.getGamePanel() != null) {
-                mainFrame.getGamePanel().resumeGame();
-            }
-        });
+        resumeButton.addActionListener(e -> mainFrame.switchToGame());
         resumeButton.setVisible(false);
 
         // Nút Start
