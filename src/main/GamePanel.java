@@ -293,7 +293,7 @@ public class GamePanel extends JPanel implements Runnable {
             }
 
             timeElapsedFrames++;
-            int durationFrames = FPS * 15; // 15 giây = 900 frame
+            int durationFrames = FPS * 25; // 15 giây = 900 frame
 
             if (timeElapsedFrames <= durationFrames) {
                 float ratio = 1.0f - ((float)timeElapsedFrames / durationFrames);

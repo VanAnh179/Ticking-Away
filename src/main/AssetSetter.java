@@ -85,7 +85,6 @@ public class AssetSetter {
 		addPortal(14, 45);
 		addPortal(15, 45);
 		addPortal(6, 24);
-        addPortal(31, 5);
         addKey(30, 5);
         addKey(34, 41);
         addKey(7, 44);
@@ -97,7 +96,6 @@ public class AssetSetter {
         addKey(39, 10);
         addKey(17, 21);
         addKey(21, 31);
-        addKey(32, 5);
 	}
 
 	public void setEnemy() {
