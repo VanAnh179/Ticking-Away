@@ -17,6 +17,8 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        setResizable(false);
+
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 

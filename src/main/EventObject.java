@@ -70,7 +70,7 @@ public class EventObject {
         // Tăng phạm vi bom nổ (không cộng dồn)
         Player player = gp.player;
         player.tempBombRange = player.bombRange + 1; // Tăng phạm vi bom nổ
-        player.bombRangeExpireTime = System.currentTimeMillis() + 30000; // 30 giây 
+        player.bombRangeExpireTime = System.currentTimeMillis() + 15000; // 15 giây 
         player.bombRange = Math.max(player.originalBombRange, player.tempBombRange); // Cập nhật phạm vi bom nổ
 
         gp.ui.showMessage("Bomb range +1");
@@ -85,7 +85,7 @@ public class EventObject {
                 player.bombRange = player.originalBombRange;
                 gp.ui.showMessage("Bomb range returned to normal");
             }
-        }, 30000); //tăng phạm vi bomb nổ trong 30s 
+        }, 15000); //tăng phạm vi bomb nổ trong 15s 
 
     }
 
@@ -106,17 +106,13 @@ public class EventObject {
     private void applySpeedDebuff(int itemIndex) {
         Player player = gp.player;
         int newSpeed = player.speed - 1;
-        if(newSpeed > 0) {
-            player.speed = newSpeed;
-            gp.obj[itemIndex] = null;
-            gp.ui.showMessage("Speed - 1");
-            new java.util.Timer().schedule(new java.util.TimerTask() {
-                @Override
-                public void run() {
-                    player.speed = player.baseSpeed;
-                    gp.ui.showMessage("Speed back to normal");
-                }
-            }, 10000);
+        if (newSpeed >= 0) {
+            player.speed = newSpeed; // Áp dụng tốc độ mới
+            gp.ui.showMessage("Speed -1");
+            // Thiết lập thời gian hết hiệu ứng (10 giây)
+            player.speedExpiredTime = System.currentTimeMillis() + 10000; 
+        } else {
+            gp.ui.showMessage("Speed cannot be reduced further!");
         }
     }
 
@@ -155,7 +151,7 @@ public class EventObject {
         player.tempBombCooldown = player.BOMB_COOLDOWN_TIME * 5; // Ví dụ: tăng gấp đôi
         player.bombCooldownExpireTime = System.currentTimeMillis() + 15000; // 15 giây
 
-        gp.ui.showMessage("Bomb cooldown increased to 5ss!");
+        gp.ui.showMessage("Bomb cooldown increased to 5s!");
         gp.obj[itemIndex] = null; // Xóa item khỏi map
 
         new java.util.Timer().schedule(new java.util.TimerTask() {
@@ -165,7 +161,7 @@ public class EventObject {
                 player.tempBombCooldown = 0;
                 gp.ui.showMessage("Bomb cooldown back to normal");
             }
-        }, 15000); // Hiệu ứng kéo dài 1515 giây
+        }, 15000); // Hiệu ứng kéo dài 15 giây
     }
 
     public void checkPortalEvent(int i) {
@@ -187,7 +183,7 @@ public class EventObject {
     }
 
     private void checkPortalCondition() {
-        if (gp.hasKey >= 1) {
+        if (gp.hasKey >= 3) {
             gp.ui.gameFinished = true;
             gp.ui.gameWon = true;
             gp.stopMusic();

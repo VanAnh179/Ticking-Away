@@ -8,17 +8,76 @@
 ---
 
 ## 🧭 "You wake up in the dark... with only a flickering torch in hand."  
-## 🧩 Story – The Flame and the Forgotten  
-Bạn tỉnh dậy trong một khoảng không gian u tối, vô tận, trí nhớ trống rỗng, chỉ còn lại ngọn đèn nhỏ run rẩy trên tay. Không rõ bạn là ai, nhưng trong tiềm thức luôn vang vọng một mục tiêu duy nhất:  
+## 🧩 *TICKING AWAY – The Flame and the Forgotten*
 
-**"Tìm chìa khóa. Mở cánh cửa."**  
+---
 
-Trước mắt bạn là một lâu đài đổ nát, đá vụn chắn mất lối đi. Kỳ lạ thay, bạn nhận ra mình có khả năng tạo ra những quả bom từ hạt nguyên tử trong không khí – vô hạn, mạnh mẽ, và duy nhất bạn sở hữu được nó. Nhưng không chỉ có đá cản đường, những sinh vật dị dạng đang bủa vây, ẩn nấp trong bóng tối.  
+### 🕯️ **Lời thì thầm trong bóng tối:**
 
-🔥 **Ánh sáng mờ dần** theo từng phút trôi qua, bạn phải nhanh chóng:  
-- Vượt qua mê cung tối tăm  
-- Giải mã bí ẩn  
-- Tìm ra cánh cổng thần bí  
+*"You wake up in the dark... with only a flickering torch in hand."*
+
+Bạn tỉnh dậy, giữa một không gian vô tận, mờ mịt và lạnh lẽo. Không nhớ tên, không nhớ tại sao mình ở đây – chỉ có **ngọn đuốc yếu ớt** trong tay và một cảm giác kỳ lạ rằng... bạn không nên ở đây.
+
+Trong tâm trí vang vọng một câu lệnh duy nhất:
+
+> “**Tìm chìa khóa. Mở cánh cửa. Thoát khỏi nơi này.**”
+
+Trước mắt là **mê cung đá cổ**, đổ nát, tăm tối – một thế giới được dệt bằng ký ức méo mó và thực tại đứt gãy. Những **sinh vật gớm ghiếc** luẩn quẩn trong bóng tối, không tiếng động – chỉ chờ cơ hội để vồ lấy ánh sáng cuối cùng của bạn.
+
+---
+
+### 💣 **Dị năng từ hư vô:**
+
+Bạn phát hiện ra mình **có khả năng tạo ra bomb từ không khí** – từ chính “khoảng trống” bao quanh mình. Không ai dạy bạn điều đó, nhưng cảm giác sử dụng nó… **quen thuộc đến đáng sợ**.
+
+Bomb nổ thành hình dấu cộng, **phá hủy đá**, tiêu diệt kẻ địch – và mỗi khi bạn dùng nó, ánh sáng dường như **bừng sáng rõ hơn một chút**…
+
+Nhưng bạn bắt đầu **nghi ngờ chính bản thân mình**. Tại sao một con người lại sở hữu thứ sức mạnh kỳ quái đến vậy?
+
+---
+
+### 🧠 **Plot Twist – Ký ức bị phong ấn:**
+
+Khi bạn tìm được **cánh cổng thần bí**, các mảnh ký ức rơi rụng trở lại. Những hình ảnh rối loạn xuất hiện trong đầu:
+
+* Một **thí nghiệm thất bại**, nơi sinh ra những sinh vật bị biến đổi từ con người.
+* Một **thực thể** đặc biệt, có khả năng điều khiển vật chất từ hư vô.
+* Một **quái vật từng bị giam giữ sâu trong mê cung**, vì nó quá nguy hiểm – nhưng nó trốn thoát… và **mất trí nhớ**.
+
+Bạn nhận ra:
+**Bạn không phải là kẻ sống sót.**
+**Bạn là một trong những con quái vật.**
+**Bạn là thứ mà chính nơi này đã cố giam giữ.**
+
+Những kẻ đuổi theo bạn không phải là kẻ thù – **chúng là những sinh vật khác đang bảo vệ thế giới khỏi bạn**.
+
+---
+
+### 🎯 **Mục tiêu thật sự?**
+
+Bạn nghĩ rằng mình đang **chạy trốn khỏi nơi này**, nhưng thực chất:
+
+* Bạn đang **tự giam mình** – tìm kiếm một cánh cổng không tồn tại.
+* Mỗi lần chơi lại là một **chu kỳ lặp lại**, vì bạn chưa sẵn sàng chấp nhận con người thật.
+
+---
+
+### ✨ **Tên game: TICKING AWAY**
+
+Bởi vì:
+
+⏳ **Thời gian đang trôi đi**, ký ức đang biến mất.
+🌑 **Bóng tối lan rộng**, ánh sáng bị nuốt chửng.
+💣 **Bạn càng dùng dị năng**, càng đến gần sự thật.
+🧠 Và **chính bạn là bom nổ chậm** – một thực thể sắp tỉnh giấc hoàn toàn.
+
+---
+
+## 🔚 **Kết thúc có thể:**
+
+* **True Ending**: Bạn nhớ lại hoàn toàn – và lựa chọn **hy sinh**, phá hủy portal để không bao giờ trốn thoát, giữ an toàn cho thế giới.
+* **False Ending**: Bạn thoát khỏi cánh cổng… nhưng **bóng tối lan rộng** khắp thế giới thực.
+* **Loop Ending**: Bạn mở được cổng, nhưng ngay sau đó tỉnh dậy lại ở nơi bắt đầu – vì **bạn chưa thật sự nhớ lại ai là mình**.
 
 ---
 
@@ -99,22 +158,6 @@ Thoát khỏi mê cung trong bóng tối bằng cách:
 - Tạo bomb **vô hạn**  
 - Nổ theo hình **dấu +**  
 - Kết hợp với **Potion** để mở rộng tầm nổ  
-
----
-
-## ✨ Why "TICKING AWAY"?  
-> **Bạn đang chạy đua với:**  
-> - ⏳ Thời gian  
-> - 🌑 Bóng tối  
-> - 👻 Những mảnh ký ức tan biến...  
-> *"Chỉ còn ánh sáng le lói cuối cùng dẫn đường"*  
-
----
-
-## 🏁 End Goal  
-Khi mở được **portal**, bạn sẽ khám phá:  
-- Sự thật về thân phận của bạn?  
-- Hay một thế giới **tăm tối hơn**?  
 
 ---
 

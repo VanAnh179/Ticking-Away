@@ -28,21 +28,46 @@ public class UI {
     public final int BG_SCORE_DECREASE = 13;
 
     // Thêm các biến cho tutorial
+    private boolean isTextComplete = false;
     public boolean showTutorial = true;
     private String[] tutorialPages = {
-        "Tôi đang ở đâu thế này?\n...",
+        "Tôi đang ở đâu thế này…?",
         "...",
-        "Vừa tỉnh dậy ở một nơi xa lạ, xung quanh chỉ toàn là hư vô.\nTrước mắt tôi là một tòa lâu đài u ám.\nKhông còn cách nào khác...\ntôi buộc phải tiến vào.",
-        "Và giờ, tôi đứng đây... giữa đống đổ nát hoang tàn.",
-        "Ự...\n\nAAAA!",
-        "[SHOW_IMAGE portal_vision 2000]", // Placeholder để chèn ảnh
-        "Đau đầu quá...",
-        "Tôi... \ntôi phải tìm cách thoát khỏi đây ngay...\nMọi thứ đang sụp đổ, hoặc... chính tôi đang mất trí.",
-        "Hy vọng ngọn đuốc này có thể cháy đủ lâu...\nCho đến khi tôi tìm được cánh cửa đó.",
-        "Cơn đau đầu vừa rồi khiến tôi thấy một ảo ảnh...\nhình ảnh về một cánh cửa...",
-        "Chắc chắn đó là lối ra...\nVà thứ tôi cần bây giờ là...\nchìa khóa.",
-        "Được rồi.\nMình có khả năng tạo ra bom bằng cách\nkết hợp các hạt nguyên tử trong không khí.",
-        "Hãy thử với viên đá kia xem!"
+        "Không khí lạnh buốt.\nIm lặng đến nghẹt thở.",
+        "Trước mắt tôi là một tòa lâu đài đổ nát,\nchìm trong bóng tối.",
+        "Tôi không nhớ mình là ai...\nkhông nhớ vì sao lại ở đây.",
+        "Nhưng trong đầu...\nchỉ có duy nhất một điều vang lên:",
+        "**Tìm chìa khóa.\nMở cánh cửa.**",
+        "...",
+        "Không còn cách nào khác.",
+        "Tôi buộc phải tiến vào.",
+        "[PLAY_SOUND 14]",
+        "Giờ tôi đứng đây...\ngiữa những bức tường đổ sụp và bóng tối vây quanh.",
+        "[PLAY_SOUND 15]",
+        "Ự...!",
+        "[SHOW_IMAGE portal_vision 2000]",
+        "AAAAAA!!",
+        "Đầu tôi…\như bị xé toạc…",
+        "Những hình ảnh mờ nhòe...\nmột **cánh cửa phát sáng**?",
+        "Lẽ nào...\nđó là lối ra?",
+        "Hoặc... \nlà thứ gì đó còn tồi tệ hơn.",
+        "Tôi phải \nrời khỏi nơi này ngay – nếu không muốn mất trí.",
+        "May mà tôi còn giữ được ngọn đuốc này.",
+        "Hy vọng nó cháy đủ lâu \nđể tôi tìm ra sự thật.",
+        "...\nKhoan đã.",
+        "Tôi cảm thấy... \nmột thứ gì đó trong tay mình.",
+        "Không, không phải trong tay. \nNó phát ra từ **Bên trong tôi.**",
+        "Như thể... \ntôi có thể chạm vào cấu trúc của thế giới này… \nvà phá hủy nó.",
+        "...Bom?",
+        "Chỉ cần tập trung vào không khí… \ngom lại những hạt cơ bản…",
+        "[SHAKE 10 30]",
+        "[PLAY_SOUND 2]",
+        "…Tôi có thể \n**tạo ra bomb từ hư vô**.",
+        "Thứ dị năng này… \nsao tôi lại biết cách sử dụng nó?",
+        "Dù sao cũng không còn nhiều thời gian nữa.\nPhải tìm cách thoát khỏi đây thôi.",
+        "Thử với viên đá kia xem nào.",
+        "[TUTORIAL – Hướng dẫn đặt bomb, điều khiển, sáng đuốc, tìm chìa khóa]",
+        "- [🕹️] **Di chuyển**: Dùng các phím mũi tên\n- [💣] **Đặt bomb**: Phím [SPACE]\n- [🕯️] **Duy trì ánh sáng**: Tìm Chest để thắp sáng đuốc\n- [🔑] **Mục tiêu**: Tìm đủ chìa khóa để mở Cổng",
     };
     private int currentTutorialPage = 0;
     private int currentCharIndex = 0;
@@ -55,19 +80,28 @@ public class UI {
     public long keyLastCharTime;
     public boolean showKeySequence = false;
     public String[] keyMessages = {
-        "A! Chìa khóa đây rồi!",
-        "[SHOW_IMAGE key_01d 2000]", // Hiệu ứng ảnh key
-        "Tuyệt quá!\nGiờ mình có thể thoát khỏi đây rồi!",
-        "Giờ tìm cánh cửa đó thôi nào"
+        "...Gì đây?\nMột chiếc... chìa khóa?",
+        "[SHOW_IMAGE key_01d 2000]",
+        "",
+        "Tôi... cảm thấy quen thuộc một cách kỳ lạ...",
+        "Như thể tay tôi từng nắm nó… hàng trăm lần trước đó.",
+        "Dù không biết tại sao, nhưng tôi chắc chắn:",
+        "Đây là một phần để mở ra **cánh cửa ấy**.",
+        "Còn lại... mấy chiếc nữa nhỉ?"
     };
     private int currentKeyPage = 0;
 
     public boolean showPortalSequence = false;
     public String[] portalMessages = {
-        "Ô,...",
         "...",
-        "Cánh cửa này cần tận 3 chìa khóa sao?",
-        "Phải tìm thêm chìa khóa mới được."
+        "Một cánh cửa phát sáng…",
+        "Không giống bất kỳ thứ gì tôi từng thấy.",
+        "Tôi đưa tay chạm thử—nhưng nó không phản hồi.",
+        "...Khóa lại rồi.",
+        "Một… hai… ba ổ khóa?",
+        "Nó cần **ba chìa khóa**.",
+        "Vẫn chưa đủ…",
+        "Phải tiếp tục thôi."
     };
     private int currentPortalPage = 0;
 
@@ -97,9 +131,9 @@ public class UI {
             if (portalImage != null) {
                 portalImage = scaleImage(portalImage, 256, 256);
                 effectImages.put("portal_vision", portalImage);
-                System.out.println("Đã tải thành công ảnh portal_vision");
+                // System.out.println("Đã tải thành công ảnh portal_vision");
             } else {
-                System.out.println("Không tìm thấy file ảnh portal_vision");
+                // System.out.println("Không tìm thấy file ảnh portal_vision");
             }
             heart = ImageIO.read(getClass().getResourceAsStream("/objects/health.png"));
             heart2 = ImageIO.read(getClass().getResourceAsStream("/objects/heart2.png"));
@@ -111,11 +145,11 @@ public class UI {
             e.printStackTrace();
         }
         resetTimer();
-
-        System.out.println("Danh sách key trong effectImages:");
-        for (String key : effectImages.keySet()) {
-            System.out.println("[" + key + "]");
-        }
+        // DEBUG
+        // System.out.println("Danh sách key trong effectImages:");
+        // for (String key : effectImages.keySet()) {
+        //     System.out.println("[" + key + "]");
+        // }
     }
     
     private BufferedImage scaleImage(BufferedImage original, int width, int height) {
@@ -157,7 +191,12 @@ public class UI {
                 currentCharIndex = 0; // Reset chỉ số ký tự
                 // Đảm bảo không kích hoạt lại hiệu ứng khi đã chuyển trang
                 showEffect = false;
-                System.out.println("Current page: " + currentTutorialPage);
+            }
+            if (showKeySequence) {
+                nextKeyPage(); // Chuyển trang key
+            } else if (showTutorial) {
+                currentTutorialPage++;
+                currentCharIndex = 0;
             }
         }
     }
@@ -408,6 +447,7 @@ public class UI {
             textSound.stop();
             currentTutorialPage++;
             currentCharIndex = 0;
+            isTextComplete = false;
         } else {
             showTutorial = false;
             startTimer(); // Bắt đầu đếm khi hộp thoại kết thúc
@@ -416,16 +456,21 @@ public class UI {
 
     private void drawKeySequence(Graphics2D g2) {
         String fullText = keyMessages[currentKeyPage];
-        
+    
         if (fullText.startsWith("[SHOW_IMAGE")) {
+            // Kích hoạt hiệu ứng ảnh và tự động chuyển trang khi hết thời gian
+            if (!showEffect) {
+                checkForImageEffect(fullText);
+            }
             drawImageEffect(g2);
         } else {
-            // Từng ký tự một
+            // Xử lý hiển thị từng ký tự
             if (System.currentTimeMillis() - lastCharTime > CHAR_DELAY && currentCharIndex < fullText.length()) {
                 currentCharIndex++;
                 lastCharTime = System.currentTimeMillis();
             }
-            drawTextBox(g2, fullText, currentCharIndex, 150, "-> tiếp", false);
+            // Vẽ hộp thoại với nội dung hiện tại
+            drawTextBox(g2, fullText, currentCharIndex, 150, "-> tiếp", true);
         }
     }
 
@@ -444,6 +489,30 @@ public class UI {
         if (!tutorialSound.clip.isRunning()) {
             tutorialSound.play();
         }
+        // Xử lý hiệu ứng rung
+        if (fullText.startsWith("[SHAKE")) {
+            String[] parts = fullText.split(" ");
+            int intensity = Integer.parseInt(parts[1]);
+            
+            // Sửa ở đây: Loại bỏ ký tự ']' khỏi phần duration
+            String durationStr = parts[2].replace("]", ""); 
+            int duration = Integer.parseInt(durationStr);
+            
+            gp.triggerShake(intensity, duration);
+            nextTutorialPage();
+            return;
+        }
+        
+        // Xử lý phát âm thanh
+        if (fullText.startsWith("[PLAY_SOUND")) {
+            String[] parts = fullText.split(" ");
+            int soundIndex = Integer.parseInt(parts[1].replace("]", ""));
+            Sound effect = new Sound();
+            effect.setFile(soundIndex);
+            effect.play();
+            nextTutorialPage();
+            return;
+        }
         // Xử lý trang hiệu ứng
         if (fullText.startsWith("[SHOW_IMAGE")) {
             if (!showEffect) { // Chỉ kích hoạt hiệu ứng một lần
@@ -457,12 +526,12 @@ public class UI {
             return; // Không vẽ nút "Next" cho trang này
         }
 
-        // Từng ký tự một
+        // Xử lý hiển thị từng ký tự
         if (System.currentTimeMillis() - lastCharTime > CHAR_DELAY && currentCharIndex < fullText.length()) {
             currentCharIndex++;
             lastCharTime = System.currentTimeMillis();
+            isTextComplete = (currentCharIndex >= fullText.length()); // Cập nhật trạng thái
         }
-        
         
         drawTextBox(g2, fullText, currentCharIndex, 150, "-> tiếp", false);
     }
@@ -490,18 +559,44 @@ public class UI {
         g2.setStroke(new BasicStroke(3));
         g2.drawRoundRect(boxX, boxY, boxWidth, boxHeight, 20, 20);
 
+        float alpha = Math.min(1.0f, (currentIndex / (float) fullText.length()) * 2); // Tăng tốc độ fade
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         // Cắt text đến chỉ số hiện tại
         String displayText = fullText.substring(0, Math.min(currentIndex, fullText.length()));
         String[] lines = displayText.split("\n");
 
-        // Vẽ text
-        g2.setColor(Color.WHITE);
-        g2.setFont(new Font("Arial", Font.PLAIN, 22));
+        Font originalFont = g2.getFont();
         int startY = boxY + 40;
+        
         for (String line : lines) {
-            g2.drawString(line, boxX + 20, startY);
-            startY += 30;
+            int currentX = boxX + 20;
+            String[] segments = line.split("\\*\\*"); // Tách bằng **
+            boolean isBold = false; // Flag để xác định đoạn bold
+            
+            for (String segment : segments) {
+                if (!segment.isEmpty()) {
+                    // Đổi font nếu là đoạn bold
+                    if (isBold) {
+                        g2.setFont(originalFont.deriveFont(Font.BOLD));
+                    } else {
+                        g2.setFont(originalFont.deriveFont(Font.PLAIN));
+                    }
+                    
+                    // Vẽ đoạn text
+                    g2.drawString(segment, currentX, startY);
+                    
+                    // Cập nhật vị trí X
+                    currentX += g2.getFontMetrics().stringWidth(segment);
+                }
+                isBold = !isBold; // Đảo trạng thái bold
+            }
+            startY += 30; // Xuống dòng
         }
+
+        // Khôi phục font gốc
+        g2.setFont(originalFont);
+        g2.setComposite(AlphaComposite.SrcOver);
+        // Hiệu ứng fade-in
 
         if (currentTutorialPage == tutorialPages.length - 1) {
             drawButton = false;
@@ -566,9 +661,9 @@ public class UI {
 
     private void nextKeyPage() {
         if (currentKeyPage < keyMessages.length - 1) {
-            textSound.stop();
             currentKeyPage++;
-            checkForImageEffect(keyMessages[currentKeyPage]);
+            currentCharIndex = 0; // Reset chỉ số ký tự khi chuyển trang
+            checkForImageEffect(keyMessages[currentKeyPage]); // Kiểm tra hiệu ứng ở trang mới
         } else {
             showKeySequence = false;
         }
@@ -581,6 +676,17 @@ public class UI {
             String durationStr = parts[2].replace("]", "").trim();
             int duration = Integer.parseInt(durationStr);
             triggerImageEffect(imageName, duration);
+            
+            // Tự động chuyển trang sau khi hiệu ứng kết thúc
+            new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        nextKeyPage();
+                    }
+                }, 
+                duration
+            );
         }
     }
 
@@ -606,7 +712,7 @@ public class UI {
             currentEffect = new BufferedNameEffect(img, duration);
             effectStartTime = System.currentTimeMillis();
             showEffect = true;
-            System.out.println("Triggered effect: " + imageName + ", duration: " + duration + "ms");
+            // System.out.println("Triggered effect: " + imageName + ", duration: " + duration + "ms");
         } else {
             System.err.println("Không tìm thấy ảnh: " + imageName);
         }
@@ -628,20 +734,37 @@ public class UI {
         else if (showEffect) { 
             showEffect = false;
             nextTutorialPage();
+            //gp.triggerShake(0, 0);
         } 
         // Cho phép click bất kỳ đâu để tiếp tục khi đang trong tutorial (không phải effect)
         else if (showTutorial && !showEffect) {
-            textSound.stop();
-            nextTutorialPage();
+            if (!isTextComplete) {
+                // Nếu text chưa hiển thị hết: hiển thị ngay toàn bộ
+                currentCharIndex = tutorialPages[currentTutorialPage].length();
+                isTextComplete = true;
+            } else {
+                // Nếu text đã hiển thị đủ: chuyển trang
+                nextTutorialPage();
+                isTextComplete = false; // Reset cho trang mới
+            }
         }
         if (showKeySequence) {
-            textSound.stop();
-            if (showEffect) {
-                showEffect = false;
+            String currentText = keyMessages[currentKeyPage];
+            
+            // Nếu đang hiển thị ảnh, bỏ qua xử lý click
+            if (currentText.startsWith("[SHOW_IMAGE")) return;
+            
+            if (currentCharIndex < currentText.length()) {
+                currentCharIndex = currentText.length(); // Hiển thị toàn bộ text
+            } else {
+                nextKeyPage(); // Chuyển trang khi click lần nữa
             }
-            nextKeyPage();
         } else if (showPortalSequence) {
-            nextPortalPage();
+            if (currentCharIndex < portalMessages[currentPortalPage].length()) {
+                currentCharIndex = portalMessages[currentPortalPage].length();
+            } else {
+                nextPortalPage();
+            }
         } else if (!showTutorial) {
             tutorialSound.stop();
         }

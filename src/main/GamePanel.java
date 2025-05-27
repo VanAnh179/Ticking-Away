@@ -407,8 +407,8 @@ public class GamePanel extends JPanel implements Runnable {
             float progress = (float) elapsed / FADE_IN_DURATION * 0.5f;
             float opacity = 1.0f - progress * progress;
             // Thêm một lớp phủ đen phụ với opacity cố định
-            g2.setColor(new Color(0, 0, 0, 0.8f)); // Lớp phủ thêm
-            g2.fillRect(0, 0, screenWidth, screenHeight);
+            // g2.setColor(new Color(0, 0, 0, 0.8f)); // Lớp phủ thêm
+            // g2.fillRect(0, 0, screenWidth, screenHeight);
             // Lớp phủ chính
             g2.setColor(new Color(0, 0, 0, opacity));
             g2.fillRect(0, 0, screenWidth, screenHeight);
