@@ -16,152 +16,156 @@
 
 *"You wake up in the dark... with only a flickering torch in hand."*
 
-Bạn tỉnh dậy, giữa một không gian vô tận, mờ mịt và lạnh lẽo. Không nhớ tên, không nhớ tại sao mình ở đây – chỉ có **ngọn đuốc yếu ớt** trong tay và một cảm giác kỳ lạ rằng... bạn không nên ở đây.
+Bạn tỉnh dậy giữa không gian vô tận, mờ mịt và lạnh lẽo. Không nhớ tên, không nhớ tại sao ở đây - chỉ có **ngọn đuốc yếu ớt** trong tay và cảm giác kỳ lạ rằng... bạn không thuộc về nơi này.
 
-Trong tâm trí vang vọng một câu lệnh duy nhất:
+Trong tâm trí vang vọng lệnh:
+> "**Tìm chìa khóa. Mở cánh cửa. Thoát khỏi nơi này.**"
 
-> “**Tìm chìa khóa. Mở cánh cửa. Thoát khỏi nơi này.**”
-
-Trước mắt là **mê cung đá cổ**, đổ nát, tăm tối – một thế giới được dệt bằng ký ức méo mó và thực tại đứt gãy. Những **sinh vật gớm ghiếc** luẩn quẩn trong bóng tối, không tiếng động – chỉ chờ cơ hội để vồ lấy ánh sáng cuối cùng của bạn.
-
----
-
-### 💣 **Dị năng từ hư vô:**
-
-Bạn phát hiện ra mình **có khả năng tạo ra bomb từ không khí** – từ chính “khoảng trống” bao quanh mình. Không ai dạy bạn điều đó, nhưng cảm giác sử dụng nó… **quen thuộc đến đáng sợ**.
-
-Bomb nổ thành hình dấu cộng, **phá hủy đá**, tiêu diệt kẻ địch – và mỗi khi bạn dùng nó, ánh sáng dường như **bừng sáng rõ hơn một chút**…
-
-Nhưng bạn bắt đầu **nghi ngờ chính bản thân mình**. Tại sao một con người lại sở hữu thứ sức mạnh kỳ quái đến vậy?
+Trước mắt là **mê cung đá cổ** đổ nát, tăm tối - thế giới dệt bằng ký ức méo mó và thực tại đứt gãy. Những **sinh vật gớm ghiếc** luẩn quẩn trong bóng tối, chờ cơ hội vồ lấy ánh sáng cuối cùng của bạn.
 
 ---
 
-### 🧠 **Plot Twist – Ký ức bị phong ấn:**
+### 💣 **Cơ chế Bomb - Sinh tử trong từng bước chân**
 
-Khi bạn tìm được **cánh cổng thần bí**, các mảnh ký ức rơi rụng trở lại. Những hình ảnh rối loạn xuất hiện trong đầu:
+Bạn có khả năng tạo bomb từ hư vô, nhưng phải trả giá đắt:
 
-* Một **thí nghiệm thất bại**, nơi sinh ra những sinh vật bị biến đổi từ con người.
-* Một **thực thể** đặc biệt, có khả năng điều khiển vật chất từ hư vô.
-* Một **quái vật từng bị giam giữ sâu trong mê cung**, vì nó quá nguy hiểm – nhưng nó trốn thoát… và **mất trí nhớ**.
-
-Bạn nhận ra:
-**Bạn không phải là kẻ sống sót.**
-**Bạn là một trong những con quái vật.**
-**Bạn là thứ mà chính nơi này đã cố giam giữ.**
-
-Những kẻ đuổi theo bạn không phải là kẻ thù – **chúng là những sinh vật khác đang bảo vệ thế giới khỏi bạn**.
+| Cơ chế | Mô tả | Rủi ro |
+|--------|-------|--------|
+| 💣 **Chỉ đặt bomb khi di chuyển** | Bomb chỉ được kích hoạt khi bạn đang di chuyển | Phơi bày vị trí cho enemy |
+| 🚶 **An toàn khi đứng yên** | Khi đứng im, enemy không gây sát thương dù chạm vào bạn | Bị bao vây, không thể phòng thủ |
+| ⚡ **Đánh đổi chiến thuật** | Di chuyển để đặt bomb ➔ Nguy hiểm<br>Đứng yên để an toàn ➔ Bất lực | Buộc chọn lựa sinh tử mỗi giây |
 
 ---
 
-### 🎯 **Mục tiêu thật sự?**
+### 👾 **Thế giới quái vật - Mỗi loại một nỗi khiếp đảm riêng**
 
-Bạn nghĩ rằng mình đang **chạy trốn khỏi nơi này**, nhưng thực chất:
+#### 🍉 Watermelon (HP: 3)
+- **Định vị**: Chỉ phát hiện bạn khi bạn **di chuyển**
+- **Hành vi**: Khi bạn đứng im ➔ Mất dấu ➔ Di chuyển ngẫu nhiên
+- **Đặc điểm**: Máu cao, bị **stun 1s** khi trúng bomb
 
-* Bạn đang **tự giam mình** – tìm kiếm một cánh cổng không tồn tại.
-* Mỗi lần chơi lại là một **chu kỳ lặp lại**, vì bạn chưa sẵn sàng chấp nhận con người thật.
+#### 🍬 Sweet (HP: 1)
+- **Khả năng đặc biệt**: Đi xuyên mọi vật thể (trừ bomb)
+- **Tốc độ**: Cao, xuất hiện bất ngờ như bóng ma
+- **Cơ chế truy đuổi**: Theo bạn ngay khi vào phạm vi cảm nhận
 
----
-
-### ✨ **Tên game: TICKING AWAY**
-
-Bởi vì:
-
-⏳ **Thời gian đang trôi đi**, ký ức đang biến mất.
-🌑 **Bóng tối lan rộng**, ánh sáng bị nuốt chửng.
-💣 **Bạn càng dùng dị năng**, càng đến gần sự thật.
-🧠 Và **chính bạn là bom nổ chậm** – một thực thể sắp tỉnh giấc hoàn toàn.
-
----
-
-## 🔚 **Kết thúc có thể:**
-
-* **True Ending**: Bạn nhớ lại hoàn toàn – và lựa chọn **hy sinh**, phá hủy portal để không bao giờ trốn thoát, giữ an toàn cho thế giới.
-* **False Ending**: Bạn thoát khỏi cánh cổng… nhưng **bóng tối lan rộng** khắp thế giới thực.
-* **Loop Ending**: Bạn mở được cổng, nhưng ngay sau đó tỉnh dậy lại ở nơi bắt đầu – vì **bạn chưa thật sự nhớ lại ai là mình**.
+#### 🍫 Bitter (HP: 5) - Kẻ săn mồi thông minh
+```mermaid
+graph TD
+    A[Bitter phát hiện bạn] --> B[Đặt bomb]
+    B --> C[Tìm đường ngắn nhất đến ô an toàn]
+    C --> D[Bomb nổ]
+    D --> E[Lại đuổi theo bạn]
+```
 
 ---
 
-## 🕹️ Gameplay Overview  
-### 🎯 Objective  
-Thoát khỏi mê cung trong bóng tối bằng cách:  
-🔑 Thu thập đủ 3 chìa khóa để mở **Cánh cổng thần bí (portal)**  
-💣 Dùng bomb để phá đá, tiêu diệt kẻ địch  
-🕯️ Giữ ánh sáng bằng cách thắp lại ngọn đuốc  
+### 📦 **Hệ thống Chest - Cơ hội và rủi ro**
 
-### ⚙️ Game Mechanics  
-#### 🌒 Tầm nhìn giới hạn:  
-- Người chơi chỉ nhìn thấy xung quanh nhờ ánh sáng từ ngọn đuốc  
-- ⏳ Cứ mỗi **15 giây**, phạm vi sáng sẽ giảm dần  
-- 🔥 Tìm và thắp lại **Chest** để khôi phục ánh sáng  
+#### 🧰 Chest 1 (Ô trắng - Hiếm)
+- **Phần thưởng**: Random 1 trong 6 vật phẩm:
+  - ⚡ Buff (3 loại): Tăng sáng/Tăng máu/Tăng sát thương bomb
+  - 🧨 Debuff (3 loại): Giảm tốc/Dịch chuyển/Tăng thời gian hồi bomb
 
-#### 🧱 Vật cản:  
-| Biểu tượng | Mô tả                  |
-|------------|------------------------|
-| 🧱         | Tường chắn (maze)      |
-| 🗿         | Đá (phá bằng bomb)     |
-| 👾         | Kẻ địch rình rập       |
-
-#### 🎮 Kỹ năng người chơi:  
-💣 Đặt bomb (nổ theo hình **dấu +**, bán kính 5 ô)  
-🧨 Phá đá/tiêu diệt enemy  
-👀 Tạo ánh sáng xung quanh  
-🎁 Nhặt vật phẩm trong Chest  
-🚪 Mở khóa portal khi đủ key  
+#### 🗝️ Chest 2 (Ô tím - Phổ biến)
+| Vật phẩm | Tỉ lệ | Hiệu ứng |
+|----------|-------|----------|
+| 💡 Tăng phạm vi sáng | Cao (70%) | Mở rộng vùng ánh sáng |
+| 🐌 Giảm tốc độ | Thấp (20%) | Di chuyển chậm 30% trong 10s |
+| ✨ Dịch chuyển | Rất thấp (10%) | Teleport đến vị trí ngẫu nhiên |
 
 ---
 
-## 📦 Items  
-### ⚡ Buffed Items:  
-| Item      | Hiệu ứng               |
-|-----------|------------------------|
-| 💎 Crystal | Tăng phạm vi sáng     |
-| ⛑ Helmet | Tăng máu (giáp ảo)    |
-| 🧪 Potion | Tăng phạm vi nổ bomb  |
+### 🧠 **Cốt truyện - Bản ngã bị lãng quên**
 
-### 🧨 Debuffed Items:  
-| Item      | Hiệu ứng               |
-|-----------|------------------------|
-| 📖 Book   | Dịch chuyển ngẫu nhiên |
-| 🍬 Candy  | Làm chậm tốc độ       |
-| 📜 Scroll | Tăng thời gian hồi bomb |
+> **Cảm hứng**: The Backrooms - Nỗi ám ảnh không lối thoát
+
+| Phát hiện | Ý nghĩa |
+|-----------|---------|
+| 🔑 Thu thập đủ key | Mở portal thoát khỏi mê cung |
+| 💡 True Ending | Thu thập **tất cả key** ➔ Nhận ra mình là quái vật ➔ Hy sinh phá hủy portal |
+| 🔁 Good Ending | Chỉ cần 3 key ➔ Thoát ra nhưng **mất trí nhớ** ➔ Lặp lại vĩnh viễn |
+| 💀 Game Over | Chết ➔ Hồi sinh tại điểm bắt đầu |
 
 ---
 
-## 👾 Enemies  
-### 🍉 Watermelon (HP: 3)   
-- Chỉ đuổi theo bạn khi bạn **di chuyển** 
-- Máu trâu hơn Sweet 
-- Bị **stun 1s** khi trúng bomb  
+### 🎯 **Hệ thống điểm thưởng**
 
-### 🍬 Sweet (HP: 1)  
-- Di chuyển xuyên qua mọi vật thể  
-- Tốc độ cao & xuất hiện bất ngờ  
-
-### 🍫 Bitter (HP: 5)  
-- Có thể **đặt bomb**, tránh bomb mà nó đã đặt.  
-- Bám đuổi dai dẳng + tốc độ cao  
+| Hành động | Điểm thưởng |
+|-----------|-------------|
+| Phá đá | +10 điểm |
+| Diệt Watermelon | +100 điểm |
+| Diệt Sweet | +50 điểm |
+| Diệt Bitter | +200 điểm |
+| Win game | +50,000 điểm |
 
 ---
 
-## 🧍‍♂️ UI & HUD  
-❤️ **Health**: 4 mạng  
-🧠 **Score**: Tính theo:  
-- Kẻ địch tiêu diệt (nhiều điểm)  
-- Đá bị phá (ít điểm hơn)  
-- Thời gian hoàn thành  
-
-⏱️ **Time**: Càng lâu trong mê cung → ánh sáng càng thu hẹp!  
+### 🔮 **Lộ trình phát triển tương lai**
+```mermaid
+gantt
+    title Kế hoạch phát triển
+    dateFormat  YYYY-MM-DD
+    section Tính năng chính
+    Cửa hàng vật phẩm          :active, 2025-07, 30d
+    Fix bug hiện có            :2025-07, 30d
+    Lựa chọn nhân vật          :2025-08, 30d
+    
+    section Mở rộng
+    Chế độ Multiplayer         :2025-08, 30d
+    Chế độ khó (Hardcore)      :2026, 30d
+    Cốt truyện phụ             :2026, 30d
+    
+    section Nâng cấp
+    Hiệu ứng hình ảnh          :2026, 30d
+    Âm thanh 3D                :2026, 30d
+```
 
 ---
 
-## 🧨 Bomb System  
-- Tạo bomb **vô hạn**  
-- Nổ theo hình **dấu +**  
-- Kết hợp với **Potion** để mở rộng tầm nổ  
+### 🎨 **Nguồn tài nguyên**
+| Loại | Nguồn | Mô tả |
+|------|-------|-------|
+| Tile set | [Cosmic Lilac](https://petricakegames.itch.io/cosmic-lilac) | Bộ tile set không gian huyền ảo |
+| Âm thanh | [MyInstants](https://www.myinstants.com/en/instant/bugs-crawling-38179/) | Hiệu ứng âm thanh rùng rợn |
+| Cốt truyện | The Backrooms | Cảm hứng về không gian vô tận |
 
 ---
 
-## 🛠️ Technologies  
+## 🧩 **CƠ CHẾ WIN/GAME OVER**
+
+### 🏆 Chiến thắng
+```mermaid
+flowchart TD
+    A[Thu thập key] --> B{Đủ 3 key?}
+    B -->|Yes| C[Mở portal]
+    C --> D{Thu thập đủ ALL key?}
+    D -->|Yes| E[True Ending: Hy sinh]
+    D -->|No| F[Good Ending: Vòng lặp]
+```
+
+### ☠️ Thất bại
+```mermaid
+flowchart LR
+    A[Mất hết máu] --> B[Game Over]
+    B --> C[Restart từ đầu]
+    C --> D[Giữ nguyên điểm số]
+```
+
+---
+
+## 🎮 **Hướng dẫn chơi nâng cao**
+1. **Chiến thuật bomb**: Di chuyển theo hình vuông ➔ Đặt bomb tại góc ➔ Trở lại vị trí an toàn
+2. **Đối phó Bitter**: Dụ nó đặt bomb ➔ Lừa vào khu vực hẹp ➔ Dùng bomb của nó tiêu diệt nó
+3. **Quản lý ánh sáng**: Ưu tiên mở chest tím ➔ Duy trì phạm vi sáng tối đa
+4. **Khai thác Sweet**: Dùng bomb chặn lối ➔ Buộc nó đi vào vùng nổ
+
+> "**Ánh sáng mong manh - Hi vọng mong manh - Nhưng ý chí phải bất diệt**"
+---
+
+
+
+# 🛠️ **Technologies**
 <div align="center">
   <img src="diagram.png" width="800" alt="OOP Architecture">
   <br>
@@ -235,70 +239,142 @@ Thoát khỏi mê cung trong bóng tối bằng cách:
 
 ---
 
-## 🧩 **THÀNH PHẦN CHÍNH**
+## 🧩 **THÀNH PHẦN CHÍNH - ĐIỂM NỔI BẬT TRONG CODE**
 
-### 🎮 **Hệ thống UI**
+### 🎮 **Hệ thống UI với hiệu ứng động phức tạp**
 ```java
-public class UI {
-    // Hiển thị thanh máu
-    private void drawHealthBar(Graphics2D g2) {
-        for (int i = 0; i < gp.player.maxHealth; i++) {
-            if (i < gp.player.health) {
-                g2.drawImage(heart, x, y, size, size, null);
+// Vẽ hiệu ứng bóng tối động với gradient radial
+public void drawDarknessEffect(Graphics2D g2, int centerX, int centerY, int radius) {
+    BufferedImage darkness = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D gDark = darkness.createGraphics();
+    int totalRadius = radius + player.bonusLightRadius;
+    
+    // Tạo gradient cho ánh sáng
+    gDark.setPaint(new RadialGradientPaint(
+        new Point(centerX, centerY),
+        totalRadius,
+        new float[]{0f, 1f},
+        new Color[]{new Color(0, 0, 0, 1f), new Color(0, 0, 0, 0f)}
+    ));
+    
+    // Vẽ hiệu ứng
+    gDark.fillOval(centerX - totalRadius, centerY - totalRadius, totalRadius * 2, totalRadius * 2);
+    g2.drawImage(darkness, 0, 0, null);
+}
+
+// Hiệu ứng mở đầu game với fade-in + flash
+private void drawStartEffect(Graphics2D g2) {
+    long elapsed = System.currentTimeMillis() - effectStartTime;
+    
+    // Fade in từ đen
+    if (elapsed < FADE_IN_DURATION) {
+        float progress = (float) elapsed / FADE_IN_DURATION * 0.5f;
+        float opacity = 1.0f - progress * progress;
+        g2.setColor(new Color(0, 0, 0, opacity));
+        g2.fillRect(0, 0, screenWidth, screenHeight);
+    }
+    // Hiệu ứng flash trắng
+    else if (flashCount < 2) {
+        // ...
+    }
+}
+```
+
+### ⚡ **Cơ chế đặt bomb chỉ khi di chuyển**
+```java
+// Trong Player.java
+public void update() {
+    // Chỉ được đặt bomb khi đang di chuyển
+    if (keyH.spacePressed && bombCooldown <= 0 && (moving || !wasTouchingEnemy)) {
+        placeBomb();
+    }
+    
+    // Bất tử khi đứng yên
+    if (!moving) {
+        invincibleCounter = 1; // Luôn bật invincible
+    } else {
+        invincibleCounter = 0; // Tắt invincible
+    }
+}
+```
+
+### 🧠 **AI Enemy Bitter phức tạp**
+```java
+// Trong E_Bitter.java
+public void update() {
+    // State Machine cho AI
+    switch (aiState) {
+        case ESCAPE:
+            if (!isNearBomb() && !isNearFlame()) {
+                aiState = State.CHASE;
+            } else {
+                escapeFromDanger(); // Tìm đường thoát hiểm
             }
-        }
+            break;
+            
+        case CHASE:
+            if (isNextToPlayer && bombCooldown <= 0) {
+                // Kiểm tra có đường thoát trước khi đặt bomb
+                if (hasEscapeRouteAfterPlacingBomb(bombCol, bombRow)) {
+                    placeBomb();
+                    aiState = State.ESCAPE;
+                }
+            }
+            break;
     }
-
-    // Cập nhật điểm số
-    public void addScore(int points) {
-        visibleScore += points;
+    
+    // Thuật toán A* tìm đường
+    private void calculateAStarPath() {
+        PathFinder pf = new PathFinder(gp);
+        List<Node> path = pf.findPath(startCol, startRow, goalCol, goalRow, false);
+        if (path != null) pathList = path;
     }
 }
 ```
-**Chức năng:**  
-- Hiển thị 4 trái tim biểu thị máu  
-- Đếm thời gian dạng `mm:ss`  
-- Hiển thị điểm số real-time  
-- Màn hình kết thúc game (Thắng/Thua)
 
-### 🎯 **Xử lý sự kiện (EventObject)**
+### 📦 **Hệ thống vật phẩm với hiệu ứng tạm thời**
 ```java
-public class EventObject {
-    public void handleItemPickup(int index) {
-        if (item instanceof IncreaseDamage) {
-            player.bombRange = Math.max(player.bombRange, 2);
+// Trong EventObject.java
+private void applyBombRangeEffect(int itemIndex) {
+    // Tăng phạm vi bomb tạm thời
+    player.tempBombRange = player.bombRange + 1;
+    player.bombRangeExpireTime = System.currentTimeMillis() + 15000;
+    
+    // Timer reset hiệu ứng
+    new java.util.Timer().schedule(new java.util.TimerTask() {
+        @Override
+        public void run() {
+            player.tempBombRange = 0;
+            player.bombRange = player.originalBombRange;
         }
-        else if (item instanceof Teleport) {
-            teleportPlayerToRandomLocation();
-        }
-    }
+    }, 15000);
 }
 ```
-**Logic chính:**  
-- Tăng phạm vi bomb khi nhặt `IncreaseDamage`  
-- Teleport ngẫu nhiên khi nhặt `Teleport`  
-- Giảm tốc độ tạm thời với `DecreaseSpeed`
-- ... 
-- Mở chest sinh vật phẩm ngẫu nhiên
 
-### 🖥️ **Menu hệ thống**
+### 🔥 **Cơ chế ánh sáng giảm dần theo thời gian**
 ```java
-public class MenuScreen extends JPanel {
-    // Tương tác với các nút
-    public void add(StartButton startBtn) {
-        startBtn.addActionListener(e -> {
-            gp.startGameThread();
-            setVisible(false);
-        });
+// Trong GamePanel.java
+public void update() {
+    timeElapsedFrames++;
+    int durationFrames = FPS * 25; // 25 giây
+    
+    // Giảm dần bán kính ánh sáng
+    if (timeElapsedFrames <= durationFrames) {
+        float ratio = 1.0f - ((float)timeElapsedFrames / durationFrames);
+        baseLightRadius = baseRadiusMin + (int)((baseRadiusMax - baseRadiusMin) * ratio);
     }
+    
+    // Hiệu ứng nhấp nháy
+    flickerAngle += 0.1f;
+    baseLightRadius += (int)(Math.sin(flickerAngle) * flickerAmplitude);
 }
 ```
-**Flow chính:**  
-1. Hiển thị background + animation  
-2. Xử lý click nút Start/Unmute  
-3. Chuyển đổi giữa các trạng thái game
 
----
+### 🎮 **Hệ thống chuyển đổi trạng thái game linh hoạt**
+```java
+// Trong MainFrame.java
+public void switchToGame
+```
 
 ## 🔗 **LUỒNG TƯƠNG TÁC CHÍNH**
 ```mermaid
@@ -314,48 +390,6 @@ sequenceDiagram
     EventObject->>Player: applyItemEffect()
     Player->>UI: updateHealth/Score()
 ```
-
----
-
-## 🛠️ **CÔNG CỤ & KỸ THUẬT**
-
-### 🖼️ UtilityTool.java
-```java
-public class UtilityTool {
-    public BufferedImage scaleImage(BufferedImage original, int width, int height) {
-		
-		BufferedImage scaledImage = new BufferedImage(width, height, 2);
-		Graphics2D g2 = scaledImage.createGraphics();
-		g2.drawImage(original, 0, 0, width, height, null);
-		g2.dispose();
-		
-		return scaledImage;
-	}
-}
-```
-
-### 🎛️ Main.java
-```java
-public class Main {
-    public static void main(String[] args) {
-        
-        JFrame window = new JFrame();
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setResizable(false);
-        window.setTitle("Ticking Away");
-
-        SwingUtilities.invokeLater(() -> {
-            new MenuScreen().setVisible(true);
-        });
-
-        window.pack();
-
-        window.setLocationRelativeTo(null);
-        window.setVisible(true);
-    }
-}
-```
-
 ---
 
 ## 📊 **THIẾT KẾ GIAO DIỆN**
